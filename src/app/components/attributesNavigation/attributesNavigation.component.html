@@ -1,0 +1,21 @@
+<div class="buttons">
+  <button *ngIf="modelButton" mat-stroked-button routerLink="/item">
+    Modelos
+  </button>
+  <button *ngIf="setButton" mat-stroked-button routerLink="/attributes/set">
+    Conjuntos
+  </button>
+  <button *ngIf="colorButton" mat-stroked-button routerLink="/attributes/color">
+    Cores
+  </button>
+  <button
+    *ngIf="fabricButton"
+    mat-stroked-button
+    routerLink="/attributes/fabric"
+  >
+    Tecidos
+  </button>
+  <button *ngIf="sizeButton" mat-stroked-button routerLink="/attributes/size">
+    Tamanhos
+  </button>
+</div>

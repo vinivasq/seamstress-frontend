@@ -1,0 +1,57 @@
+<app-title
+  title="Tamanhos"
+  icon="edit_attributes"
+  descripton="Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorem hic labore quas aliquam nemo."
+  [listButton]="true"
+  btnLabel="Modelos"
+  route="/dashboard/items"
+>
+</app-title>
+
+<div class="container">
+  <app-attributesNavigation [sizeButton]="false"></app-attributesNavigation>
+
+  <div class="attribute">
+    <div class="attribute__field">
+      <mat-form-field
+        class="field__input"
+        appearance="fill"
+        subscriptSizing="dynamic"
+      >
+        <mat-label>Tamanho</mat-label>
+        <input [(ngModel)]="size.name" matInput />
+      </mat-form-field>
+      <button
+        (click)="saveSize()"
+        class="button"
+        mat-raised-button
+        color="accent"
+      >
+        <mat-icon>check</mat-icon>
+        Cadastrar
+      </button>
+    </div>
+
+    <mat-card>
+      <mat-card-header><h2>Tamanhos Disponíveis</h2></mat-card-header>
+      <mat-card-content>
+        <ul class="attribute__list">
+          <li *ngFor="let size of sizes">
+            <mat-divider></mat-divider>
+            <div class="list__item">
+              <p class="item__color">{{ size.name }}</p>
+              <button
+                (click)="openModal(size.id, size.name)"
+                mat-icon-button
+                color="warn"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+            <mat-divider></mat-divider>
+          </li>
+        </ul>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

@@ -1,0 +1,272 @@
+<app-title
+  [title]="'Pedidos'"
+  [listButton]="false"
+  [descripton]="
+    'Lorem ipsum dolor sit amet consectetur adipisicing elit. Praesentium laudantium atque alias '
+  "
+  [icon]="'list'"
+></app-title>
+
+<app-tableHeader
+  (keyPressed)="filterOrders($event)"
+  [placeholder]="'Ex. Vestido longo azul'"
+  [label]="'Novo Pedido'"
+  [route]="'/order'"
+></app-tableHeader>
+
+<div class="responsive-table">
+  <table
+    mat-table
+    [dataSource]="dataSource"
+    multiTemplateDataRows
+    class="mat-elevation-z8"
+    matSort
+  >
+    <ng-container
+      matColumnDef="{{ column }}"
+      *ngFor="let column of displayedColumns"
+    >
+      <th mat-header-cell mat-sort-header *matHeaderCellDef>
+        {{ columnHeader(column) }}
+      </th>
+      <td mat-cell *matCellDef="let order">
+        {{
+          column === "createdAt" || column === "deadline"
+            ? (order[column] | DateFormat)
+            : column === "customer"
+            ? order[column].name
+            : column === "step"
+            ? (order[column] | Step)
+            : order[column]
+        }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="expand">
+      <th mat-header-cell *matHeaderCellDef aria-label="row actions">&nbsp;</th>
+      <td mat-cell *matCellDef="let order">
+        <button
+          mat-icon-button
+          aria-label="expand row"
+          (click)="
+            expandedOrder = expandedOrder === order ? null : order;
+            $event.stopPropagation()
+          "
+        >
+          <mat-icon *ngIf="expandedOrder !== order"
+            >keyboard_arrow_down</mat-icon
+          >
+          <mat-icon *ngIf="expandedOrder === order">keyboard_arrow_up</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="expandedDetail">
+      <td
+        mat-cell
+        *matCellDef="let order"
+        [attr.colspan]="displayedColumnsWithExpand.length"
+      >
+        <div
+          class="order-detail"
+          [@detailExpand]="order == expandedOrder ? 'expanded' : 'collapsed'"
+        >
+          <mat-tab-group
+            color="accent"
+            mat-stretch-tabs="false"
+            mat-align-tabs="start"
+          >
+            <mat-tab
+              *ngFor="let item of order.itemOrders['$values']"
+              [label]="item.item.name"
+            >
+              <div class="order__tab__item">
+                <img
+                  *ngIf="item.item.imageURL"
+                  src="{{ imageAPI }}/{{ item.item.imageURL?.split(';')[0] }}"
+                  (click)="openCarousel(item.item.imageURL)"
+                  class="mat-elevation-z2 item__image"
+                />
+
+                <div class="item">
+                  <div class="item__description">
+                    <div class="item__attributes">
+                      <div class="item__field">
+                        <h3 class="field__label">Modelo:</h3>
+                        <p>{{ item.item.name }}</p>
+                      </div>
+                      <div class="item__field">
+                        <h3 class="field__label">Conjunto:</h3>
+                        <p>{{ item.item.set?.name }}</p>
+                      </div>
+                      <div class="item__field">
+                        <h3 class="field__label">Tamanho:</h3>
+                        <p>{{ item.size.name }}</p>
+                      </div>
+                      <div class="item__field">
+                        <h3 class="field__label">Cor:</h3>
+                        <p>{{ item.color.name }}</p>
+                      </div>
+                      <div class="item__field">
+                        <h3 class="field__label">Tecido:</h3>
+                        <p>{{ item.fabric.name }}</p>
+                      </div>
+                    </div>
+                    <div
+                      class="customer__sizings"
+                      *ngIf="item.size.id === 1 && order.customer.sizings"
+                    >
+                      <div class="sizings">
+                        <div
+                          *ngIf="order.customer.sizings.bust"
+                          class="item__field"
+                        >
+                          <h3 class="field__label">Busto:</h3>
+                          <p>{{ order.customer.sizings.bust }} cm</p>
+                        </div>
+                        <div
+                          *ngIf="order.customer.sizings.waist"
+                          class="item__field"
+                        >
+                          <h3 class="field__label">Cintura:</h3>
+                          <p>{{ order.customer.sizings.waist }} cm</p>
+                        </div>
+                        <div
+                          *ngIf="order.customer.sizings.hip"
+                          class="item__field"
+                        >
+                          <h3 class="field__label">Quadril:</h3>
+                          <p>{{ order.customer.sizings.hip }} cm</p>
+                        </div>
+                        <div
+                          *ngIf="order.customer.sizings.arm"
+                          class="item__field"
+                        >
+                          <h3 class="field__label">Braço:</h3>
+                          <p>{{ order.customer.sizings.arm }} cm</p>
+                        </div>
+                        <div
+                          *ngIf="order.customer.sizings.thigh"
+                          class="item__field"
+                        >
+                          <h3 class="field__label">Coxa:</h3>
+                          <p>{{ order.customer.sizings.thigh }} cm</p>
+                        </div>
+                        <div
+                          *ngIf="order.customer.sizings.calf"
+                          class="item__field"
+                        >
+                          <h3 class="field__label">Panturrilha:</h3>
+                          <p>{{ order.customer.sizings.calf }} cm</p>
+                        </div>
+                        <div
+                          *ngIf="order.customer.sizings.shoulderToShoulder"
+                          class="item__field"
+                        >
+                          <h3 class="field__label">Ombro a Ombro:</h3>
+                          <p>
+                            {{ order.customer.sizings.shoulderToShoulder }} cm
+                          </p>
+                        </div>
+                        <div
+                          *ngIf="order.customer.sizings.lengthLegging"
+                          class="item__field"
+                        >
+                          <h3 class="field__label">Comp. Legging:</h3>
+                          <p>{{ order.customer.sizings.lengthLegging }} cm</p>
+                        </div>
+                        <div
+                          *ngIf="order.customer.sizings.lengthPants"
+                          class="item__field"
+                        >
+                          <h3 class="field__label">Comp. Calça:</h3>
+                          <p>{{ order.customer.sizings.lengthPants }} cm</p>
+                        </div>
+                        <div
+                          *ngIf="order.customer.sizings.lengthDress"
+                          class="item__field"
+                        >
+                          <h3 class="field__label">Comp. Vestido:</h3>
+                          <p>{{ order.customer.sizings.lengthDress }} cm</p>
+                        </div>
+                        <div
+                          *ngIf="order.customer.sizings.lengthShirt"
+                          class="item__field"
+                        >
+                          <h3 class="field__label">Comp. Blusa:</h3>
+                          <p>{{ order.customer.sizings.lengthShirt }} cm</p>
+                        </div>
+                        <div
+                          *ngIf="order.customer.sizings.lengthTunica"
+                          class="item__field"
+                        >
+                          <h3 class="field__label">Comp. Túnica:</h3>
+                          <p>{{ order.customer.sizings.lengthTunica }} cm</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div *ngIf="item.description" class="item__field">
+                    <h3 class="field__label">Observação do item:</h3>
+                    <p>{{ item.description }}</p>
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="order.description" class="item__field">
+                <h3 class="field__label">Observação do pedido:</h3>
+                <p style="width: 100%">{{ order.description }}</p>
+              </div>
+            </mat-tab>
+          </mat-tab-group>
+          <button
+            mat-icon-button
+            aria-label="Icon Button to open an item"
+            routerLink="/order/{{ order.id }}"
+          >
+            <mat-icon>open_in_new</mat-icon>
+          </button>
+          <button
+            mat-icon-button
+            [matMenuTriggerFor]="menu"
+            aria-label="Example icon-button with a menu"
+          >
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #menu="matMenu" xPosition="before">
+            <mat-radio-group mat-menu-item>
+              <mat-radio-button
+                class="radio__buttons"
+                *ngFor="let step of steps | keyvalue"
+                [checked]="order.step == step.value"
+                [value]="step.value"
+                (click)="updateStep(order.id, step.value)"
+              >
+                {{ step.key }}
+              </mat-radio-button>
+            </mat-radio-group>
+          </mat-menu>
+        </div>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumnsWithExpand"></tr>
+    <tr
+      mat-row
+      *matRowDef="let order; columns: displayedColumnsWithExpand"
+      class="order-row"
+      [class.order-expanded-row]="expandedOrder === order"
+      (click)="expandedOrder = expandedOrder === order ? null : order"
+    ></tr>
+    <tr
+      mat-row
+      *matRowDef="let row; columns: ['expandedDetail']"
+      class="order-detail-row"
+    ></tr>
+  </table>
+</div>
+<mat-paginator
+  [pageSizeOptions]="[5, 10, 25, 100]"
+  aria-label="Select page of orders"
+  class="table__paginator"
+></mat-paginator>
+
+<app-buttonAdd [route]="'/order'"></app-buttonAdd>

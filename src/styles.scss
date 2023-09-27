@@ -1,0 +1,45 @@
+/* You can add global styles to this file, and also import other style files */
+
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+h2,
+p {
+  margin: 0 !important;
+}
+
+.mat-mdc-tab-body-content,
+.mat-mdc-tab-body,
+.mat-mdc-tab-body-active {
+  overflow: hidden !important;
+}
+
+.mat-mdc-tab-body-wrapper {
+  height: 100% !important ;
+}
+
+.mat-mdc-form-field-error-wrapper {
+  padding: 0 !important;
+}
+
+.ngx-toastr {
+  box-shadow: 0 0 12px #3b3b3b !important;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+@media screen and (max-width: 992px) {
+  [_nghost-ng-c1125367913]
+    ngx-dropzone-remove-badge[_ngcontent-ng-c1125367913] {
+    opacity: 1 !important;
+  }
+}

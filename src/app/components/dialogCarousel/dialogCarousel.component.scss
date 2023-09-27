@@ -1,0 +1,21 @@
+.container {
+  max-height: 80vh;
+}
+
+.images__container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.image {
+  max-height: 34.375rem;
+  width: auto;
+}
+
+@media screen and (max-width: 768px) {
+  .image {
+    max-height: 21.875rem;
+  }
+}

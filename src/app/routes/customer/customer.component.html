@@ -1,0 +1,374 @@
+<div class="container">
+  <app-title
+    [icon]="'person_add'"
+    [title]="'Cadastro de Clientes'"
+    [descripton]="
+      'Lorem ipsum dolor sit amet consectetur adipisicing elit. Alias quibusdam accusamus,'
+    "
+    [listButton]="true"
+    [btnLabel]="'Clientes'"
+    [route]="'/dashboard/customers'"
+  >
+  </app-title>
+
+  <div class="form__container">
+    <img
+      class="svg__container"
+      src="../../../assets/undraw_fill_form_re_cwyf.svg"
+      alt=""
+    />
+
+    <mat-stepper
+      [orientation]="(stepperOrientation | async)!"
+      class="stepper mat-elevation-z8"
+      [formGroup]="form"
+    >
+      <mat-step formGroupName="firstFormGroup">
+        <div class="form__header">
+          <ng-template matStepLabel>Dados Pessoais</ng-template>
+        </div>
+
+        <div class="form__content">
+          <mat-form-field>
+            <mat-label>Nome</mat-label>
+            <input
+              matInput
+              placeholder="Fulano da Silva"
+              formControlName="name"
+              maxlength="70"
+            />
+            <mat-error *ngIf="firstGroup.get('name')?.hasError('required')"
+              >O campo "Nome" não pode ficar vazio</mat-error
+            >
+          </mat-form-field>
+
+          <div class="form__fieldGroup">
+            <mat-form-field class="form__fieldGroup-item">
+              <mat-label>CPF/CNPJ</mat-label>
+              <input
+                matInput
+                mask="CPF_CNPJ"
+                placeholder="000-000-000-00"
+                formControlName="cpF_CNPJ"
+              />
+              <mat-error
+                *ngIf="firstGroup.get('cpF_CNPJ')?.hasError('required')"
+                >Campo obrigatório</mat-error
+              >
+              <mat-error *ngIf="firstGroup.get('cpF_CNPJ')?.hasError('mask')"
+                >CPF/CNPJ inválido</mat-error
+              >
+            </mat-form-field>
+
+            <mat-form-field class="form__fieldGroup-item">
+              <mat-label>Telefone</mat-label>
+              <input
+                matInput
+                mask="(00) 00000-0000"
+                placeholder="(00) 00000-0000"
+                formControlName="phoneNumber"
+              />
+              <mat-error
+                *ngIf="firstGroup.get('phoneNumber')?.hasError('required')"
+                >Campo obrigatório</mat-error
+              >
+              <mat-error *ngIf="firstGroup.get('phoneNumber')?.hasError('mask')"
+                >Número de telefone inválido</mat-error
+              >
+            </mat-form-field>
+          </div>
+
+          <mat-form-field>
+            <mat-label>Email</mat-label>
+            <input
+              matInput
+              placeholder="fulano@email.com"
+              formControlName="email"
+              maxlength="70"
+            />
+            <mat-error *ngIf="firstGroup.get('email')?.hasError('required')"
+              >O campo "E-mail" não pode ficar vazio</mat-error
+            >
+            <mat-error *ngIf="firstGroup.get('email')?.hasError('email')"
+              >Formato de e-mail inválido.</mat-error
+            >
+          </mat-form-field>
+        </div>
+        <div class="form__buttons">
+          <button mat-stroked-button matStepperNext color="accent">
+            Próximo
+          </button>
+        </div>
+      </mat-step>
+
+      <mat-step formGroupName="secondFormGroup">
+        <div class="form__header">
+          <ng-template matStepLabel>Endereço</ng-template>
+        </div>
+
+        <div class="form__content">
+          <div class="form__fieldGroup">
+            <mat-form-field class="form__fieldGroup-item">
+              <mat-label>CEP</mat-label>
+              <input
+                matInput
+                mask="00000-000"
+                placeholder="00000-000"
+                formControlName="cep"
+              />
+              <mat-error *ngIf="secondGroup.get('cep')?.hasError('required')"
+                >Campo obrigatório</mat-error
+              >
+              <mat-error *ngIf="secondGroup.get('cep')?.hasError('mask')"
+                >CEP inválido</mat-error
+              >
+            </mat-form-field>
+
+            <mat-form-field class="form__fieldGroup-item">
+              <mat-label>N° Residência</mat-label>
+              <input
+                matInput
+                placeholder="00000"
+                mask="09999"
+                formControlName="number"
+              />
+              <mat-error *ngIf="secondGroup.get('number')?.hasError('required')"
+                >Campo obrigatório</mat-error
+              >
+            </mat-form-field>
+          </div>
+
+          <mat-form-field>
+            <mat-label>Logradouro</mat-label>
+            <input
+              matInput
+              placeholder="Av Duque de Caxias"
+              formControlName="address"
+              maxlength="80"
+            />
+            <mat-error *ngIf="secondGroup.get('address')?.hasError('required')"
+              >O campo "Logradouro" não pode ficar vazio</mat-error
+            >
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>Complemento</mat-label>
+            <input matInput maxlength="150" formControlName="complement" />
+          </mat-form-field>
+        </div>
+        <div class="form__buttons">
+          <button mat-stroked-button matStepperPrevious>Voltar</button>
+          <button mat-stroked-button matStepperNext color="accent">
+            Próximo
+          </button>
+        </div>
+      </mat-step>
+
+      <mat-step formGroupName="thirdFormGroup" optional>
+        <div class="form__header">
+          <ng-template matStepLabel>Medidas</ng-template>
+        </div>
+        <div class="form__content form__content-sizing">
+          <mat-form-field class="sizing__content" floatLabel="always">
+            <mat-label>Busto</mat-label>
+            <input
+              matInput
+              formControlName="bust"
+              pattern="^\d{1,3}(?:\.\d{1,2})?$"
+              type="number"
+              placeholder="000.00"
+            />
+            <span matTextSuffix>cm</span>
+            <mat-error *ngIf="thirdGroup.get('bust')?.hasError('pattern')"
+              >Medida inválida. Ex: 123.45</mat-error
+            >
+          </mat-form-field>
+
+          <mat-form-field class="sizing__content" floatLabel="always">
+            <mat-label>Cintura</mat-label>
+            <input
+              matInput
+              formControlName="waist"
+              pattern="^\d{1,3}(?:\.\d{1,2})?$"
+              type="number"
+              placeholder="000.00"
+            />
+            <span matTextSuffix>cm</span>
+            <mat-error *ngIf="thirdGroup.get('waist')?.hasError('pattern')"
+              >Medida inválida. Ex: 123.45</mat-error
+            >
+          </mat-form-field>
+
+          <mat-form-field class="sizing__content" floatLabel="always">
+            <mat-label>Quadril</mat-label>
+            <input
+              matInput
+              formControlName="hip"
+              pattern="^\d{1,3}(?:\.\d{1,2})?$"
+              type="number"
+              placeholder="000.00"
+            />
+            <span matTextSuffix>cm</span>
+            <mat-error *ngIf="thirdGroup.get('hip')?.hasError('pattern')"
+              >Medida inválida. Ex: 123.45</mat-error
+            >
+          </mat-form-field>
+
+          <mat-form-field class="sizing__content" floatLabel="always">
+            <mat-label>Ombro a Ombro</mat-label>
+            <input
+              matInput
+              formControlName="shoulderToShoulder"
+              pattern="^\d{1,3}(?:\.\d{1,2})?$"
+              type="number"
+              placeholder="000.00"
+            />
+            <span matTextSuffix>cm</span>
+            <mat-error
+              *ngIf="thirdGroup.get('shoulderToShoulder')?.hasError('pattern')"
+              >Medida inválida. Ex: 123.45</mat-error
+            >
+          </mat-form-field>
+
+          <mat-form-field class="sizing__content" floatLabel="always">
+            <mat-label>Braço</mat-label>
+            <input
+              matInput
+              formControlName="arm"
+              pattern="^\d{1,3}(?:\.\d{1,2})?$"
+              type="number"
+              placeholder="000.00"
+            />
+            <span matTextSuffix>cm</span>
+            <mat-error *ngIf="thirdGroup.get('arm')?.hasError('pattern')"
+              >Medida inválida. Ex: 123.45</mat-error
+            >
+          </mat-form-field>
+
+          <mat-form-field class="sizing__content" floatLabel="always">
+            <mat-label>Coxa</mat-label>
+            <input
+              matInput
+              formControlName="thigh"
+              pattern="^\d{1,3}(?:\.\d{1,2})?$"
+              type="number"
+              placeholder="000.00"
+            />
+            <span matTextSuffix>cm</span>
+            <mat-error *ngIf="thirdGroup.get('thigh')?.hasError('pattern')"
+              >Medida inválida. Ex: 123.45</mat-error
+            >
+          </mat-form-field>
+
+          <mat-form-field class="sizing__content" floatLabel="always">
+            <mat-label>Panturrilha</mat-label>
+            <input
+              matInput
+              formControlName="calf"
+              pattern="^\d{1,3}(?:\.\d{1,2})?$"
+              type="number"
+              placeholder="000.00"
+            />
+            <span matTextSuffix>cm</span>
+            <mat-error *ngIf="thirdGroup.get('calf')?.hasError('pattern')"
+              >Medida inválida. Ex: 123.45</mat-error
+            >
+          </mat-form-field>
+
+          <mat-form-field class="sizing__content" floatLabel="always">
+            <mat-label>Comp. Legging</mat-label>
+            <input
+              matInput
+              formControlName="lengthLegging"
+              pattern="^\d{1,3}(?:\.\d{1,2})?$"
+              type="number"
+              placeholder="000.00"
+            />
+            <span matTextSuffix>cm</span>
+            <mat-error
+              *ngIf="thirdGroup.get('lengthLegging')?.hasError('pattern')"
+              >Medida inválida. Ex: 123.45</mat-error
+            >
+          </mat-form-field>
+
+          <mat-form-field class="sizing__content" floatLabel="always">
+            <mat-label>Comp. Calça</mat-label>
+            <input
+              matInput
+              formControlName="lengthPants"
+              pattern="^\d{1,3}(?:\.\d{1,2})?$"
+              type="number"
+              placeholder="000.00"
+            />
+            <span matTextSuffix>cm</span>
+            <mat-error
+              *ngIf="thirdGroup.get('lengthPants')?.hasError('pattern')"
+              >Medida inválida. Ex: 123.45</mat-error
+            >
+          </mat-form-field>
+
+          <mat-form-field class="sizing__content" floatLabel="always">
+            <mat-label>Comp. Vestido</mat-label>
+            <input
+              matInput
+              formControlName="lengthDress"
+              pattern="^\d{1,3}(?:\.\d{1,2})?$"
+              type="number"
+              placeholder="000.00"
+            />
+            <span matTextSuffix>cm</span>
+            <mat-error
+              *ngIf="thirdGroup.get('lengthDress')?.hasError('pattern')"
+              >Medida inválida. Ex: 123.45</mat-error
+            >
+          </mat-form-field>
+
+          <mat-form-field class="sizing__content" floatLabel="always">
+            <mat-label>Comp. Blusa</mat-label>
+            <input
+              matInput
+              formControlName="lengthShirt"
+              pattern="^\d{1,3}(?:\.\d{1,2})?$"
+              type="number"
+              placeholder="000.00"
+            />
+            <span matTextSuffix>cm</span>
+            <mat-error
+              *ngIf="thirdGroup.get('lengthShirt')?.hasError('pattern')"
+              >Medida inválida. Ex: 123.45</mat-error
+            >
+          </mat-form-field>
+
+          <mat-form-field class="sizing__content" floatLabel="always">
+            <mat-label>Comp. Túnica</mat-label>
+            <input
+              matInput
+              formControlName="lengthTunica"
+              pattern="^\d{1,3}(?:\.\d{1,2})?$"
+              type="number"
+              placeholder="000.00"
+            />
+            <span matTextSuffix>cm</span>
+            <mat-error
+              *ngIf="thirdGroup.get('lengthTunica')?.hasError('pattern')"
+              >Medida inválida. Ex: 123.45</mat-error
+            >
+          </mat-form-field>
+        </div>
+
+        <div class="form__buttons">
+          <button mat-stroked-button matStepperPrevious>Voltar</button>
+          <button
+            mat-raised-button
+            color="accent"
+            matStepperNext
+            (click)="saveCustomer()"
+          >
+            Finalizar
+            <mat-icon>check</mat-icon>
+          </button>
+        </div>
+      </mat-step>
+    </mat-stepper>
+  </div>
+</div>

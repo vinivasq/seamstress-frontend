@@ -1,0 +1,166 @@
+<app-title
+  [title]="'Clientes'"
+  [icon]="'people'"
+  [descripton]="
+    'Lorem ipsum dolor sit amet consectetur adipisicing elit. Alias quibusdam accusamus'
+  "
+></app-title>
+
+<app-tableHeader
+  [placeholder]="'Fulano da Silva'"
+  [label]="'Novo Cliente'"
+  [route]="'/customer'"
+>
+</app-tableHeader>
+<app-buttonAdd [route]="'/customer'"> </app-buttonAdd>
+
+<div class="customers">
+  <mat-card *ngFor="let customer of customers" class="customer">
+    <mat-tab-group class="customer__tab" color="accent">
+      <mat-tab label="Dados">
+        <mat-card-header>
+          <mat-card-title>{{ customer.name }}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content class="customer__content">
+          <div>
+            <div class="customer__field">
+              <p class="customer__label">Telefone:</p>
+              <p>{{ customer.phoneNumber }}</p>
+            </div>
+            <div class="customer__field">
+              <p class="customer__label">CPF:</p>
+              <p>{{ customer.cpF_CNPJ }}</p>
+            </div>
+            <div class="customer__field">
+              <p class="customer__label">E-mail:</p>
+              <p>{{ customer.email }}</p>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-tab>
+
+      <mat-tab label="Endereço">
+        <mat-card-content class="customer__content">
+          <div class="customer__field">
+            <p class="customer__label">Rua:</p>
+            <p>{{ customer.address }}</p>
+          </div>
+          <div class="customer__field">
+            <p class="customer__label">Número:</p>
+            <p>{{ customer.number }}</p>
+          </div>
+          <div class="customer__field">
+            <p class="customer__label">CEP:</p>
+            <p>{{ customer.cep }}</p>
+          </div>
+          <div>
+            <p
+              *ngIf="customer.complement"
+              class="customer__label customer__label-complement"
+            >
+              Complemento <mat-icon>keyboard_arrow_down</mat-icon>
+            </p>
+            <p>{{ customer.complement }}</p>
+          </div>
+        </mat-card-content>
+      </mat-tab>
+
+      <mat-tab *ngIf="customer.sizings" label="Medidas">
+        <mat-card-content class="customer__content customer__content-sizings">
+          <div class="sizings">
+            <div *ngIf="customer.sizings.bust" class="customer__field-sizing">
+              <p class="customer__label">Busto:</p>
+              <p>{{ customer.sizings.bust }}</p>
+            </div>
+            <div *ngIf="customer.sizings.waist" class="customer__field-sizing">
+              <p class="customer__label">Cintura:</p>
+              <p>{{ customer.sizings.waist }}</p>
+            </div>
+            <div *ngIf="customer.sizings.hip" class="customer__field-sizing">
+              <p class="customer__label">Quadril:</p>
+              <p>{{ customer.sizings.hip }}</p>
+            </div>
+            <div *ngIf="customer.sizings.arm" class="customer__field-sizing">
+              <p class="customer__label">Braço:</p>
+              <p>{{ customer.sizings.arm }}</p>
+            </div>
+            <div *ngIf="customer.sizings.thigh" class="customer__field-sizing">
+              <p class="customer__label">Coxa:</p>
+              <p>{{ customer.sizings.thigh }}</p>
+            </div>
+            <div *ngIf="customer.sizings.calf" class="customer__field-sizing">
+              <p class="customer__label">Panturrilha:</p>
+              <p>{{ customer.sizings.calf }}</p>
+            </div>
+            <div
+              *ngIf="customer.sizings.shoulderToShoulder"
+              class="customer__field-sizing"
+            >
+              <p class="customer__label">Ombro a Ombro:</p>
+              <p>{{ customer.sizings.shoulderToShoulder }}</p>
+            </div>
+            <div
+              *ngIf="customer.sizings.lengthLegging"
+              class="customer__field-sizing"
+            >
+              <p class="customer__label">Comp. Legging:</p>
+              <p>{{ customer.sizings.lengthLegging }}</p>
+            </div>
+            <div
+              *ngIf="customer.sizings.lengthPants"
+              class="customer__field-sizing"
+            >
+              <p class="customer__label">Comp. Calça:</p>
+              <p>{{ customer.sizings.lengthPants }}</p>
+            </div>
+            <div
+              *ngIf="customer.sizings.lengthDress"
+              class="customer__field-sizing"
+            >
+              <p class="customer__label">Comp. Vestido:</p>
+              <p>{{ customer.sizings.lengthDress }}</p>
+            </div>
+            <div
+              *ngIf="customer.sizings.lengthShirt"
+              class="customer__field-sizing"
+            >
+              <p class="customer__label">Comp. Blusa:</p>
+              <p>{{ customer.sizings.lengthShirt }}</p>
+            </div>
+            <div
+              *ngIf="customer.sizings.lengthTunica"
+              class="customer__field-sizing"
+            >
+              <p class="customer__label">Comp. Túnica:</p>
+              <p>{{ customer.sizings.lengthTunica }}</p>
+            </div>
+          </div>
+          <div class="customer__field">
+            <mat-icon class="card__icon" color="accent">info</mat-icon>
+            <mat-card-subtitle style="height: 20px !important"
+              >Medidas em cm</mat-card-subtitle
+            >
+          </div>
+        </mat-card-content>
+      </mat-tab>
+    </mat-tab-group>
+    <mat-card-actions class="card__buttons">
+      <div>
+        <button
+          mat-icon-button
+          color="warn"
+          (click)="openModal(customer.id, customer.name)"
+        >
+          <mat-icon>delete</mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          color="accent"
+          routerLink="/customer/{{ customer.id }}"
+        >
+          <mat-icon>edit</mat-icon>
+        </button>
+      </div>
+    </mat-card-actions>
+  </mat-card>
+</div>

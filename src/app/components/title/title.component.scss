@@ -1,0 +1,54 @@
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: auto;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  margin-bottom: 1rem;
+}
+
+.toolbar {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.mat-icon {
+  width: 4rem;
+  font-size: 4rem;
+  height: auto;
+}
+
+.toolbar__content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.toolbar__headers {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+}
+
+.toolbar__description {
+  font-size: 1rem;
+  font-weight: 300;
+  white-space: wrap;
+  line-height: normal;
+}
+
+@media screen and (max-width: 768px) {
+  .toolbar {
+    flex-direction: column;
+    align-items: flex-end;
+  }
+
+  .mat-icon {
+    width: 3rem;
+    font-size: 3rem;
+  }
+}

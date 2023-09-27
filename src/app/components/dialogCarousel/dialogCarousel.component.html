@@ -1,0 +1,8 @@
+<div mat-dialog-title>Imagens do Modelo</div>
+<div mat-dialog-content class="container">
+  <div class="images__container">
+    <div *ngFor="let imageURL of data.imageURL.split(';')">
+      <img class="image" src="{{ imageAPI }}/{{ imageURL }}" />
+    </div>
+  </div>
+</div>

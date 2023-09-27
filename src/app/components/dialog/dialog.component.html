@@ -1,0 +1,13 @@
+<h1 mat-dialog-title>{{ data.title }}</h1>
+<div mat-dialog-content>{{ data.content }}</div>
+<div mat-dialog-actions class="dialog__buttons">
+  <button
+    mat-stroked-button
+    color="warn"
+    mat-dialog-close
+    (click)="data.action()"
+  >
+    Sim
+  </button>
+  <button mat-stroked-button mat-dialog-close>Não</button>
+</div>

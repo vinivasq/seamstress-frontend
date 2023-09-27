@@ -1,0 +1,21 @@
+<mat-toolbar color="primary" class="toolbar__container mat-elevation-z3">
+  <button
+    mat-icon-button
+    class="drawer__button"
+    aria-label="Example icon-button with menu icon"
+    (click)="drawer.open()"
+  >
+    <mat-icon>menu</mat-icon>
+  </button>
+  <div class="toolbar__image-container">
+    <img
+      src="../../assets/seamstress_logo_slate-50.svg"
+      alt="Logo Seamstress"
+      class="toolbar__image"
+      routerLink="/dashboard/orders"
+    />
+  </div>
+  <nav class="navbar">
+    <app-links></app-links>
+  </nav>
+</mat-toolbar>

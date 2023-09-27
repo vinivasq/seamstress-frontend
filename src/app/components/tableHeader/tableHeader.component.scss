@@ -1,0 +1,26 @@
+.filter {
+  align-items: center;
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+}
+
+.button {
+  height: 3.5rem;
+  flex-grow: 1;
+  align-self: flex-start;
+}
+
+.mat-mdc-form-field {
+  flex-grow: 10;
+}
+
+@media screen and (max-width: 768px) {
+  .button {
+    display: none;
+  }
+
+  .mat-mdc-form-field {
+    width: 100%;
+  }
+}

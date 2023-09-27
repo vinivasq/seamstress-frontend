@@ -1,0 +1,99 @@
+<div class="form">
+  <img
+    src="../../../../assets/undraw_learning_re_32qv.svg"
+    alt=""
+    class="form__image"
+  />
+
+  <div class="form__container mat-elevation-z3">
+    <div class="form__header">
+      <img
+        src="../../../../assets/seamstress_logo_slate-50.svg"
+        alt="Logo da plataforma"
+      />
+      <span>Cadastro de usuário</span>
+    </div>
+
+    <form class="form__content" [formGroup]="formGroup">
+      <div class="form__name">
+        <mat-form-field>
+          <mat-label>Primeiro Nome</mat-label>
+          <input matInput type="text" maxlength="30" formControlName="name" />
+          <mat-error *ngIf="form.name?.hasError('required')"
+            >Primeiro nome é obrigatório</mat-error
+          >
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Último Nome</mat-label>
+          <input
+            matInput
+            type="text"
+            maxlength="30"
+            formControlName="lastName"
+          />
+          <mat-error *ngIf="form.lastName?.hasError('required')"
+            >Último nome é obrigatório</mat-error
+          >
+        </mat-form-field>
+      </div>
+
+      <mat-form-field>
+        <mat-label>Endereço de e-mail</mat-label>
+        <input matInput type="email" formControlName="email" />
+        <mat-error *ngIf="form.email?.hasError('required')"
+          >O campo "E-mail" não pode ficar vazio</mat-error
+        >
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Nome de usuário</mat-label>
+        <input matInput type="text" formControlName="username" />
+        <mat-error *ngIf="form.username?.hasError('required')"
+          >O campo "Nome de usuário" não pode ficar vazio</mat-error
+        >
+      </mat-form-field>
+
+      <div class="form__password">
+        <mat-form-field>
+          <mat-label>Sua senha</mat-label>
+          <input
+            matInput
+            type="password"
+            minlength="6"
+            formControlName="password"
+          />
+          <mat-error *ngIf="form.password?.hasError('required')"
+            >Senha é obrigatório</mat-error
+          >
+          <mat-error *ngIf="form.password?.hasError('minlength')"
+            >Tam. mínimo 6 caracteres</mat-error
+          >
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Repita a senha</mat-label>
+          <input matInput type="password" formControlName="passwordMatch" />
+          <mat-error *ngIf="form.passwordMatch?.hasError('required')"
+            >Campo obrigatório</mat-error
+          >
+          <mat-error *ngIf="form.passwordMatch?.hasError('mustMatch')"
+            >As senhas não combinam</mat-error
+          >
+        </mat-form-field>
+      </div>
+    </form>
+    <div class="form__footer">
+      <button
+        mat-raised-button
+        color="accent"
+        routerLink="/dashboard/orders"
+        class="form__button"
+      >
+        Criar conta
+      </button>
+
+      <span class="form__link" routerLink="/user/login"
+        >Já possui conta? Conecte-se aqui!</span
+      >
+    </div>
+  </div>
+</div>

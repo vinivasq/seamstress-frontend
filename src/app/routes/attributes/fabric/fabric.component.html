@@ -1,0 +1,77 @@
+<app-title
+  title="Tecidos"
+  icon="edit_attributes"
+  descripton="Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorem hic labore quas aliquam nemo."
+  [listButton]="true"
+  btnLabel="Modelos"
+  route="/dashboard/items"
+>
+</app-title>
+
+<div class="container">
+  <app-attributesNavigation [fabricButton]="false"></app-attributesNavigation>
+
+  <div class="attribute">
+    <div class="attribute__field">
+      <mat-form-field
+        class="field__input"
+        appearance="fill"
+        subscriptSizing="dynamic"
+      >
+        <mat-label>Tecido</mat-label>
+        <input [(ngModel)]="fabric.name" matInput placeholder="Linho" />
+      </mat-form-field>
+      <div class="buttons">
+        <button
+          *ngIf="fabric.id != 0"
+          (click)="clearFabric()"
+          class="button"
+          mat-stroked-button
+          color="warn"
+        >
+          <mat-icon>cancel</mat-icon> Cancelar
+        </button>
+        <button
+          (click)="saveFabric()"
+          class="button"
+          mat-raised-button
+          color="accent"
+        >
+          <mat-icon>check</mat-icon>
+          {{ fabric.id == 0 ? "Cadastrar" : "Salvar" }}
+        </button>
+      </div>
+    </div>
+
+    <mat-card>
+      <mat-card-header><h2>Tecidos Disponíveis</h2></mat-card-header>
+      <mat-card-content>
+        <ul class="attribute__list">
+          <li *ngFor="let fabric of fabrics">
+            <mat-divider></mat-divider>
+            <div class="list__item">
+              <p class="item__color">{{ fabric.name }}</p>
+              <div>
+                <button
+                  (click)="loadFabric(fabric.id)"
+                  mat-icon-button
+                  color="accent"
+                >
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button
+                  (click)="openModal(fabric.id, fabric.name)"
+                  mat-icon-button
+                  color="warn"
+                >
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </div>
+            <mat-divider></mat-divider>
+          </li>
+        </ul>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

@@ -1,0 +1,262 @@
+<app-title
+  [title]="'Cadastro de Pedidos'"
+  [listButton]="true"
+  [route]="'/dashboard/orders'"
+  [descripton]="
+    'Lorem ipsum dolor sit amet consectetur adipisicing elit. Praesentium laudantium atque alias'
+  "
+  [btnLabel]="'Pedidos'"
+  [icon]="'playlist_add'"
+></app-title>
+
+<div class="container">
+  <mat-card [formGroup]="form">
+    <mat-card-header class="order__header">
+      <h1>Informações do pedido</h1>
+      <!-- <p>Form value: {{ form.value | json }}</p> -->
+      <mat-divider></mat-divider>
+    </mat-card-header>
+    <mat-card-content class="order__info">
+      <div class="info__container">
+        <mat-form-field class="info__field">
+          <mat-label>Cliente</mat-label>
+          <input
+            matInput
+            formControlName="customer"
+            type="text"
+            placeholder="Selecione um Cliente"
+            aria-label="Cliente"
+            [matAutocomplete]="customer"
+          />
+          <mat-autocomplete #customer="matAutocomplete">
+            <mat-option
+              *ngFor="let customer of filteredCustomers | async"
+              [value]="customer.name"
+              (onSelectionChange)="getCustomerId($event, customer.id)"
+            >
+              {{ customer.name }}
+            </mat-option>
+          </mat-autocomplete>
+          <mat-error *ngIf="form.get('customer')?.hasError('required')">
+            O campo "Cliente" não pode ficar vazio
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div>
+        <mat-form-field class="info__field-deadline">
+          <mat-label>Prazo de entrega</mat-label>
+          <input matInput formControlName="deadline" [matDatepicker]="picker" />
+          <mat-datepicker-toggle
+            matIconSuffix
+            [for]="picker"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+          <mat-error *ngIf="form.get('deadline')?.hasError('required')">
+            "Prazo de entrega" não pode ficar vazio
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="info__container">
+        <mat-form-field class="info__field">
+          <mat-label>Observações do pedido</mat-label>
+          <textarea
+            matInput
+            cdkTextareaAutosize
+            formControlName="description"
+            #autosize="cdkTextareaAutosize"
+            (input)="autosize.resizeToFitContent(true)"
+            rows="1"
+          ></textarea>
+        </mat-form-field>
+      </div>
+    </mat-card-content>
+  </mat-card>
+  <mat-card *ngIf="dataSource.length > 0">
+    <mat-card-header class="order__header">
+      <h1>Itens do pedido</h1>
+      <mat-divider></mat-divider>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="responsive-table">
+        <table mat-table [dataSource]="dataSource">
+          <ng-container
+            matColumnDef="{{ column }}"
+            *ngFor="let column of displayedColumns"
+          >
+            <th mat-header-cell *matHeaderCellDef>
+              {{ columnHeader(column) }}
+            </th>
+            <td mat-cell *matCellDef="let item; let i = index">
+              <div class="cell">
+                <div class="cell__content">
+                  {{ item[column] }}
+                </div>
+                <button
+                  *ngIf="column == 'price'"
+                  class="button"
+                  color="warn"
+                  mat-icon-button
+                  aria-label="Icon Button to remove an item"
+                  (click)="openModalItem(item, i)"
+                >
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card [formGroup]="newItemOrder">
+    <mat-card-header class="order__header">
+      <h1>Selecione um Modelo</h1>
+      <!-- <p>Form value: {{ newItemOrder.value | json }}</p> -->
+      <!-- <p>Form valid: {{ form.status | json }}</p> -->
+      <mat-divider></mat-divider>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="order__model">
+        <div class="model__group">
+          <mat-form-field class="group__field-model">
+            <mat-label>Nome do Modelo</mat-label>
+            <input
+              type="text"
+              placeholder="Selecione um Modelo"
+              aria-label="Modelo"
+              matInput
+              formControlName="item"
+              [matAutocomplete]="item"
+            />
+            <mat-autocomplete #item="matAutocomplete">
+              <mat-option
+                *ngFor="let item of filteredItems | async"
+                [value]="item.name"
+                (onSelectionChange)="getItemAttributes($event, item.id)"
+              >
+                {{ item.name }}
+              </mat-option>
+            </mat-autocomplete>
+            <mat-error *ngIf="newItemOrder.get('item')?.hasError('required')">
+              O campo "Nome do modelo" não pode ficar vazio
+            </mat-error>
+          </mat-form-field>
+          <div class="model__subgroup">
+            <mat-form-field class="group__field">
+              <mat-label>Tamanho</mat-label>
+              <mat-select formControlName="size">
+                <mat-option *ngFor="let size of itemSizes" [value]="size">
+                  {{ size.name }}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="newItemOrder.get('size')?.hasError('required')">
+                "Tamanho" deve ser informado
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field class="group__field-amount">
+              <mat-label>Quantidade</mat-label>
+              <input
+                type="number"
+                matInput
+                min="0"
+                formControlName="amount"
+                [ngxMatNumberSpinner]="spinner"
+              />
+              <ngx-mat-number-spinner
+                #spinner
+                matSuffix
+              ></ngx-mat-number-spinner>
+              <mat-error
+                *ngIf="newItemOrder.get('amount')?.hasError('required')"
+              >
+                Campo Obrigatório
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="model__group">
+          <div class="model__container">
+            <mat-form-field class="model__field">
+              <mat-label>Cor</mat-label>
+              <mat-select formControlName="color">
+                <mat-option *ngFor="let color of itemColors" [value]="color">{{
+                  color.name
+                }}</mat-option>
+              </mat-select>
+              <mat-error
+                *ngIf="newItemOrder.get('color')?.hasError('required')"
+              >
+                O campo "Cor" não pode ficar vazio
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="model__container">
+            <mat-form-field class="model__field">
+              <mat-label>Tecido</mat-label>
+              <mat-select formControlName="fabric">
+                <mat-option
+                  *ngFor="let fabric of itemFabrics"
+                  [value]="fabric"
+                  >{{ fabric.name }}</mat-option
+                >
+              </mat-select>
+              <mat-error
+                *ngIf="newItemOrder.get('fabric')?.hasError('required')"
+              >
+                O campo "Tecido" não pode ficar vazio
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <mat-form-field class="group__field-description">
+            <mat-label>Observações do modelo</mat-label>
+            <textarea
+              matInput
+              cdkTextareaAutosize
+              #autosize="cdkTextareaAutosize"
+              formControlName="description"
+              (input)="autosize.resizeToFitContent(true)"
+              rows="1"
+            ></textarea>
+          </mat-form-field>
+        </div>
+        <div class="model__buttons">
+          <button mat-stroked-button (click)="addItemOrder()" color="accent">
+            <mat-icon>add</mat-icon>
+            Adicionar
+          </button>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card>
+    <mat-card-content class="order__footer">
+      <div class="order__price">
+        <h2>
+          Total: R$
+          {{ form.get("total").value === 0 ? "0,00" : form.get("total").value }}
+        </h2>
+      </div>
+      <div class="footer__buttons">
+        <button
+          *ngIf="requestMethod === 'put'"
+          mat-stroked-button
+          color="warn"
+          (click)="openModalOrder()"
+        >
+          <mat-icon>delete</mat-icon>
+          Excluir Pedido
+        </button>
+        <button mat-raised-button color="accent" (click)="saveOrder()">
+          <mat-icon>check</mat-icon
+          >{{ requestMethod === "post" ? "Finalizar" : "Salvar" }} Pedido
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

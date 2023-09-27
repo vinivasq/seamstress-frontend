@@ -1,0 +1,53 @@
+.drawer__button {
+  display: none;
+}
+
+.toolbar__container {
+  position: fixed;
+  z-index: 99;
+  display: flex;
+  gap: 1rem;
+  padding: 0 2rem;
+}
+
+.toolbar__image-container {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.toolbar__image {
+  cursor: pointer;
+  width: 12rem;
+  height: auto;
+}
+
+.navbar {
+  height: 100%;
+  width: 100%;
+}
+
+@media screen and (max-width: 768px) {
+  .drawer__button {
+    display: flex;
+  }
+
+  .toolbar__container {
+    padding: 0 0.5rem;
+  }
+  .toolbar__image-container {
+    position: absolute;
+    left: 50%;
+    top: 28px;
+    transform: translate(-50%, -50%);
+  }
+  .toolbar__image {
+    width: 8rem;
+  }
+  .toolbar__tab-container {
+    display: none;
+  }
+  .navbar {
+    display: none;
+  }
+}

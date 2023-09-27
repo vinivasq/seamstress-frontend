@@ -1,0 +1,44 @@
+<div class="form">
+  <img
+    src="../../../../assets/undraw_learning_re_32qv.svg"
+    alt=""
+    class="form__image"
+  />
+
+  <div class="form__container mat-elevation-z3">
+    <div class="form__header">
+      <img
+        src="../../../../assets/seamstress_logo_slate-50.svg"
+        alt="Logo da plataforma"
+      />
+      <span>Faça login e gerencie seus pedidos</span>
+    </div>
+
+    <form class="form__content">
+      <mat-form-field class="form__field">
+        <mat-label>Endereço de e-mail</mat-label>
+        <input matInput type="email" />
+      </mat-form-field>
+      <mat-form-field class="form__field">
+        <mat-label>Sua senha</mat-label>
+        <input matInput type="password" />
+      </mat-form-field>
+      <mat-checkbox class="example-margin">Lembrar de mim</mat-checkbox>
+    </form>
+    <div class="form__footer">
+      <button
+        mat-raised-button
+        color="accent"
+        routerLink="/dashboard/orders"
+        class="form__button"
+      >
+        Entrar na plataforma
+      </button>
+
+      <span class="form__link">Esqueceu sua senha?</span>
+      <span class="form__link" routerLink="/user/register"
+        >Não possui conta? Crie uma aqui!</span
+      >
+    </div>
+  </div>
+</div>

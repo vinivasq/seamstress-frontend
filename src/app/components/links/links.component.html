@@ -1,0 +1,59 @@
+<ul class="links">
+  <div class="links__profile">
+    <mat-icon class="links__icon">account_circle</mat-icon>
+    <li
+      class="link"
+      (click)="drawer.close()"
+      routerLink="/user/profile"
+      routerLinkActive="link-active"
+    >
+      Meu Perfil
+    </li>
+  </div>
+
+  <div class="links__navigation">
+    <li
+      class="link"
+      (click)="drawer.close()"
+      routerLink="/dashboard/orders"
+      routerLinkActive="link-active"
+    >
+      <p>Pedidos</p>
+    </li>
+    <li
+      class="link"
+      (click)="drawer.close()"
+      routerLink="/dashboard/customers"
+      routerLinkActive="link-active"
+    >
+      <p>Clientes</p>
+    </li>
+    <li
+      class="link"
+      (click)="drawer.close()"
+      routerLink="/dashboard/items"
+      routerLinkActive="link-active"
+    >
+      <p>Modelos</p>
+    </li>
+  </div>
+
+  <div class="links__footer">
+    <div class="links__exit">
+      <mat-icon color="warn">power_settings_new</mat-icon>
+      <li (click)="drawer.close()" routerLink="/user/login">Sair</li>
+    </div>
+  </div>
+
+  <li class="links__profile-desktop" [mat-menu-trigger-for]="menu">
+    Vinícius <mat-icon>arrow_drop_down</mat-icon>
+  </li>
+</ul>
+<mat-menu #menu="matMenu">
+  <button mat-menu-item (click)="drawer.close()" routerLink="/user/profile">
+    Meu Perfil
+  </button>
+  <button mat-menu-item (click)="drawer.close()" routerLink="/user/login">
+    Sair
+  </button>
+</mat-menu>

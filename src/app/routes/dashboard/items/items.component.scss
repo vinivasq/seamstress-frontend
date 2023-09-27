@@ -1,0 +1,26 @@
+.cell {
+  display: flex;
+  align-items: center;
+}
+
+.cell__content {
+  flex-grow: 1;
+}
+
+.button {
+  margin: auto;
+}
+
+@media screen and (max-width: 768px) {
+  .responsive-table {
+    width: 100%;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    border-radius: 5px 5px 0px 0px;
+  }
+
+  .table__paginator {
+    padding-bottom: 0.5rem;
+    border-radius: 0px 0px 5px 5px;
+  }
+}

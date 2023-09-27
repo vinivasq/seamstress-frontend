@@ -1,0 +1,21 @@
+<div class="filter">
+  <mat-form-field>
+    <mat-label>Buscar</mat-label>
+    <input
+      matInput
+      (keyup)="setFilterValue()"
+      placeholder="{{ placeholder }}"
+      [(ngModel)]="filterValue"
+      #input
+    />
+  </mat-form-field>
+  <button
+    mat-raised-button
+    color="accent"
+    class="button"
+    routerLink="/{{ route }}"
+  >
+    <mat-icon>playlist_add</mat-icon>
+    {{ label }}
+  </button>
+</div>

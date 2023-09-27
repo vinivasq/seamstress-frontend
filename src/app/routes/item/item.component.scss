@@ -1,0 +1,74 @@
+.form {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.form__fields {
+  display: flex;
+  flex-direction: column;
+  max-width: 46.875rem;
+  flex-grow: 1;
+}
+
+.fields__groups {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.group__field {
+  width: 50%;
+}
+
+.price__field {
+  text-align: right;
+}
+
+.buttons {
+  display: flex;
+  gap: 0.5rem;
+  align-self: flex-end;
+}
+
+.button {
+  flex-grow: 1;
+}
+
+.button-image {
+  display: none;
+}
+
+.dropzone__container {
+  margin: auto;
+  margin-top: 0;
+  width: 40%;
+  min-width: 20rem;
+}
+
+.dropzone {
+  background-color: transparent;
+  border: none;
+}
+
+.invisible {
+  position: absolute;
+  top: 0;
+  height: 0 !important;
+}
+
+@media screen and (max-width: 992px) {
+  .form,
+  .fields__groups {
+    flex-direction: column;
+  }
+
+  .buttons,
+  .group__field {
+    width: 100%;
+  }
+
+  .dropzone__container {
+    width: 100%;
+    min-width: 100%;
+  }
+}

@@ -1,0 +1,13 @@
+<mat-drawer-container class="drawer__container">
+  <mat-drawer #drawer class="drawer__content">
+    <app-links></app-links>
+  </mat-drawer>
+  <header>
+    <app-toolbar *ngIf="showMenu()"> </app-toolbar>
+  </header>
+
+  <app-spinner></app-spinner>
+  <div class="layout">
+    <router-outlet></router-outlet>
+  </div>
+</mat-drawer-container>

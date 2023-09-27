@@ -1,0 +1,170 @@
+<app-title
+  [icon]="'playlist_add'"
+  [title]="'Cadastro de Modelos'"
+  [descripton]="
+    'Lorem ipsum dolor sit amet consectetur adipisicing elit. Alias quibusdam accusamus'
+  "
+  [listButton]="true"
+  [btnLabel]="'Modelos'"
+  [route]="'/dashboard/items'"
+>
+</app-title>
+
+<div class="container">
+  <app-attributesNavigation [modelButton]="false"></app-attributesNavigation>
+
+  <mat-card class="mat-elevation-z8">
+    <mat-card-header> <h1>Novo Modelo</h1> </mat-card-header>
+    <mat-card-content>
+      <div [formGroup]="form" class="form">
+        <mat-form-field class="dropzone__container" appearance="fill">
+          <div
+            ngx-dropzone
+            class="dropzone"
+            [accept]="'image/*'"
+            aria-required="true"
+            (change)="onSelect($event)"
+          >
+            <ngx-dropzone-label>
+              <div>
+                <h2>
+                  {{
+                    this.isMobile
+                      ? "Toque para adicionar imagens"
+                      : "Arraste ou Clique para adicionar imagens"
+                  }}
+                </h2>
+              </div>
+            </ngx-dropzone-label>
+            <ngx-dropzone-image-preview
+              ngProjectAs="ngx-dropzone-preview"
+              *ngFor="let image of images"
+              [file]="image"
+              [removable]="true"
+              (removed)="onRemove(image)"
+            >
+            </ngx-dropzone-image-preview>
+          </div>
+          <input matInput formControlName="imageURL" class="invisible" />
+          <mat-error *ngIf="form.get('imageURL')?.hasError('required')">
+            O campo "Imagem" não pode ficar vazio
+          </mat-error>
+        </mat-form-field>
+
+        <div class="form__fields">
+          <div class="fields__groups">
+            <mat-form-field class="group__field">
+              <mat-label>Nome do Modelo</mat-label>
+              <input
+                matInput
+                placeholder="Vestido Longo"
+                formControlName="name"
+                maxlength="70"
+              />
+              <mat-error *ngIf="form.get('name')?.hasError('required')">
+                O campo "Nome" não pode ficar vazio
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field class="group__field">
+              <mat-label>Conjunto</mat-label>
+              <input
+                type="text"
+                placeholder="Selecione um Conjunto"
+                aria-label="Conjunto"
+                matInput
+                formControlName="set"
+                [matAutocomplete]="auto"
+              />
+              <mat-autocomplete #auto="matAutocomplete">
+                <mat-option
+                  *ngFor="let set of filteredSets | async"
+                  [value]="set.name"
+                  (onSelectionChange)="getSetId($event, set)"
+                >
+                  {{ set.name }}
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+          </div>
+          <div class="fields__groups">
+            <mat-form-field class="group__field">
+              <mat-label>Cores</mat-label>
+              <mat-select formControlName="itemColors" multiple>
+                <mat-option *ngFor="let color of colors" [value]="color.id">{{
+                  color.name
+                }}</mat-option>
+              </mat-select>
+              <mat-error *ngIf="form.get('itemColors')?.hasError('required')">
+                O campo "Cores" não pode ficar vazio
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field class="group__field">
+              <mat-label>Tecidos</mat-label>
+              <mat-select formControlName="itemFabrics" multiple>
+                <mat-option
+                  *ngFor="let fabric of fabrics"
+                  [value]="fabric.id"
+                  >{{ fabric.name }}</mat-option
+                >
+              </mat-select>
+              <mat-error *ngIf="form.get('itemFabrics')?.hasError('required')">
+                O campo "Tecidos" não pode ficar vazio
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="fields__groups">
+            <mat-form-field class="group__field">
+              <mat-label>Tamanhos</mat-label>
+              <mat-select formControlName="itemSizes" multiple>
+                <mat-option *ngFor="let size of sizes" [value]="size.id">{{
+                  size.name
+                }}</mat-option>
+              </mat-select>
+              <mat-error *ngIf="form.get('itemSizes')?.hasError('required')">
+                O campo "Tamanhos" não pode ficar vazio
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="group__field" floatLabel="always">
+              <mat-label>Valor</mat-label>
+              <input
+                matInput
+                formControlName="price"
+                type="text"
+                class="price__field"
+                placeholder="0,00"
+                mask="separator.2"
+              />
+              <span matTextPrefix>$&nbsp;</span>
+              <mat-error *ngIf="form.get('price')?.hasError('required')">
+                O valor não pode ficar vazio
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="buttons">
+            <button
+              *ngIf="requestMethod == 'put'"
+              class="button"
+              mat-stroked-button
+              color="warn"
+              aria-label="Icon Button to delete an item"
+              (click)="openDialog(item)"
+            >
+              <mat-icon>delete</mat-icon>
+              Excluir
+            </button>
+            <button
+              class="button"
+              mat-raised-button
+              color="accent"
+              (click)="saveItem()"
+            >
+              <mat-icon>check</mat-icon>
+              {{ requestMethod == "post" ? "Cadastrar" : "Salvar" }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
