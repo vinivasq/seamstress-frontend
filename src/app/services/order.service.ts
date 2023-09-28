@@ -6,7 +6,7 @@ import { environment } from 'src/environments/environment';
 
 @Injectable()
 export class OrderService {
-  baseURL = `https://seamstress-backend-production.up.railway.app/api/order`;
+  baseURL = `${environment.apiURL}/order`;
 
   constructor(private client: HttpClient) {}
 
