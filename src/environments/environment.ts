@@ -1,4 +1,5 @@
 export const environment = {
-  apiURL: 'http://localhost:5279/api',
-  imageAPI: 'http://localhost:5279/resources/images',
+  apiURL: 'https://seamstress-backend-production.up.railway.app/api',
+  imageAPI:
+    'https://seamstress-backend-production.up.railway.app/resources/images',
 };
