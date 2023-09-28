@@ -11,6 +11,7 @@ const allowCors = (req, res, next) => {
 
   res.header(
     "Access-Control-Allow-Headers",
+    "Access-Control-Allow-Origin",
     "Origin, X-Requested-With, Content-Type, Accept, Authorization, Access-Control-Allow-Credentials, X-Access-Token, X-Key"
   );
   res.header(
