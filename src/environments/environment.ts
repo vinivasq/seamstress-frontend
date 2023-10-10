@@ -1,5 +1,4 @@
 export const environment = {
   apiURL: 'https://seamstress-backend-production.up.railway.app/api',
-  imageAPI:
-    'https://seamstress-backend-production.up.railway.app/wwwroot/resources/images',
+  imageAPI: 'https://seamstressstorage.blob.core.windows.net/images/models',
 };
