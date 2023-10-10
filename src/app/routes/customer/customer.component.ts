@@ -92,8 +92,6 @@ export class CustomerComponent implements OnInit {
       next: (customer: Customer) => {
         this.customer = { ...customer };
 
-        console.log(this.customer);
-
         const firstFormGroup = this.form.get('firstFormGroup') as FormControl;
         firstFormGroup.patchValue(this.customer);
 
@@ -137,8 +135,6 @@ export class CustomerComponent implements OnInit {
     this.requestMethod === 'post'
       ? (this.customer = { ...formValues })
       : (this.customer = { id: this.customer.id, ...formValues });
-
-    console.log(this.customer);
 
     this._customerService[this.requestMethod](this.customer).subscribe({
       next: () => {

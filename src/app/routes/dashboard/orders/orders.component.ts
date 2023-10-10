@@ -73,46 +73,6 @@ export class OrdersComponent implements OnInit {
     return formatHeader(header);
   }
 
-  public openCarousel(imageURL: string) {
-    this.dialog.open(DialogCarouselComponent, {
-      data: {
-        title: `Fotos do Modelo`,
-        imageURL: imageURL,
-      },
-    });
-  }
-
-  public openDialog(id: number) {
-    this.dialog.open(DialogComponent, {
-      data: {
-        title: `Deseja excluir o pedido ${id}?`,
-        content: 'Tem certeza que deseja excluir o pedido?',
-        action: () => {
-          this.orderService.deleteOrder(id).subscribe({
-            next: (result: any) => {
-              if (result.message === 'Deletado com sucesso') {
-                this.toastr.success(
-                  'Pedido deletado com sucesso',
-                  'Pedido deletado'
-                );
-
-                this.getOrders();
-              }
-            },
-            error: (error) => {
-              console.log(error);
-              this.toastr.error(
-                'Erro ao deletar',
-                'Ocorreu um erro ao deletar o pedido'
-              );
-            },
-            complete: () => {},
-          });
-        },
-      },
-    });
-  }
-
   ngOnInit() {
     this.getOrders();
   }
@@ -152,5 +112,14 @@ export class OrdersComponent implements OnInit {
         },
       })
       .add(() => (this.spinner.isLoading = false));
+  }
+
+  public openCarousel(imageURL: string) {
+    this.dialog.open(DialogCarouselComponent, {
+      data: {
+        title: `Fotos do Modelo`,
+        imageURL: imageURL,
+      },
+    });
   }
 }
