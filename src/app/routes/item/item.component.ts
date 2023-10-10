@@ -16,6 +16,7 @@ import { ItemColors } from 'src/app/models/ItemColors';
 import { ItemFabrics } from 'src/app/models/ItemFabrics';
 import { ItemSizes } from 'src/app/models/ItemSizes';
 import { ImageService } from 'src/app/services/image.service';
+import { SpinnerService } from 'src/app/services/spinner.service';
 
 @Component({
   selector: 'app-item',
@@ -53,7 +54,8 @@ export class ItemComponent implements OnInit {
     private _activeRoute: ActivatedRoute,
     private _router: Router,
     private _toastrService: ToastrService,
-    public dialog: MatDialog
+    private _spinner: SpinnerService,
+    private _dialog: MatDialog
   ) {}
 
   ngOnInit() {
@@ -84,6 +86,7 @@ export class ItemComponent implements OnInit {
     const itemId = this._activeRoute.snapshot.paramMap.get('id');
     if (itemId === null) return;
 
+    this._spinner.isLoading = true;
     this.requestMethod = 'put';
 
     this._itemService.getItemById(+itemId).subscribe({
@@ -138,6 +141,7 @@ export class ItemComponent implements OnInit {
           'Erro ao carregar'
         );
       },
+      complete: () => (this._spinner.isLoading = false),
     });
   }
 
@@ -146,6 +150,8 @@ export class ItemComponent implements OnInit {
       this._toastrService.warning('Campos inválidos');
       return;
     }
+
+    this._spinner.isLoading = true;
 
     let setId: number;
     const { name, price } = this.form.getRawValue();
@@ -174,10 +180,10 @@ export class ItemComponent implements OnInit {
     };
 
     if (this.images?.length > 0) {
-      this.item.imageURL = await this._itemService.updateImage(
-        this.item.id,
-        this.images
-      );
+        this.item.imageURL = await this._itemService.updateImage(
+          this.item.id,
+          this.images
+        );
     }
 
     itemAttributes.itemColors.forEach((ic) => {
@@ -204,11 +210,15 @@ export class ItemComponent implements OnInit {
         this.images = null;
         this._router.navigate(['/item']);
       },
-      error: () =>
+      error: () => {
+        console.log('erro');
+
         this._toastrService.error(
           'Não foi possível salvar o modelo',
           'Erro ao salvar'
-        ),
+        );
+      },
+      complete: () => (this._spinner.isLoading = false),
     });
   }
 
@@ -228,7 +238,7 @@ export class ItemComponent implements OnInit {
   }
 
   public openDialog(item: Item) {
-    this.dialog.open(DialogComponent, {
+    this._dialog.open(DialogComponent, {
       data: {
         title: `Deseja excluir o modelo ${item.name}?`,
         content: 'Tem certeza que deseja excluir o modelo?',

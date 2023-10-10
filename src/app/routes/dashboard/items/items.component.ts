@@ -5,6 +5,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { formatHeader } from 'src/helpers/ColumnHeaders';
 import { ItemService } from 'src/app/services/item.service';
 import { ToastrService } from 'ngx-toastr';
+import { SpinnerService } from 'src/app/services/spinner.service';
 
 @Component({
   selector: 'app-items',
@@ -20,7 +21,8 @@ export class ItemsComponent implements OnInit {
 
   constructor(
     private _itemService: ItemService,
-    private _toastrService: ToastrService
+    private _toastrService: ToastrService,
+    private _spinner: SpinnerService
   ) {}
 
   ngOnInit() {
@@ -32,6 +34,8 @@ export class ItemsComponent implements OnInit {
   }
 
   getItems() {
+    this._spinner.isLoading = true;
+
     this._itemService.getItems().subscribe({
       next: (data: any) => {
         this.dataSource = new MatTableDataSource(data);
@@ -43,6 +47,7 @@ export class ItemsComponent implements OnInit {
           'Erro ao listar os modelos',
           'Erro ao listar'
         ),
+      complete: () => (this._spinner.isLoading = false),
     });
   }
 

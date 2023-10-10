@@ -23,6 +23,7 @@ import { CustomerService } from 'src/app/services/customer.service';
 import { ItemService } from 'src/app/services/item.service';
 import { ItemOrderService } from 'src/app/services/itemOrder.service';
 import { OrderService } from 'src/app/services/order.service';
+import { SpinnerService } from 'src/app/services/spinner.service';
 import { formatHeader } from 'src/helpers/ColumnHeaders';
 
 @Component({
@@ -36,8 +37,6 @@ export class OrderComponent implements OnInit {
   get itemOrders(): FormArray {
     return this.form.get('itemOrders') as FormArray;
   }
-
-  // dataFutura.setDate(this.dataAtual.getDate() + 15);
 
   form = this._formBuilder.group({
     customerId: [null],
@@ -90,6 +89,7 @@ export class OrderComponent implements OnInit {
     private _itemOrderService: ItemOrderService,
     private _customerService: CustomerService,
     private _toastrService: ToastrService,
+    private _spinner: SpinnerService,
     private _dialog: MatDialog
   ) {}
 
@@ -223,6 +223,7 @@ export class OrderComponent implements OnInit {
     const orderId = this._activeRoute.snapshot.paramMap.get('id');
     if (orderId === null) return;
 
+    this._spinner.isLoading = true;
     this.requestMethod = 'put';
 
     this._orderService.getOrderById(+orderId).subscribe({
@@ -257,6 +258,7 @@ export class OrderComponent implements OnInit {
           'Não foi possível carregar o pedido',
           'Erro ao carregar'
         ),
+      complete: () => (this._spinner.isLoading = false),
     });
   }
 
@@ -275,6 +277,8 @@ export class OrderComponent implements OnInit {
       );
       return;
     }
+
+    this._spinner.isLoading = true;
 
     const { customer, ...formValues } = this.form.getRawValue() as any;
     this.order = {
@@ -302,6 +306,7 @@ export class OrderComponent implements OnInit {
           'Erro ao cadastrar o pedido',
           'Erro ao Cadastrar'
         ),
+      complete: () => (this._spinner.isLoading = false),
     });
   }
 
