@@ -180,10 +180,16 @@ export class ItemComponent implements OnInit {
     };
 
     if (this.images?.length > 0) {
+      try {
         this.item.imageURL = await this._itemService.updateImage(
           this.item.id,
           this.images
         );
+      } catch (error) {
+        this._spinner.isLoading = false;
+        this._toastrService.error('Erro ao salvar imagens');
+        return;
+      }
     }
 
     itemAttributes.itemColors.forEach((ic) => {
