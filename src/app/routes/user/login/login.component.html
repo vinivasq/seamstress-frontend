@@ -14,23 +14,36 @@
       <span>Faça login e gerencie seus pedidos</span>
     </div>
 
-    <form class="form__content">
+    <form #loginForm="ngForm" class="form__content">
       <mat-form-field class="form__field">
-        <mat-label>Endereço de e-mail</mat-label>
-        <input matInput type="email" />
+        <mat-label>Seu usuário</mat-label>
+        <input
+          matInput
+          [(ngModel)]="model.username"
+          name="username"
+          type="text"
+          required
+        />
       </mat-form-field>
       <mat-form-field class="form__field">
         <mat-label>Sua senha</mat-label>
-        <input matInput type="password" />
+        <input
+          matInput
+          [(ngModel)]="model.password"
+          name="password"
+          type="password"
+          required
+        />
       </mat-form-field>
       <mat-checkbox class="example-margin">Lembrar de mim</mat-checkbox>
     </form>
     <div class="form__footer">
       <button
         mat-raised-button
+        [disabled]="loginForm['invalid']"
         color="accent"
-        routerLink="/dashboard/orders"
         class="form__button"
+        (click)="login()"
       >
         Entrar na plataforma
       </button>

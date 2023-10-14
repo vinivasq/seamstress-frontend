@@ -1,6 +1,6 @@
 import { Customer } from './Customer';
 import { ItemOrder } from './ItemOrder';
-import { User } from './User';
+import { User } from './identity/User';
 
 export interface Order {
   id: number;
