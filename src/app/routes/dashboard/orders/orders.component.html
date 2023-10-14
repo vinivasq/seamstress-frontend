@@ -35,8 +35,6 @@
             ? (order[column] | DateFormat)
             : column === "customer"
             ? order[column].name
-            : column === "step"
-            ? (order[column] | Step)
             : order[column]
         }}
       </td>

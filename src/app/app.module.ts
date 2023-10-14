@@ -62,7 +62,6 @@ import { LoginComponent } from './routes/user/login/login.component';
 import { RegisterComponent } from './routes/user/register/register.component';
 
 import { DateFormatPipe } from 'src/helpers/DateFormat.pipe';
-import { StepPipe } from 'src/helpers/Step.pipe';
 
 import { OrderService } from './services/order.service';
 import { SpinnerService } from './services/spinner.service';
@@ -97,7 +96,6 @@ import { DrawerService } from './services/drawer.service';
     TableHeaderComponent,
     SpinnerComponent,
     DateFormatPipe,
-    StepPipe,
   ],
   imports: [
     BrowserModule,
