@@ -1,9 +1,7 @@
-export interface User {
-  id: number;
+export class UserRegister {
   username: string;
   email: string;
   password: string;
   firstName: string;
   lastName: string;
-  token: string;
 }

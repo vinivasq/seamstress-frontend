@@ -27,6 +27,18 @@ export class UserService {
     );
   }
 
+  public register(model: any): Observable<void> {
+    return this._client.post(`${this.baseURL}/register`, model).pipe(
+      take(1),
+      map((response: User) => {
+        const user = response;
+        if (user) {
+          this.setCurrentUser(user);
+        }
+      })
+    );
+  }
+
   public setCurrentUser(user: User): void {
     localStorage.setItem('user', JSON.stringify(user));
     this.currentUserSource.next(user);

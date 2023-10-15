@@ -21,8 +21,6 @@ export class LoginComponent implements OnInit {
   ngOnInit() {}
 
   public login(): void {
-    console.log('teste');
-
     this._userService.login(this.model).subscribe({
       next: () => {
         this._router.navigateByUrl('/dashboard');
