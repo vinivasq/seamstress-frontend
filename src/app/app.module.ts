@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 
 import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask';
 import { ToastrModule } from 'ngx-toastr';
@@ -66,6 +66,9 @@ import { DateFormatPipe } from 'src/helpers/DateFormat.pipe';
 import { OrderService } from './services/order.service';
 import { SpinnerService } from './services/spinner.service';
 import { DrawerService } from './services/drawer.service';
+import { UserService } from './services/user.service';
+
+import { JwtInterceptor } from './interceptors/jwt.interceptor';
 
 @NgModule({
   declarations: [
@@ -145,6 +148,8 @@ import { DrawerService } from './services/drawer.service';
     OrderService,
     SpinnerService,
     DrawerService,
+    UserService,
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
     provideNgxMask(),
     { provide: MAT_DATE_LOCALE, useValue: 'br' },
   ],
