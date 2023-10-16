@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { authGuard } from './guard/auth.guard';
 
 import { NotFoundComponent } from './routes/notFound/notFound.component';
 import { DashboardComponent } from './routes/dashboard/dashboard.component';
@@ -30,41 +31,56 @@ const routes: Routes = [
     children: [
       { path: 'login', component: LoginComponent },
       { path: 'register', component: RegisterComponent },
-      { path: 'profile', component: ProfileComponent },
+      {
+        path: 'profile',
+        component: ProfileComponent,
+        canActivate: [authGuard],
+      },
     ],
   },
 
   {
-    path: 'dashboard',
-    component: DashboardComponent,
+    path: '',
+    runGuardsAndResolvers: 'always',
+    canActivate: [authGuard],
     children: [
-      { path: 'orders', component: OrdersComponent },
-      { path: 'customers', component: CustomersComponent },
-      { path: 'items', component: ItemsComponent },
-    ],
-  },
+      {
+        path: 'dashboard',
+        component: DashboardComponent,
+        children: [
+          { path: 'orders', component: OrdersComponent },
+          { path: 'customers', component: CustomersComponent },
+          { path: 'items', component: ItemsComponent },
+        ],
+      },
 
-  { path: 'customers', redirectTo: 'dashboard/customers', pathMatch: 'full' },
-  { path: 'customer', component: CustomerComponent },
-  { path: 'customer/:id', component: CustomerComponent },
+      {
+        path: 'customers',
+        redirectTo: 'dashboard/customers',
+        pathMatch: 'full',
+      },
+      { path: 'customer', component: CustomerComponent },
+      { path: 'customer/:id', component: CustomerComponent },
 
-  { path: 'orders', redirectTo: 'dashboard/orders', pathMatch: 'full' },
-  { path: 'order', component: OrderComponent },
-  { path: 'order/:id', component: OrderComponent },
+      { path: 'orders', redirectTo: 'dashboard/orders', pathMatch: 'full' },
+      { path: 'order', component: OrderComponent },
+      { path: 'order/:id', component: OrderComponent },
 
-  { path: 'items', redirectTo: 'dashboard/items', pathMatch: 'full' },
-  { path: 'item', component: ItemComponent },
-  { path: 'item/:id', component: ItemComponent },
+      { path: 'items', redirectTo: 'dashboard/items', pathMatch: 'full' },
+      { path: 'item', component: ItemComponent },
+      { path: 'item/:id', component: ItemComponent },
 
-  { path: 'attributes', redirectTo: 'attributes/color', pathMatch: 'full' },
-  {
-    path: 'attributes',
-    component: AttributesComponent,
-    children: [
-      { path: 'color', component: ColorComponent },
-      { path: 'fabric', component: FabricComponent },
-      { path: 'size', component: SizeComponent },
-      { path: 'set', component: SetComponent },
+      { path: 'attributes', redirectTo: 'attributes/color', pathMatch: 'full' },
+      {
+        path: 'attributes',
+        component: AttributesComponent,
+        children: [
+          { path: 'color', component: ColorComponent },
+          { path: 'fabric', component: FabricComponent },
+          { path: 'size', component: SizeComponent },
+          { path: 'set', component: SetComponent },
+        ],
+      },
     ],
   },
 
