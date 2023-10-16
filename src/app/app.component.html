@@ -3,7 +3,8 @@
     <app-links></app-links>
   </mat-drawer>
   <header>
-    <app-toolbar *ngIf="showMenu()"> </app-toolbar>
+    <app-toolbar *ngIf="(userService.currentUser$ | async) !== null">
+    </app-toolbar>
   </header>
 
   <app-spinner></app-spinner>
