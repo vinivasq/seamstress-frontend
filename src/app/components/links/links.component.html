@@ -1,6 +1,9 @@
 <ul class="links">
   <div class="links__profile">
     <mat-icon class="links__icon">account_circle</mat-icon>
+    <h3 *ngIf="userService.currentUser$ | async as user">
+      {{ user.firstName | titlecase }}
+    </h3>
     <li
       class="link"
       (click)="drawer.close()"
@@ -45,8 +48,12 @@
     </div>
   </div>
 
-  <li class="links__profile-desktop" [mat-menu-trigger-for]="menu">
-    Vinícius <mat-icon>arrow_drop_down</mat-icon>
+  <li
+    class="links__profile-desktop"
+    *ngIf="userService.currentUser$ | async as user"
+    [mat-menu-trigger-for]="menu"
+  >
+    {{ user.firstName | titlecase }} <mat-icon>arrow_drop_down</mat-icon>
   </li>
 </ul>
 <mat-menu #menu="matMenu">
