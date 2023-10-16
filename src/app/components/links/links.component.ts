@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDrawer } from '@angular/material/sidenav';
+import { Router } from '@angular/router';
 import { DrawerService } from 'src/app/services/drawer.service';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-links',
@@ -10,9 +12,20 @@ import { DrawerService } from 'src/app/services/drawer.service';
 export class LinksComponent implements OnInit {
   public drawer!: DrawerService;
 
-  constructor(drawerService: DrawerService) {
+  constructor(
+    private _userService: UserService,
+    private _router: Router,
+    public drawerService: DrawerService
+  ) {
     this.drawer = drawerService;
   }
 
   ngOnInit() {}
+
+  logout() {
+    this.drawer.close();
+
+    this._userService.logout();
+    this._router.navigateByUrl('/user/login');
+  }
 }
