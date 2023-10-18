@@ -32,8 +32,7 @@ export class LoginComponent implements OnInit {
             'Informações inválidas'
           );
         else {
-          console.log(err);
-          this._toastr.error('Erro inesperado');
+          this._toastr.error('Usuário não encontrado');
         }
       },
     });
