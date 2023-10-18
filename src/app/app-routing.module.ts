@@ -19,6 +19,7 @@ import { FabricComponent } from './routes/attributes/fabric/fabric.component';
 import { SizeComponent } from './routes/attributes/size/size.component';
 import { SetComponent } from './routes/attributes/set/set.component';
 import { AttributesComponent } from './routes/attributes/attributes.component';
+import { roleGuard } from './guard/role.guard';
 
 const routes: Routes = [
   { path: '', redirectTo: 'dashboard/orders', pathMatch: 'full' },
@@ -49,8 +50,22 @@ const routes: Routes = [
         component: DashboardComponent,
         children: [
           { path: 'orders', component: OrdersComponent },
-          { path: 'customers', component: CustomersComponent },
-          { path: 'items', component: ItemsComponent },
+          {
+            path: 'customers',
+            component: CustomersComponent,
+            canActivate: [authGuard, roleGuard],
+            data: {
+              role: ['admin', 'requester'],
+            },
+          },
+          {
+            path: 'items',
+            component: ItemsComponent,
+            canActivate: [authGuard, roleGuard],
+            data: {
+              role: ['admin', 'requester'],
+            },
+          },
         ],
       },
 
@@ -59,21 +74,67 @@ const routes: Routes = [
         redirectTo: 'dashboard/customers',
         pathMatch: 'full',
       },
-      { path: 'customer', component: CustomerComponent },
-      { path: 'customer/:id', component: CustomerComponent },
+      {
+        path: 'customer',
+        component: CustomerComponent,
+        canActivate: [authGuard, roleGuard],
+        data: {
+          role: ['admin', 'requester'],
+        },
+      },
+      {
+        path: 'customer/:id',
+        component: CustomerComponent,
+        canActivate: [authGuard, roleGuard],
+        data: {
+          role: ['admin', 'requester'],
+        },
+      },
 
       { path: 'orders', redirectTo: 'dashboard/orders', pathMatch: 'full' },
-      { path: 'order', component: OrderComponent },
-      { path: 'order/:id', component: OrderComponent },
+      {
+        path: 'order',
+        component: OrderComponent,
+        canActivate: [authGuard, roleGuard],
+        data: {
+          role: ['admin', 'requester'],
+        },
+      },
+      {
+        path: 'order/:id',
+        component: OrderComponent,
+        canActivate: [authGuard, roleGuard],
+        data: {
+          role: ['admin', 'requester'],
+        },
+      },
 
       { path: 'items', redirectTo: 'dashboard/items', pathMatch: 'full' },
-      { path: 'item', component: ItemComponent },
-      { path: 'item/:id', component: ItemComponent },
+      {
+        path: 'item',
+        component: ItemComponent,
+        canActivate: [authGuard, roleGuard],
+        data: {
+          role: ['admin', 'requester'],
+        },
+      },
+      {
+        path: 'item/:id',
+        component: ItemComponent,
+        canActivate: [authGuard, roleGuard],
+        data: {
+          role: ['admin', 'requester'],
+        },
+      },
 
       { path: 'attributes', redirectTo: 'attributes/color', pathMatch: 'full' },
       {
         path: 'attributes',
         component: AttributesComponent,
+        canActivate: [authGuard, roleGuard],
+        data: {
+          role: ['admin', 'requester'],
+        },
         children: [
           { path: 'color', component: ColorComponent },
           { path: 'fabric', component: FabricComponent },
