@@ -238,7 +238,7 @@
               <mat-radio-button
                 class="radio__buttons"
                 *ngFor="let step of steps | keyvalue"
-                [checked]="order.step == step.value"
+                [checked]="order.step.toLowerCase() == step.key.toLowerCase()"
                 [value]="step.value"
                 (click)="updateStep(order.id, step.value)"
               >
