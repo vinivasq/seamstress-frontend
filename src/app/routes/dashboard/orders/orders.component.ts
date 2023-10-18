@@ -14,10 +14,10 @@ import { formatHeader } from 'src/helpers/ColumnHeaders';
 import { SpinnerService } from '../../../services/spinner.service';
 import { OrderService } from '../../../services/order.service';
 import { ToastrService } from 'ngx-toastr';
-import { DialogComponent } from '../../../components/dialog/dialog.component';
 import { DialogCarouselComponent } from 'src/app/components/dialogCarousel/dialogCarousel.component';
 import { MatDialog } from '@angular/material/dialog';
 import { environment } from 'src/environments/environment';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-orders',
@@ -59,10 +59,11 @@ export class OrdersComponent implements OnInit {
   @ViewChild(MatSort) sort?: MatSort;
 
   constructor(
-    private orderService: OrderService,
-    private dialog: MatDialog,
-    private spinner: SpinnerService,
-    private toastr: ToastrService
+    public userService: UserService,
+    private _orderService: OrderService,
+    private _dialog: MatDialog,
+    private _spinner: SpinnerService,
+    private _toastr: ToastrService
   ) {}
 
   filterOrders(value: string) {
@@ -78,20 +79,23 @@ export class OrdersComponent implements OnInit {
   }
 
   public updateStep(orderId: number, step: number) {
-    this.orderService.updateOrder(orderId, step).subscribe({
+    this._orderService.updateOrder(orderId, step).subscribe({
       next: () => {
-        this.toastr.success('Etapa atualizada com sucesso', 'Etapa atualizada');
+        this._toastr.success(
+          'Etapa atualizada com sucesso',
+          'Etapa atualizada'
+        );
         this.getOrders();
       },
       error: () =>
-        this.toastr.error('Erro ao atualizar a etapa', 'Erro ao atualizar'),
+        this._toastr.error('Erro ao atualizar a etapa', 'Erro ao atualizar'),
     });
   }
 
   public getOrders(): void {
-    this.spinner.isLoading = true;
+    this._spinner.isLoading = true;
 
-    this.orderService
+    this._orderService
       .getOrders()
       .subscribe({
         next: (data: any): void => {
@@ -103,19 +107,18 @@ export class OrdersComponent implements OnInit {
             return dataStr.indexOf(filter) != -1;
           };
         },
-        error: (err: any) => {
-          console.log(err);
-          this.toastr.error(
+        error: () => {
+          this._toastr.error(
             'Não foi possível listar os pedidos',
             'Erro de conexão'
           );
         },
       })
-      .add(() => (this.spinner.isLoading = false));
+      .add(() => (this._spinner.isLoading = false));
   }
 
   public openCarousel(imageURL: string) {
-    this.dialog.open(DialogCarouselComponent, {
+    this._dialog.open(DialogCarouselComponent, {
       data: {
         title: `Fotos do Modelo`,
         imageURL: imageURL,

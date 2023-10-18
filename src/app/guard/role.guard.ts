@@ -8,8 +8,6 @@ export const roleGuard: CanActivateFn = (route, state) => {
   const user = JSON.parse(localStorage.getItem('user'));
   const isAllowed = route.data['role']?.includes(user.role.toLowerCase());
 
-  console.log(isAllowed);
-
   if (!isAllowed) {
     toastr.info('Acesso não permitido.');
     router.navigate(['dashboard/orders']);

@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-tableHeader',
@@ -12,7 +13,7 @@ export class TableHeaderComponent {
   @Input() label = '';
   filterValue: string = '';
 
-  constructor() {}
+  constructor(public userService: UserService) {}
 
   setFilterValue() {
     this.keyPressed.emit(this.filterValue);

@@ -28,6 +28,9 @@
       (click)="drawer.close()"
       routerLink="/dashboard/customers"
       routerLinkActive="link-active"
+      *ngIf="
+        (userService.currentUser$ | async)?.role.toLowerCase() !== 'executor'
+      "
     >
       <p>Clientes</p>
     </li>
@@ -36,6 +39,9 @@
       (click)="drawer.close()"
       routerLink="/dashboard/items"
       routerLinkActive="link-active"
+      *ngIf="
+        (userService.currentUser$ | async)?.role.toLowerCase() !== 'executor'
+      "
     >
       <p>Modelos</p>
     </li>
