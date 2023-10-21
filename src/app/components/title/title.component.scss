@@ -37,8 +37,9 @@
 .toolbar__description {
   font-size: 1rem;
   font-weight: 300;
+  word-break: break-word;
   white-space: wrap;
-  line-height: normal;
+  // line-height: normal;
 }
 
 @media screen and (max-width: 768px) {
