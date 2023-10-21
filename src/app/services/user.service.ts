@@ -39,6 +39,10 @@ export class UserService {
     );
   }
 
+  public getExecutors() {
+    return this._client.get(`${this.baseURL}/executors`).pipe(take(1));
+  }
+
   public setCurrentUser(user: User): void {
     localStorage.setItem('user', JSON.stringify(user));
     this.currentUserSource.next(user);

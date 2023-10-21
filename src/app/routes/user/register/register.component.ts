@@ -6,6 +6,7 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { User } from 'src/app/models/identity/User';
 import { UserRegister } from 'src/app/models/identity/UserRegister';
 import { SpinnerService } from 'src/app/services/spinner.service';
 import { UserService } from 'src/app/services/user.service';
@@ -52,12 +53,23 @@ export class RegisterComponent implements OnInit {
   public register() {
     this._spinner.isLoading = true;
 
-    this.user = { ...this.formGroup.getRawValue() };
+    this.user = { ...this.formGroup.getRawValue(), role: 'Executor' } as any;
 
-    this._userService.register(this.user).subscribe({
-      next: () => this._router.navigateByUrl('/dashboard'),
-      error: () => this._toastr.error('Não foi possível registrar'),
-      complete: () => (this._spinner.isLoading = false),
-    });
+    this._userService
+      .register(this.user)
+      .subscribe({
+        next: () => this._router.navigateByUrl('/dashboard'),
+        error: (error) => {
+          console.log(error);
+
+          if (error.error === 'Usuário já existe') {
+            this._toastr.error(
+              'Não foi possível registrar',
+              'Usuário já existente'
+            );
+          }
+        },
+      })
+      .add(() => (this._spinner.isLoading = false));
   }
 }

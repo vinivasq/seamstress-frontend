@@ -19,11 +19,13 @@ import { Item } from 'src/app/models/Item';
 import { ItemOrder } from 'src/app/models/ItemOrder';
 import { Order } from 'src/app/models/Order';
 import { Size } from 'src/app/models/Size';
+import { User } from 'src/app/models/identity/User';
 import { CustomerService } from 'src/app/services/customer.service';
 import { ItemService } from 'src/app/services/item.service';
 import { ItemOrderService } from 'src/app/services/itemOrder.service';
 import { OrderService } from 'src/app/services/order.service';
 import { SpinnerService } from 'src/app/services/spinner.service';
+import { UserService } from 'src/app/services/user.service';
 import { formatHeader } from 'src/helpers/ColumnHeaders';
 
 @Component({
@@ -41,6 +43,8 @@ export class OrderComponent implements OnInit {
   form = this._formBuilder.group({
     customerId: [null],
     customer: ['', [Validators.required]],
+    executorId: [null],
+    executor: ['', [Validators.required]],
     createdAt: [new Date()],
     deadline: [null as Date, [Validators.required]],
     description: [''],
@@ -73,12 +77,14 @@ export class OrderComponent implements OnInit {
   order: Order;
   dataSource: any[] = [];
   customers: Customer[];
-  filteredCustomers: Observable<Item[]>;
+  filteredCustomers: Observable<any[]>;
   items: Item[];
   filteredItems: Observable<Item[]>;
   itemColors: Color[];
   itemFabrics: Fabric[];
   itemSizes: Size[];
+  executors: User[];
+  filteredExecutors: Observable<any[]>;
 
   constructor(
     private _formBuilder: FormBuilder,
@@ -88,6 +94,7 @@ export class OrderComponent implements OnInit {
     private _orderService: OrderService,
     private _itemOrderService: ItemOrderService,
     private _customerService: CustomerService,
+    private _userService: UserService,
     private _toastrService: ToastrService,
     private _spinner: SpinnerService,
     private _dialog: MatDialog
@@ -96,10 +103,11 @@ export class OrderComponent implements OnInit {
   ngOnInit() {
     this.getItems();
     this.getCustomers();
+    this.getExecutors();
     this.loadOrder();
   }
 
-  private _filter(value: any, field: string): Item[] {
+  private _filter(value: any, field: string) {
     const filterValue = value.toLowerCase();
 
     return this[field].filter((field) =>
@@ -113,6 +121,9 @@ export class OrderComponent implements OnInit {
 
   getCustomerId(event, customerId: number) {
     if (event.isUserInput) this.form.get('customerId')?.setValue(customerId);
+  }
+  getExecutorId(event, executorId: number) {
+    if (event.isUserInput) this.form.get('executorId')?.setValue(executorId);
   }
 
   addItemOrder() {
@@ -280,11 +291,15 @@ export class OrderComponent implements OnInit {
 
     this._spinner.isLoading = true;
 
-    const { customer, ...formValues } = this.form.getRawValue() as any;
+    const { customer, executor, ...formValues } =
+      this.form.getRawValue() as any;
+
     this.order = {
       id: this.order?.id ?? 0,
       ...formValues,
     };
+
+    console.log(this.order);
 
     this._orderService[this.requestMethod](this.order).subscribe({
       next: () => {
@@ -344,6 +359,20 @@ export class OrderComponent implements OnInit {
     });
   }
 
+  getExecutors() {
+    this._userService.getExecutors().subscribe({
+      next: (data: any) => {
+        this.executors = data;
+        this.filteredExecutors = this.form.get('executor').valueChanges.pipe(
+          startWith(''),
+          map((value) => this._filter(value || '', 'executors'))
+        );
+      },
+      error: () =>
+        this._toastrService.error('Não foi possível encontrar confeccionistas'),
+    });
+  }
+
   getCustomers() {
     this._customerService.getCustomers().subscribe({
       next: (data: any) => {
@@ -355,7 +384,7 @@ export class OrderComponent implements OnInit {
       },
       error: () =>
         this._toastrService.error(
-          'Erro ao carregar os modelos',
+          'Erro ao carregar os clientes',
           'Erro ao carregar'
         ),
     });

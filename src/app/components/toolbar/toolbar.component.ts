@@ -8,8 +8,10 @@ import { DrawerService } from 'src/app/services/drawer.service';
 })
 export class ToolbarComponent {
   public drawer: DrawerService;
+  public user = {} as any;
 
   constructor(public drawerService: DrawerService) {
     this.drawer = drawerService;
+    this.user = localStorage.getItem('user');
   }
 }

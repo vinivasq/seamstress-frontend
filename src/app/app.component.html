@@ -1,6 +1,6 @@
 <mat-drawer-container class="drawer__container">
   <mat-drawer #drawer class="drawer__content">
-    <app-links></app-links>
+    <app-links *ngIf="(userService.currentUser$ | async) !== null"></app-links>
   </mat-drawer>
   <header>
     <app-toolbar *ngIf="(userService.currentUser$ | async) !== null">

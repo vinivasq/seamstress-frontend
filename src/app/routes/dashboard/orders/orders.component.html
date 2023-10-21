@@ -265,11 +265,15 @@
     ></tr>
   </table>
 </div>
+<div *ngIf="!foundOrders" class="no-orders">
+  <p>Nenhum pedido encontrado.</p>
+</div>
 <mat-paginator
   [pageSizeOptions]="[5, 10, 25, 100]"
   aria-label="Select page of orders"
   class="table__paginator"
-></mat-paginator>
+>
+</mat-paginator>
 
 <app-buttonAdd
   [route]="'/order'"

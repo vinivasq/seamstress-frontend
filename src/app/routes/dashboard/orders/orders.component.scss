@@ -104,6 +104,15 @@ tr.order-row:not(.order-expanded-row):active {
   flex-direction: column;
 }
 
+.no-orders {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.5rem 0;
+  background-color: #424242;
+  color: #e4e4e4be;
+}
+
 @media screen and (max-width: 768px) {
   .responsive-table {
     width: 100%;

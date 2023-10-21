@@ -36,6 +36,7 @@ import { UserService } from 'src/app/services/user.service';
 })
 export class OrdersComponent implements OnInit {
   public dataSource: any;
+  public foundOrders = false;
   public steps = {
     Aguardando: 0,
     Corte: 1,
@@ -106,6 +107,7 @@ export class OrdersComponent implements OnInit {
             const dataStr = data.customer.name + data.description;
             return dataStr.indexOf(filter) != -1;
           };
+          if (data.length > 0) this.foundOrders = true;
         },
         error: () => {
           this._toastr.error(
