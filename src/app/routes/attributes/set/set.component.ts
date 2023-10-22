@@ -4,6 +4,7 @@ import { ToastrService } from 'ngx-toastr';
 import { DialogComponent } from 'src/app/components/dialog/dialog.component';
 import { Set } from 'src/app/models/Set';
 import { AttributeService } from 'src/app/services/attribute.service';
+import { SpinnerService } from 'src/app/services/spinner.service';
 
 @Component({
   selector: 'app-set',
@@ -18,6 +19,7 @@ export class SetComponent implements OnInit {
   constructor(
     private _attributeService: AttributeService,
     private _toastrService: ToastrService,
+    private _spinnerService: SpinnerService,
     private _dialog: MatDialog
   ) {}
 
@@ -26,19 +28,23 @@ export class SetComponent implements OnInit {
   }
 
   getSets() {
+    this._spinnerService.isLoading = true;
     this._attributeService.setAttribute('set');
 
-    this._attributeService.getAttributes().subscribe({
-      next: (data: Set[]) => {
-        this.sets = data;
-      },
-      error: () => {
-        this._toastrService.error(
-          'Não foi possível listar os Conjuntos',
-          'Erro ao Listar'
-        );
-      },
-    });
+    this._attributeService
+      .getAttributes()
+      .subscribe({
+        next: (data: Set[]) => {
+          this.sets = data;
+        },
+        error: () => {
+          this._toastrService.error(
+            'Não foi possível listar os Conjuntos',
+            'Erro ao Listar'
+          );
+        },
+      })
+      .add(() => (this._spinnerService.isLoading = false));
   }
 
   saveSet() {

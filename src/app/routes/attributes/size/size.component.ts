@@ -4,6 +4,7 @@ import { ToastrService } from 'ngx-toastr';
 import { DialogComponent } from 'src/app/components/dialog/dialog.component';
 import { Size } from 'src/app/models/Size';
 import { AttributeService } from 'src/app/services/attribute.service';
+import { SpinnerService } from 'src/app/services/spinner.service';
 
 @Component({
   selector: 'app-size',
@@ -17,6 +18,7 @@ export class SizeComponent implements OnInit {
   constructor(
     private _attributeService: AttributeService,
     private _toastrService: ToastrService,
+    private _spinnerService: SpinnerService,
     private _dialog: MatDialog
   ) {}
 
@@ -25,19 +27,23 @@ export class SizeComponent implements OnInit {
   }
 
   getSizes() {
+    this._spinnerService.isLoading = true;
     this._attributeService.setAttribute('size');
 
-    this._attributeService.getAttributes().subscribe({
-      next: (data: Size[]) => {
-        this.sizes = data;
-      },
-      error: () => {
-        this._toastrService.error(
-          'Não foi possível listar os Tamanhos',
-          'Erro ao Listar'
-        );
-      },
-    });
+    this._attributeService
+      .getAttributes()
+      .subscribe({
+        next: (data: Size[]) => {
+          this.sizes = data;
+        },
+        error: () => {
+          this._toastrService.error(
+            'Não foi possível listar os Tamanhos',
+            'Erro ao Listar'
+          );
+        },
+      })
+      .add(() => (this._spinnerService.isLoading = false));
   }
 
   saveSize() {

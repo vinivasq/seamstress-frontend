@@ -4,6 +4,7 @@ import { ToastrService } from 'ngx-toastr';
 import { DialogComponent } from 'src/app/components/dialog/dialog.component';
 import { Fabric } from 'src/app/models/Fabric';
 import { AttributeService } from 'src/app/services/attribute.service';
+import { SpinnerService } from 'src/app/services/spinner.service';
 
 @Component({
   selector: 'app-fabric',
@@ -18,6 +19,7 @@ export class FabricComponent implements OnInit {
   constructor(
     private _attributeService: AttributeService,
     private _toastrService: ToastrService,
+    private _spinnerService: SpinnerService,
     private _dialog: MatDialog
   ) {}
 
@@ -26,19 +28,23 @@ export class FabricComponent implements OnInit {
   }
 
   getFabrics() {
+    this._spinnerService.isLoading = true;
     this._attributeService.setAttribute('fabric');
 
-    this._attributeService.getAttributes().subscribe({
-      next: (data: Fabric[]) => {
-        this.fabrics = data;
-      },
-      error: () => {
-        this._toastrService.error(
-          'Não foi possível listar os Tecidos',
-          'Erro ao Listar'
-        );
-      },
-    });
+    this._attributeService
+      .getAttributes()
+      .subscribe({
+        next: (data: Fabric[]) => {
+          this.fabrics = data;
+        },
+        error: () => {
+          this._toastrService.error(
+            'Não foi possível listar os Tecidos',
+            'Erro ao Listar'
+          );
+        },
+      })
+      .add(() => (this._spinnerService.isLoading = false));
   }
 
   saveFabric() {

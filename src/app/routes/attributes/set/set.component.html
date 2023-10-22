@@ -19,7 +19,7 @@
         subscriptSizing="dynamic"
       >
         <mat-label>Conjunto</mat-label>
-        <input [(ngModel)]="set.name" matInput />
+        <input #setName [(ngModel)]="set.name" matInput />
       </mat-form-field>
       <div class="buttons">
         <button
@@ -36,6 +36,7 @@
           class="button"
           mat-raised-button
           color="accent"
+          [disabled]="setName.value.trim().length === 0"
         >
           <mat-icon>check</mat-icon>
           {{ set.id == 0 ? "Cadastrar" : "Salvar" }}

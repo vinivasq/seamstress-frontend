@@ -4,6 +4,7 @@ import { ToastrService } from 'ngx-toastr';
 import { DialogComponent } from 'src/app/components/dialog/dialog.component';
 import { Color } from 'src/app/models/Color';
 import { AttributeService } from 'src/app/services/attribute.service';
+import { SpinnerService } from 'src/app/services/spinner.service';
 
 @Component({
   selector: 'app-color',
@@ -18,6 +19,7 @@ export class ColorComponent implements OnInit {
   constructor(
     private _attributeService: AttributeService,
     private _toastrService: ToastrService,
+    private _spinnerService: SpinnerService,
     private _dialog: MatDialog
   ) {}
 
@@ -26,19 +28,23 @@ export class ColorComponent implements OnInit {
   }
 
   getColors() {
+    this._spinnerService.isLoading = true;
     this._attributeService.setAttribute('color');
 
-    this._attributeService.getAttributes().subscribe({
-      next: (data: Color[]) => {
-        this.colors = data;
-      },
-      error: () => {
-        this._toastrService.error(
-          'Não foi possível listar as cores',
-          'Erro ao Listar'
-        );
-      },
-    });
+    this._attributeService
+      .getAttributes()
+      .subscribe({
+        next: (data: Color[]) => {
+          this.colors = data;
+        },
+        error: () => {
+          this._toastrService.error(
+            'Não foi possível listar as cores',
+            'Erro ao Listar'
+          );
+        },
+      })
+      .add(() => (this._spinnerService.isLoading = false));
   }
 
   saveColor() {

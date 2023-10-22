@@ -19,7 +19,12 @@
         subscriptSizing="dynamic"
       >
         <mat-label>Cor</mat-label>
-        <input [(ngModel)]="color.name" matInput placeholder="Off White" />
+        <input
+          #colorName
+          [(ngModel)]="color.name"
+          matInput
+          placeholder="Off White"
+        />
       </mat-form-field>
       <div class="buttons">
         <button
@@ -36,6 +41,7 @@
           class="button"
           mat-raised-button
           color="accent"
+          [disabled]="colorName.value.trim().length === 0"
         >
           <mat-icon>check</mat-icon>
           {{ color.id == 0 ? "Cadastrar" : "Salvar" }}

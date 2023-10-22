@@ -19,13 +19,14 @@
         subscriptSizing="dynamic"
       >
         <mat-label>Tamanho</mat-label>
-        <input [(ngModel)]="size.name" matInput />
+        <input #sizeName [(ngModel)]="size.name" matInput />
       </mat-form-field>
       <button
         (click)="saveSize()"
         class="button"
         mat-raised-button
         color="accent"
+        [disabled]="sizeName.value.trim().length === 0"
       >
         <mat-icon>check</mat-icon>
         Cadastrar

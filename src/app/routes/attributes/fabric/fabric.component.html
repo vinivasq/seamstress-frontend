@@ -19,7 +19,12 @@
         subscriptSizing="dynamic"
       >
         <mat-label>Tecido</mat-label>
-        <input [(ngModel)]="fabric.name" matInput placeholder="Linho" />
+        <input
+          #fabricName
+          [(ngModel)]="fabric.name"
+          matInput
+          placeholder="Linho"
+        />
       </mat-form-field>
       <div class="buttons">
         <button
@@ -36,6 +41,7 @@
           class="button"
           mat-raised-button
           color="accent"
+          [disabled]="fabricName.value.trim().length === 0"
         >
           <mat-icon>check</mat-icon>
           {{ fabric.id == 0 ? "Cadastrar" : "Salvar" }}
