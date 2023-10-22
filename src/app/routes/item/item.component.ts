@@ -162,7 +162,7 @@ export class ItemComponent implements OnInit {
       itemSizes: this.form.getRawValue().itemSizes as unknown as number[],
     };
 
-    if (itemAttributes.set.length === 0) {
+    if (itemAttributes.set?.length === 0) {
       setId = null;
     } else {
       setId = this.set?.id ?? this.item?.set?.id;

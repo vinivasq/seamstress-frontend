@@ -8,6 +8,7 @@ import {
 import { Observable, take } from 'rxjs';
 import { UserService } from '../services/user.service';
 import { User } from '../models/identity/User';
+import { environment } from 'src/environments/environment';
 
 @Injectable()
 export class JwtInterceptor implements HttpInterceptor {
@@ -18,6 +19,9 @@ export class JwtInterceptor implements HttpInterceptor {
     next: HttpHandler
   ): Observable<HttpEvent<unknown>> {
     let currentUser: User;
+
+    if (request.url.startsWith(environment.imageAPI))
+      return next.handle(request);
 
     this._userService.currentUser$.pipe(take(1)).subscribe({
       next: (user: User) => {
