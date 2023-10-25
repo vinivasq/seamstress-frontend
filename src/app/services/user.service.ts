@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, ReplaySubject, map, take } from 'rxjs';
+import { Observable, ReplaySubject, firstValueFrom, map, take } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { User } from '../models/identity/User';
 
@@ -36,6 +36,12 @@ export class UserService {
           this.setCurrentUser(user);
         }
       })
+    );
+  }
+
+  public async validateToken(token: string): Promise<Object> {
+    return await firstValueFrom(
+      this._client.get(`${this.baseURL}/validate/${token}`)
     );
   }
 
