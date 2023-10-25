@@ -17,7 +17,7 @@ export const authGuard: CanActivateFn = async () => {
 
   if (!(await userService.validateToken(user.token))) {
     userService.logout();
-    toastr.info('Usuário não autenticado.');
+    toastr.info('Login Necessário.');
     router.navigate(['/user/login']);
     return false;
   }
