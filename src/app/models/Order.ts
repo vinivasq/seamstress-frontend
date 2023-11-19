@@ -6,6 +6,7 @@ export interface Order {
   id: number;
   description?: string;
   createdAt: Date;
+  orderedAt: Date;
   deadline: Date;
   total: number;
   customerId: number;

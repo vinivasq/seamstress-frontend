@@ -5,8 +5,8 @@ export function formatHeader(header: string): string {
       return (value = 'Cód');
     case 'customer':
       return (value = 'Cliente');
-    case 'createdAt':
-      return (value = 'Criado Em');
+    case 'orderedAt':
+      return (value = 'Pedido em');
     case 'deadline':
       return (value = 'Prazo Final');
     case 'total':

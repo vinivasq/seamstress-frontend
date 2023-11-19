@@ -46,6 +46,7 @@ export class OrderComponent implements OnInit {
     executorId: [null],
     executor: ['', [Validators.required]],
     createdAt: [new Date()],
+    orderedAt: [null as Date, [Validators.required]],
     deadline: [null as Date, [Validators.required]],
     description: [''],
     total: [0],
@@ -245,6 +246,7 @@ export class OrderComponent implements OnInit {
           customer: this.order.customer.name,
           customerId: this.order.customer.id,
           createdAt: this.order.createdAt,
+          orderedAt: this.order.orderedAt,
           deadline: this.order.deadline,
           description: this.order.description,
           total: this.order.total,
@@ -298,8 +300,6 @@ export class OrderComponent implements OnInit {
       id: this.order?.id ?? 0,
       ...formValues,
     };
-
-    console.log(this.order);
 
     this._orderService[this.requestMethod](this.order).subscribe({
       next: () => {
