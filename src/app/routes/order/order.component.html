@@ -41,21 +41,41 @@
             O campo "Cliente" não pode ficar vazio
           </mat-error>
         </mat-form-field>
-      </div>
 
-      <div>
-        <mat-form-field class="info__field-deadline">
-          <mat-label>Prazo de entrega</mat-label>
-          <input matInput formControlName="deadline" [matDatepicker]="picker" />
-          <mat-datepicker-toggle
-            matIconSuffix
-            [for]="picker"
-          ></mat-datepicker-toggle>
-          <mat-datepicker #picker></mat-datepicker>
-          <mat-error *ngIf="form.get('deadline')?.hasError('required')">
-            "Prazo de entrega" não pode ficar vazio
-          </mat-error>
-        </mat-form-field>
+        <div class="info__container">
+          <mat-form-field class="info__field">
+            <mat-label>Data da compra</mat-label>
+            <input
+              matInput
+              formControlName="orderedAt"
+              [matDatepicker]="orderedAt"
+            />
+            <mat-datepicker-toggle
+              matIconSuffix
+              [for]="orderedAt"
+            ></mat-datepicker-toggle>
+            <mat-datepicker #orderedAt></mat-datepicker>
+            <mat-error *ngIf="form.get('orderedAt')?.hasError('required')">
+              "Data da compra" não pode ficar vazio
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field class="info__field">
+            <mat-label>Prazo de entrega</mat-label>
+            <input
+              matInput
+              formControlName="deadline"
+              [matDatepicker]="deadline"
+            />
+            <mat-datepicker-toggle
+              matIconSuffix
+              [for]="deadline"
+            ></mat-datepicker-toggle>
+            <mat-datepicker #deadline></mat-datepicker>
+            <mat-error *ngIf="form.get('deadline')?.hasError('required')">
+              "Prazo de entrega" não pode ficar vazio
+            </mat-error>
+          </mat-form-field>
+        </div>
       </div>
 
       <div class="info__container">
@@ -82,8 +102,7 @@
             O campo "Confeccionista" não pode ficar vazio
           </mat-error>
         </mat-form-field>
-      </div>
-      <div class="info__container">
+
         <mat-form-field class="info__field">
           <mat-label>Observações do pedido</mat-label>
           <textarea
@@ -98,6 +117,7 @@
       </div>
     </mat-card-content>
   </mat-card>
+
   <mat-card *ngIf="dataSource.length > 0">
     <mat-card-header class="order__header">
       <h1>Itens do pedido</h1>

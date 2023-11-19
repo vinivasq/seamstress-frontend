@@ -3,7 +3,7 @@
     margin: 0;
   }
   mat-divider {
-    margin-bottom: 0.5rem;
+    margin-bottom: 1rem;
   }
 
   display: flex;
@@ -13,12 +13,13 @@
 
 .order__info {
   display: flex;
-  justify-content: space-between;
-  gap: 1rem;
+  flex-direction: column;
 }
 
 .info__container {
-  flex-grow: 1;
+  width: 100%;
+  display: flex;
+  gap: 1rem;
 }
 
 .info__field,
@@ -65,6 +66,7 @@
 
 .order__footer {
   display: flex;
+  align-items: flex-end;
   justify-content: flex-end;
   gap: 2rem;
 }
@@ -94,13 +96,20 @@
 }
 
 @media screen and (max-width: 768px) {
+  .order__header {
+    h1 {
+      font-size: large;
+    }
+  }
+
   .order__info {
     flex-direction: column;
     gap: 0;
   }
 
-  .info__field-deadline {
-    width: 100%;
+  .info__container {
+    flex-direction: column;
+    gap: 0;
   }
 
   .model__group {
