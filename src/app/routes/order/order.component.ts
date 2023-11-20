@@ -245,6 +245,8 @@ export class OrderComponent implements OnInit {
         this.form.patchValue({
           customer: this.order.customer.name,
           customerId: this.order.customer.id,
+          executor: this.order.executor.name,
+          executorId: this.order.executor.id,
           createdAt: this.order.createdAt,
           orderedAt: this.order.orderedAt,
           deadline: this.order.deadline,
