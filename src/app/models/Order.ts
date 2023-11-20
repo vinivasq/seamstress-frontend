@@ -11,6 +11,8 @@ export interface Order {
   total: number;
   customerId: number;
   customer?: Customer;
+  executorId: number;
+  executor?: User;
   itemOrders: ItemOrder[];
   orderUser?: User[];
 }

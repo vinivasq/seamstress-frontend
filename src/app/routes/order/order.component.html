@@ -80,13 +80,13 @@
 
       <div class="info__container">
         <mat-form-field class="info__field">
-          <mat-label>Confeccionista</mat-label>
+          <mat-label>Produção</mat-label>
           <input
             matInput
             formControlName="executor"
             type="text"
-            placeholder="Selecione um Confeccionista"
-            aria-label="Confeccionista"
+            placeholder="Selecione um produtor"
+            aria-label="Produção"
             [matAutocomplete]="executor"
           />
           <mat-autocomplete #executor="matAutocomplete">
@@ -99,7 +99,7 @@
             </mat-option>
           </mat-autocomplete>
           <mat-error *ngIf="form.get('executor')?.hasError('required')">
-            O campo "Confeccionista" não pode ficar vazio
+            O campo "Produção" não pode ficar vazio
           </mat-error>
         </mat-form-field>
 
