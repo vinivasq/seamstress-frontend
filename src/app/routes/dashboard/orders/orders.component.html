@@ -92,7 +92,7 @@
                         <h3 class="field__label">Modelo:</h3>
                         <p>{{ item.item.name }}</p>
                       </div>
-                      <div class="item__field">
+                      <div *ngIf="item.item.set" class="item__field">
                         <h3 class="field__label">Conjunto:</h3>
                         <p>{{ item.item.set?.name }}</p>
                       </div>
@@ -111,7 +111,7 @@
                     </div>
                     <div
                       class="customer__sizings"
-                      *ngIf="item.size.id === 1 && order.customer.sizings"
+                      *ngIf="item.size.id === 7 && order.customer.sizings"
                     >
                       <div class="sizings">
                         <div
