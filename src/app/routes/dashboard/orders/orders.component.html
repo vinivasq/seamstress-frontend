@@ -215,37 +215,39 @@
               </div>
             </mat-tab>
           </mat-tab-group>
-          <button
-            mat-icon-button
-            aria-label="Icon Button to open an item"
-            routerLink="/order/{{ order.id }}"
-            *ngIf="
-              (userService.currentUser$ | async)?.role.toLowerCase() !==
-              'executor'
-            "
-          >
-            <mat-icon>open_in_new</mat-icon>
-          </button>
-          <button
-            mat-icon-button
-            [matMenuTriggerFor]="menu"
-            aria-label="Example icon-button with a menu"
-          >
-            <mat-icon>more_vert</mat-icon>
-          </button>
-          <mat-menu #menu="matMenu" xPosition="before">
-            <mat-radio-group mat-menu-item>
-              <mat-radio-button
-                class="radio__buttons"
-                *ngFor="let step of steps | keyvalue"
-                [checked]="order.step.toLowerCase() == step.key.toLowerCase()"
-                [value]="step.value"
-                (click)="updateStep(order.id, step.value)"
-              >
-                {{ step.key }}
-              </mat-radio-button>
-            </mat-radio-group>
-          </mat-menu>
+          <div>
+            <button
+              mat-icon-button
+              aria-label="Icon Button to open an item"
+              routerLink="/order/{{ order.id }}"
+              *ngIf="
+                (userService.currentUser$ | async)?.role.toLowerCase() !==
+                'executor'
+              "
+            >
+              <mat-icon>open_in_new</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              [matMenuTriggerFor]="menu"
+              aria-label="Example icon-button with a menu"
+            >
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu" xPosition="before">
+              <mat-radio-group mat-menu-item>
+                <mat-radio-button
+                  class="radio__buttons"
+                  *ngFor="let step of steps | keyvalue"
+                  [checked]="order.step.toLowerCase() == step.key.toLowerCase()"
+                  [value]="step.value"
+                  (click)="updateStep(order.id, step.value)"
+                >
+                  {{ step.key }}
+                </mat-radio-button>
+              </mat-radio-group>
+            </mat-menu>
+          </div>
         </div>
       </td>
     </ng-container>

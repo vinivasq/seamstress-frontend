@@ -31,10 +31,11 @@ tr.order-row:not(.order-expanded-row):active {
   border-radius: 4px;
   overflow: hidden;
   display: flex;
+  justify-content: space-between;
 }
 
 .mat-mdc-tab-group {
-  width: 100%;
+  max-width: 50rem;
 }
 
 .order__tab__item {
