@@ -23,6 +23,13 @@ p {
   height: 100% !important ;
 }
 
+.mat-mdc-menu-item:hover:not([disabled]),
+.mat-mdc-menu-item.cdk-program-focused:not([disabled]),
+.mat-mdc-menu-item.cdk-keyboard-focused:not([disabled]),
+.mat-mdc-menu-item-highlighted:not([disabled]) {
+  background: transparent !important;
+}
+
 .mat-mdc-form-field-error-wrapper {
   padding: 0 !important;
 }

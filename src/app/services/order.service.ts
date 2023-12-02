@@ -14,6 +14,10 @@ export class OrderService {
     return this.client.get(this.baseURL).pipe(take(1));
   }
 
+  getPendingOrders() {
+    return this.client.get(`${this.baseURL}/Pending`).pipe(take(1));
+  }
+
   getOrderById(id: number) {
     return this.client.get(`${this.baseURL}/${id}`).pipe(take(1));
   }

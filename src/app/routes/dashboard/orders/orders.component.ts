@@ -43,6 +43,7 @@ export class OrdersComponent implements OnInit {
     Fechamento: 2,
     Finalização: 3,
     Pronto: 4,
+    Entregue: 5,
   };
   displayedColumns: string[] = [
     'id',
@@ -76,7 +77,7 @@ export class OrdersComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.getOrders();
+    this.getPendingOrders();
   }
 
   public updateStep(orderId: number, step: number) {
@@ -86,18 +87,18 @@ export class OrdersComponent implements OnInit {
           'Etapa atualizada com sucesso',
           'Etapa atualizada'
         );
-        this.getOrders();
+        this.getPendingOrders();
       },
       error: () =>
         this._toastr.error('Erro ao atualizar a etapa', 'Erro ao atualizar'),
     });
   }
 
-  public getOrders(): void {
+  public getPendingOrders(): void {
     this._spinner.isLoading = true;
 
     this._orderService
-      .getOrders()
+      .getPendingOrders()
       .subscribe({
         next: (data: any): void => {
           this.dataSource = new MatTableDataSource(data);
