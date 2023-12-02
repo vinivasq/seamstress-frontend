@@ -37,14 +37,14 @@ import { UserService } from 'src/app/services/user.service';
 export class OrdersComponent implements OnInit {
   public dataSource: any;
   public foundOrders = false;
-  public steps = {
-    Aguardando: 0,
-    Corte: 1,
-    Fechamento: 2,
-    Finalização: 3,
-    Pronto: 4,
-    Entregue: 5,
-  };
+  public steps = [
+    { label: 'Aguardando', value: 0 },
+    { label: 'Corte', value: 1 },
+    { label: 'Fechamento', value: 2 },
+    { label: 'Finalização', value: 3 },
+    { label: 'Pronto', value: 4 },
+    { label: 'Entregue', value: 5 },
+  ];
   displayedColumns: string[] = [
     'id',
     'customer',
