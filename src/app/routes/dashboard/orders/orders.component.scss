@@ -103,6 +103,7 @@ tr.order-row:not(.order-expanded-row):active {
 .radio__buttons {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
 }
 
 .no-orders {

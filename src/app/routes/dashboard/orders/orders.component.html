@@ -235,15 +235,19 @@
               <mat-icon>more_vert</mat-icon>
             </button>
             <mat-menu #menu="matMenu" xPosition="before">
-              <mat-radio-group mat-menu-item>
+              <mat-radio-group
+                mat-menu-item
+                class="radio__buttons"
+                *ngFor="let step of steps"
+                [value]="step.value"
+                (click)="updateStep(order.id, step.value)"
+              >
                 <mat-radio-button
-                  class="radio__buttons"
-                  *ngFor="let step of steps | keyvalue"
-                  [checked]="order.step.toLowerCase() == step.key.toLowerCase()"
-                  [value]="step.value"
-                  (click)="updateStep(order.id, step.value)"
+                  [checked]="
+                    order.step.toLowerCase() == step.label.toLowerCase()
+                  "
                 >
-                  {{ step.key }}
+                  {{ step.label }}
                 </mat-radio-button>
               </mat-radio-group>
             </mat-menu>
