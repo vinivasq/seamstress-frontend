@@ -115,6 +115,7 @@
                 mask="00000-000"
                 placeholder="00000-000"
                 formControlName="cep"
+                (blur)="getAddress()"
               />
               <mat-error *ngIf="secondGroup.get('cep')?.hasError('required')"
                 >Campo obrigatório</mat-error
