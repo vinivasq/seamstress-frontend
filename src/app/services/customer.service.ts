@@ -33,4 +33,10 @@ export class CustomerService {
       .patch(`${this.baseURL}/${customer.id}`, customer)
       .pipe(take(1));
   }
+
+  public getAddress(cep: number) {
+    return this.client
+      .get(`https://viacep.com.br/ws/${cep}/json/`)
+      .pipe(take(1));
+  }
 }

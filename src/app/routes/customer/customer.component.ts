@@ -149,4 +149,25 @@ export class CustomerComponent implements OnInit {
       complete: () => {},
     });
   }
+
+  getAddress() {
+    const cep = this.secondGroup.get('cep');
+    if (cep.invalid) return;
+
+    this._customerService.getAddress(+cep.getRawValue()).subscribe({
+      next: (data: any) => {
+        this.secondGroup.get('address').patchValue(data.logradouro);
+
+        if (data.complemento !== '')
+          this.secondGroup.get('complement').patchValue(data.complemento);
+      },
+      error: (error) => {
+        console.log(error);
+        this._toastr.error(
+          'Não foi possível encontrar o endereço',
+          'Erro ao buscar endereço'
+        );
+      },
+    });
+  }
 }
