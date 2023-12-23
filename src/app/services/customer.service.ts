@@ -39,8 +39,4 @@ export class CustomerService {
       .get(`https://viacep.com.br/ws/${cep}/json/`)
       .pipe(take(1));
   }
-
-  public acertaEndereco() {
-    return this.client.get(`${this.baseURL}/acerta`).pipe(take(1));
-  }
 }

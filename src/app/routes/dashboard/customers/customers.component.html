@@ -14,15 +14,6 @@
 </app-tableHeader>
 <app-buttonAdd [route]="'/customer'"> </app-buttonAdd>
 
-<button
-  mat-raised-button
-  color="accent"
-  class="button__add"
-  (click)="acertaEnderecos()"
->
-  Corrigir Endereços
-</button>
-
 <div class="customers">
   <mat-card *ngFor="let customer of customers" class="customer">
     <mat-tab-group class="customer__tab" color="accent">
