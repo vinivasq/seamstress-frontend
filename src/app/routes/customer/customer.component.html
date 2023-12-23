@@ -152,6 +152,34 @@
             >
           </mat-form-field>
 
+          <div class="form__fieldGroup">
+            <mat-form-field class="form__fieldGroup-item">
+              <mat-label>Cidade</mat-label>
+              <input
+                matInput
+                placeholder="São Paulo"
+                formControlName="city"
+                maxlength="80"
+              />
+              <mat-error *ngIf="secondGroup.get('city')?.hasError('required')"
+                >Campo obrigatório.</mat-error
+              >
+            </mat-form-field>
+            <mat-form-field class="form__fieldGroup-item">
+              <mat-label>Bairro</mat-label>
+              <input
+                matInput
+                placeholder="Centro"
+                formControlName="neighborhood"
+                maxlength="80"
+              />
+              <mat-error
+                *ngIf="secondGroup.get('neighborhood')?.hasError('required')"
+                >Campo obrigatório.</mat-error
+              >
+            </mat-form-field>
+          </div>
+
           <mat-form-field>
             <mat-label>Complemento</mat-label>
             <input matInput maxlength="150" formControlName="complement" />
