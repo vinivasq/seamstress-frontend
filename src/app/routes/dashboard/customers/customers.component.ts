@@ -77,4 +77,14 @@ export class CustomersComponent implements OnInit {
       },
     });
   }
+
+  acertaEnderecos() {
+    this._customerService.acertaEndereco().subscribe({
+      next: () => this._toastrService.success('Deu bom'),
+      error: (err) => {
+        this._toastrService.error('deu ruim');
+        console.log(err);
+      },
+    });
+  }
 }

@@ -41,6 +41,8 @@ export class CustomerComponent implements OnInit {
     secondFormGroup: this._formBuilder.group({
       cep: ['', [Validators.required]],
       address: ['', [Validators.required]],
+      city: ['', [Validators.required]],
+      neighborhood: ['', [Validators.required]],
       number: [null, [Validators.required]],
       complement: [''],
     }),
@@ -157,9 +159,8 @@ export class CustomerComponent implements OnInit {
     this._customerService.getAddress(+cep.getRawValue()).subscribe({
       next: (data: any) => {
         this.secondGroup.get('address').patchValue(data.logradouro);
-
-        if (data.complemento !== '')
-          this.secondGroup.get('complement').patchValue(data.complemento);
+        this.secondGroup.get('city').patchValue(data.localidade);
+        this.secondGroup.get('neighborhood').patchValue(data.bairro);
       },
       error: (error) => {
         console.log(error);
