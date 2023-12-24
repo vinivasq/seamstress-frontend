@@ -215,7 +215,7 @@
               </div>
             </mat-tab>
           </mat-tab-group>
-          <div>
+          <div class="order__actions">
             <button
               mat-icon-button
               aria-label="Icon Button to open an item"
@@ -227,10 +227,28 @@
             >
               <mat-icon>open_in_new</mat-icon>
             </button>
+
             <button
-              mat-icon-button
+              *ngIf="
+                (userService.currentUser$ | async)?.role.toLowerCase() ===
+                  'requester' && order.step.toLowerCase() === 'pronto'
+              "
+              (click)="updateStep(order.id, 5)"
+              mat-raised-button
+              color="accent"
+            >
+              <mat-icon>check</mat-icon>
+              Entregue
+            </button>
+
+            <button
+              *ngIf="
+                (userService.currentUser$ | async)?.role.toLowerCase() ===
+                'executor'
+              "
               [matMenuTriggerFor]="menu"
-              aria-label="Example icon-button with a menu"
+              mat-icon-button
+              aria-label="Button to open steps menu"
             >
               <mat-icon>more_vert</mat-icon>
             </button>

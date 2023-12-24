@@ -34,6 +34,13 @@ tr.order-row:not(.order-expanded-row):active {
   justify-content: space-between;
 }
 
+.order__actions {
+  display: flex;
+  align-items: center;
+  height: 3rem;
+  gap: 0.5rem;
+}
+
 .mat-mdc-tab-group {
   max-width: 50rem;
 }
