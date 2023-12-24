@@ -43,7 +43,6 @@ export class OrdersComponent implements OnInit {
     { label: 'Fechamento', value: 2 },
     { label: 'Finalização', value: 3 },
     { label: 'Pronto', value: 4 },
-    { label: 'Entregue', value: 5 },
   ];
   displayedColumns: string[] = [
     'id',
