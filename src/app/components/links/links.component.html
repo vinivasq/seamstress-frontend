@@ -1,7 +1,7 @@
 <ul class="links">
   <div class="links__profile">
     <mat-icon class="links__icon">account_circle</mat-icon>
-    <h3 *ngIf="userService.currentUser$ | async as user">
+    <h3 *ngIf="user as user">
       {{ user.firstName | titlecase }}
     </h3>
     <li
@@ -28,9 +28,7 @@
       (click)="drawer.close()"
       routerLink="/dashboard/customers"
       routerLinkActive="link-active"
-      *ngIf="
-        (userService.currentUser$ | async)?.role.toLowerCase() !== 'executor'
-      "
+      *ngIf="user.role.toLowerCase() !== 'executor'"
     >
       <p>Clientes</p>
     </li>
@@ -39,9 +37,7 @@
       (click)="drawer.close()"
       routerLink="/dashboard/items"
       routerLinkActive="link-active"
-      *ngIf="
-        (userService.currentUser$ | async)?.role.toLowerCase() !== 'executor'
-      "
+      *ngIf="user.role.toLowerCase() !== 'executor'"
     >
       <p>Modelos</p>
     </li>
@@ -56,7 +52,7 @@
 
   <li
     class="links__profile-desktop"
-    *ngIf="userService.currentUser$ | async as user"
+    *ngIf="user as user"
     [mat-menu-trigger-for]="menu"
   >
     {{ user.firstName | titlecase }} <mat-icon>arrow_drop_down</mat-icon>

@@ -18,6 +18,7 @@ import { DialogCarouselComponent } from 'src/app/components/dialogCarousel/dialo
 import { MatDialog } from '@angular/material/dialog';
 import { environment } from 'src/environments/environment';
 import { UserService } from 'src/app/services/user.service';
+import { User } from 'src/app/models/identity/User';
 
 @Component({
   selector: 'app-orders',
@@ -55,12 +56,13 @@ export class OrdersComponent implements OnInit {
   displayedColumnsWithExpand = [...this.displayedColumns, 'expand'];
   expandedOrder?: Order | null;
   imageAPI = environment.imageAPI;
+  user: User;
 
   @ViewChild(MatPaginator) paginator?: MatPaginator;
   @ViewChild(MatSort) sort?: MatSort;
 
   constructor(
-    public userService: UserService,
+    private _userService: UserService,
     private _orderService: OrderService,
     private _dialog: MatDialog,
     private _spinner: SpinnerService,
@@ -77,6 +79,10 @@ export class OrdersComponent implements OnInit {
 
   ngOnInit() {
     this.getPendingOrders();
+
+    this._userService.currentUser$.subscribe(
+      (data: User) => (this.user = data)
+    );
   }
 
   public updateStep(orderId: number, step: number) {

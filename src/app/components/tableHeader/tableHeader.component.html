@@ -14,9 +14,7 @@
     color="accent"
     class="button"
     routerLink="/{{ route }}"
-    *ngIf="
-      (userService.currentUser$ | async)?.role.toLowerCase() !== 'executor'
-    "
+    *ngIf="user.role.toLowerCase() !== 'executor'"
   >
     <mat-icon>playlist_add</mat-icon>
     {{ label }}

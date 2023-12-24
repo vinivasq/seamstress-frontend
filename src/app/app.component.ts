@@ -16,7 +16,6 @@ export class AppComponent implements AfterViewInit, OnInit {
   userService: UserService;
 
   constructor(
-    private _router: Router,
     private _userService: UserService,
     public drawerService: DrawerService
   ) {
@@ -30,13 +29,6 @@ export class AppComponent implements AfterViewInit, OnInit {
 
   ngOnInit(): void {
     this.setCurrentUser();
-  }
-
-  showMenu(): boolean {
-    return this._router.url == '/user/login' ||
-      this._router.url == '/user/register'
-      ? false
-      : true;
   }
 
   setCurrentUser() {

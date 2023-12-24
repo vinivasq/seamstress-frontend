@@ -220,18 +220,15 @@
               mat-icon-button
               aria-label="Icon Button to open an item"
               routerLink="/order/{{ order.id }}"
-              *ngIf="
-                (userService.currentUser$ | async)?.role.toLowerCase() !==
-                'executor'
-              "
+              *ngIf="user.role.toLocaleLowerCase() !== 'executor'"
             >
               <mat-icon>open_in_new</mat-icon>
             </button>
 
             <button
               *ngIf="
-                (userService.currentUser$ | async)?.role.toLowerCase() ===
-                  'requester' && order.step.toLowerCase() === 'pronto'
+                user.role.toLocaleLowerCase() === 'requester' &&
+                order.step.toLowerCase() === 'pronto'
               "
               (click)="updateStep(order.id, 5)"
               mat-raised-button
@@ -242,10 +239,7 @@
             </button>
 
             <button
-              *ngIf="
-                (userService.currentUser$ | async)?.role.toLowerCase() ===
-                'executor'
-              "
+              *ngIf="user.role.toLocaleLowerCase() === 'executor'"
               [matMenuTriggerFor]="menu"
               mat-icon-button
               aria-label="Button to open steps menu"
@@ -301,5 +295,5 @@
 
 <app-buttonAdd
   [route]="'/order'"
-  *ngIf="(userService.currentUser$ | async)?.role.toLowerCase() !== 'executor'"
+  *ngIf="user.role.toLocaleLowerCase() !== 'executor'"
 ></app-buttonAdd>
