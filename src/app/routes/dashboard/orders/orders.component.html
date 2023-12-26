@@ -29,7 +29,15 @@
       <th mat-header-cell mat-sort-header *matHeaderCellDef>
         {{ columnHeader(column) }}
       </th>
-      <td mat-cell *matCellDef="let order">
+      <td
+        mat-cell
+        *matCellDef="let order"
+        matBadge="!"
+        matBadgePosition="before"
+        matBadgeSize="large"
+        matBadgeColor="warn"
+        [matBadgeHidden]="SetBadge(order.deadline, column)"
+      >
         {{
           column === "orderedAt" || column === "deadline"
             ? (order[column] | DateFormat)

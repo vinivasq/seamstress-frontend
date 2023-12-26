@@ -32,6 +32,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatRadioModule } from '@angular/material/radio';
+import { MatBadgeModule } from '@angular/material/badge';
 import { MAT_DATE_LOCALE, MatNativeDateModule } from '@angular/material/core';
 
 import { AppComponent } from './app.component';
@@ -132,6 +133,7 @@ import { JwtInterceptor } from './interceptors/jwt.interceptor';
     MatDatepickerModule,
     MatNativeDateModule,
     MatRadioModule,
+    MatBadgeModule,
     NgxDropzoneModule,
     NgxMatNumberInputSpinnerModule,
     ToastrModule.forRoot({
