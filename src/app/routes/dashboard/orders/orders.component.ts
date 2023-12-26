@@ -125,6 +125,17 @@ export class OrdersComponent implements OnInit {
       .add(() => (this._spinner.isLoading = false));
   }
 
+  public SetBadge(deadLine: Date, column: string): boolean {
+    if (column === 'customer') {
+      let todayPlus7 = new Date();
+      todayPlus7.setDate(new Date().getDate() + 7);
+
+      if (todayPlus7 <= new Date(deadLine)) return true;
+      return false;
+    }
+    return true;
+  }
+
   public openCarousel(imageURL: string) {
     this._dialog.open(DialogCarouselComponent, {
       data: {
