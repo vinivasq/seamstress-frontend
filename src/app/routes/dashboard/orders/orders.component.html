@@ -226,10 +226,7 @@
             </button>
 
             <button
-              *ngIf="
-                user.role.toLocaleLowerCase() === 'requester' &&
-                order.step.toLowerCase() === 'pronto'
-              "
+              *ngIf="user.role.toLocaleLowerCase() === 'requester'"
               (click)="updateStep(order.id, 5)"
               mat-raised-button
               color="accent"
