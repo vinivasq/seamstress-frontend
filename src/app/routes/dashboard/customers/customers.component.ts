@@ -32,10 +32,7 @@ export class CustomersComponent implements OnInit {
       .getCustomers()
       .subscribe({
         next: (data: Customer[]) => {
-          this.customers = data.sort(
-            (customerA: Customer, customerB: Customer) =>
-              customerB.id - customerA.id
-          );
+          this.customers = data;
         },
         error: (error) => {
           console.log(error);
