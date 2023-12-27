@@ -9,7 +9,7 @@ import { CustomerService } from 'src/app/services/customer.service';
 import { Customer } from 'src/app/models/Customer';
 import { ToastrService } from 'ngx-toastr';
 import { SpinnerService } from 'src/app/services/spinner.service';
-import { Sizings } from 'src/app/models/Sizings';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-customer',
@@ -144,9 +144,8 @@ export class CustomerComponent implements OnInit {
 
         this._router.navigate(['/dashboard/customers']);
       },
-      error: (error: any) => {
-        console.log(error);
-        this._toastr.error('Erro ao salvar o cliente', 'Erro ao salvar');
+      error: (error: HttpErrorResponse) => {
+        this._toastr.error(error.error, 'Erro ao salvar');
       },
       complete: () => {},
     });
