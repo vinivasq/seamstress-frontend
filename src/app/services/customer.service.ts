@@ -12,8 +12,10 @@ export class CustomerService {
 
   constructor(private client: HttpClient) {}
 
-  getCustomers() {
-    return this.client.get<Customer[]>(this.baseURL).pipe(take(1));
+  getCustomers(term: string) {
+    return this.client
+      .get<Customer[]>(`${this.baseURL}/?term=${term}`)
+      .pipe(take(1));
   }
 
   getCustomerByID(id: number) {

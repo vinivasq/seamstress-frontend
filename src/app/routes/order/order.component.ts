@@ -376,7 +376,7 @@ export class OrderComponent implements OnInit {
   }
 
   getCustomers() {
-    this._customerService.getCustomers().subscribe({
+    this._customerService.getCustomers('').subscribe({
       next: (data: any) => {
         this.customers = data;
         this.filteredCustomers = this.form.get('customer').valueChanges.pipe(
