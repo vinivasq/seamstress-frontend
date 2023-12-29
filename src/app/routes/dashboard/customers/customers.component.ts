@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
+import { Subject, debounceTime } from 'rxjs';
 import { DialogComponent } from 'src/app/components/dialog/dialog.component';
 import { Customer } from 'src/app/models/Customer';
 import { CustomerService } from 'src/app/services/customer.service';
@@ -13,6 +14,7 @@ import { SpinnerService } from 'src/app/services/spinner.service';
 })
 export class CustomersComponent implements OnInit {
   public customers: Customer[] = [];
+  searchTerm: Subject<string> = new Subject<string>();
 
   constructor(
     private _customerService: CustomerService,
@@ -29,7 +31,7 @@ export class CustomersComponent implements OnInit {
     this._spinnerService.isLoading = true;
 
     this._customerService
-      .getCustomers()
+      .getCustomers('')
       .subscribe({
         next: (data: Customer[]) => {
           this.customers = data;
@@ -43,6 +45,32 @@ export class CustomersComponent implements OnInit {
         },
       })
       .add(() => (this._spinnerService.isLoading = false));
+  }
+
+  filterCustomers(value: string) {
+    if (!this.searchTerm.observed) {
+      this._spinnerService.isLoading = true;
+
+      this.searchTerm.pipe(debounceTime(1000)).subscribe((term) => {
+        this._customerService
+          .getCustomers(term)
+          .subscribe({
+            next: (data: Customer[]) => {
+              this.customers = data;
+            },
+            error: (error) => {
+              console.log(error);
+              this._toastrService.error(
+                'Não foi possível listar os clientes',
+                'Erro de conexão'
+              );
+            },
+          })
+          .add(() => (this._spinnerService.isLoading = false));
+      });
+    }
+
+    this.searchTerm.next(value);
   }
 
   openModal(id: number, name: string) {

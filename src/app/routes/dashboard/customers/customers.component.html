@@ -10,6 +10,7 @@
   [placeholder]="'Fulano da Silva'"
   [label]="'Novo Cliente'"
   [route]="'/customer'"
+  (keyPressed)="filterCustomers($event)"
 >
 </app-tableHeader>
 <app-buttonAdd [route]="'/customer'"> </app-buttonAdd>
