@@ -4,6 +4,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Subject, debounceTime } from 'rxjs';
 import { DialogComponent } from 'src/app/components/dialog/dialog.component';
 import { Customer } from 'src/app/models/Customer';
+import { PaginatedResult, Pagination } from 'src/app/models/Pagination';
 import { CustomerService } from 'src/app/services/customer.service';
 import { SpinnerService } from 'src/app/services/spinner.service';
 
@@ -14,6 +15,7 @@ import { SpinnerService } from 'src/app/services/spinner.service';
 })
 export class CustomersComponent implements OnInit {
   public customers: Customer[] = [];
+  public pagination = {} as Pagination;
   searchTerm: Subject<string> = new Subject<string>();
 
   constructor(
@@ -24,6 +26,12 @@ export class CustomersComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.pagination = {
+      currentPage: 1,
+      pageSize: 10,
+      totalItems: 1,
+    } as Pagination;
+
     this.getCustomers();
   }
 
@@ -31,10 +39,11 @@ export class CustomersComponent implements OnInit {
     this._spinnerService.isLoading = true;
 
     this._customerService
-      .getCustomers('')
+      .getCustomers(this.pagination.currentPage, this.pagination.pageSize)
       .subscribe({
-        next: (data: Customer[]) => {
-          this.customers = data;
+        next: (data: PaginatedResult<any>) => {
+          this.customers = data.result.$values as Customer[];
+          this.pagination = data.pagination;
         },
         error: (error) => {
           console.log(error);
@@ -47,16 +56,27 @@ export class CustomersComponent implements OnInit {
       .add(() => (this._spinnerService.isLoading = false));
   }
 
+  pageChange(event: { pageIndex: number; pageSize: number }) {
+    this.pagination.currentPage = ++event.pageIndex;
+    this.pagination.pageSize = event.pageSize;
+    this.getCustomers();
+  }
+
   filterCustomers(value: string) {
     if (!this.searchTerm.observed) {
       this._spinnerService.isLoading = true;
 
       this.searchTerm.pipe(debounceTime(1000)).subscribe((term) => {
         this._customerService
-          .getCustomers(term)
+          .getCustomers(
+            this.pagination.currentPage,
+            this.pagination.pageSize,
+            term
+          )
           .subscribe({
-            next: (data: Customer[]) => {
-              this.customers = data;
+            next: (data: PaginatedResult<any>) => {
+              this.customers = data.result.$values as Customer[];
+              this.pagination = data.pagination;
             },
             error: (error) => {
               console.log(error);

@@ -173,3 +173,13 @@
     </mat-card-actions>
   </mat-card>
 </div>
+
+<mat-paginator
+  [length]="pagination.totalItems"
+  [pageSize]="pagination.pageSize"
+  [pageSizeOptions]="[10, 25, 50, 100]"
+  (page)="pageChange($event)"
+  aria-label="Select page"
+  style="margin-top: 1rem"
+>
+</mat-paginator>
