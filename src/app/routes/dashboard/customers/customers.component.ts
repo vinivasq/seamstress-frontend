@@ -42,8 +42,10 @@ export class CustomersComponent implements OnInit {
       .getCustomers(this.pagination.currentPage, this.pagination.pageSize)
       .subscribe({
         next: (data: PaginatedResult<any>) => {
-          this.customers = data.result.$values as Customer[];
+          this.customers = data.result;
           this.pagination = data.pagination;
+
+          console.log(data);
         },
         error: (error) => {
           console.log(error);
@@ -75,8 +77,10 @@ export class CustomersComponent implements OnInit {
           )
           .subscribe({
             next: (data: PaginatedResult<any>) => {
-              this.customers = data.result.$values as Customer[];
+              this.customers = data.result;
               this.pagination = data.pagination;
+
+              console.log(data);
             },
             error: (error) => {
               console.log(error);

@@ -10,7 +10,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatTable } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, map, startWith } from 'rxjs';
+import { Observable, Subject, debounceTime, map, startWith } from 'rxjs';
 import { DialogComponent } from 'src/app/components/dialog/dialog.component';
 import { Color } from 'src/app/models/Color';
 import { Customer } from 'src/app/models/Customer';
@@ -18,6 +18,7 @@ import { Fabric } from 'src/app/models/Fabric';
 import { Item } from 'src/app/models/Item';
 import { ItemOrder } from 'src/app/models/ItemOrder';
 import { Order } from 'src/app/models/Order';
+import { PaginatedResult } from 'src/app/models/Pagination';
 import { Size } from 'src/app/models/Size';
 import { User } from 'src/app/models/identity/User';
 import { CustomerService } from 'src/app/services/customer.service';
@@ -376,12 +377,29 @@ export class OrderComponent implements OnInit {
   }
 
   getCustomers() {
-    this._customerService.getCustomers('').subscribe({
-      next: (data: any) => {
-        this.customers = data;
+    this._customerService.getCustomers(1, 25).subscribe({
+      next: (data: PaginatedResult<any>) => {
+        this.customers = data.result.$values as Customer[];
         this.filteredCustomers = this.form.get('customer').valueChanges.pipe(
           startWith(''),
-          map((value) => this._filter(value || '', 'customers'))
+          debounceTime(1000),
+          map((value) => {
+            console.log(value);
+
+            if (value.length > 0) {
+              let teste: any[];
+              this._customerService
+                .getCustomers(1, 25, value)
+                .subscribe((data: PaginatedResult<any>) => {
+                  teste = data.result.$values;
+                  console.log(teste);
+                  return teste;
+                });
+            }
+
+            console.log(this.customers);
+            return this.customers;
+          })
         );
       },
       error: () =>
