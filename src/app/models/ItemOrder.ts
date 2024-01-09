@@ -5,7 +5,7 @@ import { Size } from './Size';
 
 export interface ItemOrder {
   id: number;
-  item?: Item;
+  item: Item;
   itemId: number;
   orderId: number;
   color: Color;
@@ -13,5 +13,4 @@ export interface ItemOrder {
   size: Size;
   description: string;
   amount: number;
-  price?: number;
 }
