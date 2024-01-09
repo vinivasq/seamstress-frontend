@@ -208,7 +208,7 @@
               <input
                 type="number"
                 matInput
-                min="0"
+                min="1"
                 formControlName="amount"
                 [ngxMatNumberSpinner]="spinner"
               />
@@ -220,6 +220,9 @@
                 *ngIf="newItemOrder.get('amount')?.hasError('required')"
               >
                 Campo Obrigatório
+              </mat-error>
+              <mat-error *ngIf="newItemOrder.get('amount')?.hasError('min')">
+                Quantidade inválida
               </mat-error>
             </mat-form-field>
           </div>

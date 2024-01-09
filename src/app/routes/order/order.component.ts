@@ -143,7 +143,7 @@ export class OrderComponent implements OnInit {
     this.form
       .get('total')
       ?.setValue(parseFloat((total + itemOrder.price).toFixed(2)));
-    this.addData(itemOrder as unknown as ItemOrder);
+    this.addData(itemOrder);
     this.itemOrders.push(this.createItemOrder(itemOrder as any));
 
     this.newItemOrder.reset();
@@ -163,7 +163,7 @@ export class OrderComponent implements OnInit {
     });
   }
 
-  addData(itemOrder: ItemOrder) {
+  addData(itemOrder: any) {
     const dataToAdd = {
       id: itemOrder.id ?? 0,
       item: itemOrder.item,
@@ -254,18 +254,16 @@ export class OrderComponent implements OnInit {
           total: this.order.total,
         });
 
-        for (let i = 0; i < this.order.itemOrders['$values'].length; i++) {
-          this.itemOrders.push(
-            this.createItemOrder(this.order.itemOrders['$values'][i])
-          );
+        for (let i = 0; i < this.order.itemOrders.length; i++) {
+          this.itemOrders.push(this.createItemOrder(this.order.itemOrders[i]));
 
-          const { item, ...itemOrder } = this.order.itemOrders['$values'][i];
+          const { item, ...itemOrderResponse } = this.order.itemOrders[i];
 
-          let dataSourceItem = itemOrder;
-          dataSourceItem.item = item.name;
-          dataSourceItem.price = item.price * dataSourceItem.amount;
-
-          this.addData(dataSourceItem);
+          this.addData({
+            ...itemOrderResponse,
+            item: item.name,
+            price: item.price,
+          });
         }
       },
       error: () =>
@@ -346,7 +344,7 @@ export class OrderComponent implements OnInit {
 
   getItems() {
     this._itemService.getItems().subscribe({
-      next: (data: any) => {
+      next: (data: Item[]) => {
         this.items = data;
         this.filteredItems = this.newItemOrder.get('item').valueChanges.pipe(
           startWith(''),
@@ -406,16 +404,16 @@ export class OrderComponent implements OnInit {
     newItemOrder.get('itemId')?.setValue(itemId);
     newItemOrder.get('price')?.setValue(itemResponse.price);
 
-    for (let i = 0; i < itemResponse.itemColors['$values'].length; ++i) {
-      colors.push(itemResponse.itemColors['$values'][i].color);
+    for (let i = 0; i < itemResponse.itemColors.length; ++i) {
+      colors.push(itemResponse.itemColors[i].color);
     }
 
-    for (let i = 0; i < itemResponse.itemFabrics['$values'].length; ++i) {
-      fabrics.push(itemResponse.itemFabrics['$values'][i].fabric);
+    for (let i = 0; i < itemResponse.itemFabrics.length; ++i) {
+      fabrics.push(itemResponse.itemFabrics[i].fabric);
     }
 
-    for (let i = 0; i < itemResponse.itemSizes['$values'].length; ++i) {
-      sizes.push(itemResponse.itemSizes['$values'][i].size);
+    for (let i = 0; i < itemResponse.itemSizes.length; ++i) {
+      sizes.push(itemResponse.itemSizes[i].size);
     }
 
     this.enableAttributes();
