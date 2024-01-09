@@ -27,7 +27,7 @@ export class CustomerService {
       params = params.append('pageSize', itemsPerPage.toString());
     }
 
-    if (term != null) params = params.append('term', term);
+    if (term != null && term.length > 0) params = params.append('term', term);
 
     return this.client
       .get<Customer[]>(this.baseURL, { observe: 'response', params })
