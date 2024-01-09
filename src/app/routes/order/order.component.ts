@@ -46,7 +46,6 @@ export class OrderComponent implements OnInit {
     customer: ['', [Validators.required]],
     executorId: [null],
     executor: ['', [Validators.required]],
-    createdAt: [new Date()],
     orderedAt: [null as Date, [Validators.required]],
     deadline: [null as Date, [Validators.required]],
     description: [''],
@@ -248,7 +247,6 @@ export class OrderComponent implements OnInit {
           customerId: this.order.customer.id,
           executor: this.order.executor.name,
           executorId: this.order.executor.id,
-          createdAt: this.order.createdAt,
           orderedAt: this.order.orderedAt,
           deadline: this.order.deadline,
           description: this.order.description,
@@ -299,6 +297,8 @@ export class OrderComponent implements OnInit {
 
     this.order = {
       id: this.order?.id ?? 0,
+      createdAt:
+        this.requestMethod === 'post' ? new Date() : this.order.createdAt,
       ...formValues,
     };
 
