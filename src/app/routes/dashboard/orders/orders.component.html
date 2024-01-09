@@ -82,7 +82,7 @@
             mat-align-tabs="start"
           >
             <mat-tab
-              *ngFor="let item of order.itemOrders['$values']"
+              *ngFor="let item of order.itemOrders"
               [label]="item.item.name"
             >
               <div class="order__tab__item">

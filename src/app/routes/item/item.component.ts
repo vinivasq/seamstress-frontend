@@ -118,21 +118,17 @@ export class ItemComponent implements OnInit {
 
         const itemColors = this.form.get('itemColors') as FormControl;
         itemColors.patchValue(
-          this.item.itemColors['$values'].map(
-            (color: ItemColors) => color.colorId
-          )
+          this.item.itemColors.map((color: ItemColors) => color.colorId)
         );
 
         const itemFabrics = this.form.get('itemFabrics') as FormControl;
         itemFabrics.patchValue(
-          this.item.itemFabrics['$values'].map(
-            (fabric: ItemFabrics) => fabric.fabricId
-          )
+          this.item.itemFabrics.map((fabric: ItemFabrics) => fabric.fabricId)
         );
 
         const itemSizes = this.form.get('itemSizes') as FormControl;
         itemSizes.patchValue(
-          this.item.itemSizes['$values'].map((size: ItemSizes) => size.sizeId)
+          this.item.itemSizes.map((size: ItemSizes) => size.sizeId)
         );
       },
       error: () => {
