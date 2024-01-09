@@ -28,7 +28,7 @@ export class CustomersComponent implements OnInit {
   ngOnInit() {
     this.pagination = {
       currentPage: 1,
-      pageSize: 10,
+      pageSize: 8,
       totalItems: 1,
     } as Pagination;
 
@@ -44,8 +44,6 @@ export class CustomersComponent implements OnInit {
         next: (data: PaginatedResult<any>) => {
           this.customers = data.result;
           this.pagination = data.pagination;
-
-          console.log(data);
         },
         error: (error) => {
           console.log(error);
@@ -77,10 +75,13 @@ export class CustomersComponent implements OnInit {
           )
           .subscribe({
             next: (data: PaginatedResult<any>) => {
+              if (data.result == null) {
+                this._toastrService.warning('Nenhum cliente encontrado.');
+                return;
+              }
+
               this.customers = data.result;
               this.pagination = data.pagination;
-
-              console.log(data);
             },
             error: (error) => {
               console.log(error);
