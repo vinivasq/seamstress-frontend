@@ -10,7 +10,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatTable } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, Subject, debounceTime, map, startWith } from 'rxjs';
+import { Observable, debounceTime, map, startWith, switchMap } from 'rxjs';
 import { DialogComponent } from 'src/app/components/dialog/dialog.component';
 import { Color } from 'src/app/models/Color';
 import { Customer } from 'src/app/models/Customer';
@@ -77,8 +77,7 @@ export class OrderComponent implements OnInit {
   requestMethod: string = 'post';
   order: Order;
   dataSource: any[] = [];
-  customers: Customer[];
-  filteredCustomers: Observable<any[]>;
+  customers: Observable<Customer[]>;
   items: Item[];
   filteredItems: Observable<Item[]>;
   itemColors: Color[];
@@ -375,37 +374,28 @@ export class OrderComponent implements OnInit {
   }
 
   getCustomers() {
-    this._customerService.getCustomers(1, 25).subscribe({
-      next: (data: PaginatedResult<any>) => {
-        this.customers = data.result.$values as Customer[];
-        this.filteredCustomers = this.form.get('customer').valueChanges.pipe(
-          startWith(''),
-          debounceTime(1000),
-          map((value) => {
-            console.log(value);
+    this.customers = this.form.get('customer').valueChanges.pipe(
+      startWith(''),
+      debounceTime(1000),
+      switchMap((value) => {
+        return this.filterCustomers(value);
+      })
+    );
+  }
 
-            if (value.length > 0) {
-              let teste: any[];
-              this._customerService
-                .getCustomers(1, 25, value)
-                .subscribe((data: PaginatedResult<any>) => {
-                  teste = data.result.$values;
-                  console.log(teste);
-                  return teste;
-                });
-            }
+  filterCustomers(value: string): Observable<Customer[]> {
+    return this._customerService.getCustomers(1, 25, value).pipe(
+      map((data: PaginatedResult<Customer[]>) => {
+        if (data.result == null) {
+          this._toastrService.warning(
+            'Revise os termos de busca',
+            'Nenhum cliente encontrado'
+          );
+        }
 
-            console.log(this.customers);
-            return this.customers;
-          })
-        );
-      },
-      error: () =>
-        this._toastrService.error(
-          'Erro ao carregar os clientes',
-          'Erro ao carregar'
-        ),
-    });
+        return data.result;
+      })
+    );
   }
 
   async getItemAttributes(event, itemId: number) {
