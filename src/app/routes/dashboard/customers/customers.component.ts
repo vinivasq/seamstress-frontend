@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { PageEvent } from '@angular/material/paginator';
 import { ToastrService } from 'ngx-toastr';
 import { Subject, debounceTime } from 'rxjs';
 import { DialogComponent } from 'src/app/components/dialog/dialog.component';
@@ -16,6 +17,7 @@ import { SpinnerService } from 'src/app/services/spinner.service';
 export class CustomersComponent implements OnInit {
   public customers: Customer[] = [];
   public pagination = {} as Pagination;
+  pageIndex = 0;
   searchTerm: Subject<string> = new Subject<string>();
 
   constructor(
@@ -56,13 +58,18 @@ export class CustomersComponent implements OnInit {
       .add(() => (this._spinnerService.isLoading = false));
   }
 
-  pageChange(event: { pageIndex: number; pageSize: number }) {
+  pageChange(event: PageEvent) {
     this.pagination.currentPage = ++event.pageIndex;
     this.pagination.pageSize = event.pageSize;
+    this.pageIndex = event.pageIndex;
+
     this.getCustomers();
   }
 
   filterCustomers(value: string) {
+    this.pagination.currentPage = 1;
+    this.pageIndex = 0;
+
     if (!this.searchTerm.observed) {
       this._spinnerService.isLoading = true;
 
