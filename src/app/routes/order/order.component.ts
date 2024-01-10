@@ -10,7 +10,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatTable } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, map, startWith } from 'rxjs';
+import { Observable, debounceTime, map, startWith, switchMap } from 'rxjs';
 import { DialogComponent } from 'src/app/components/dialog/dialog.component';
 import { Color } from 'src/app/models/Color';
 import { Customer } from 'src/app/models/Customer';
@@ -18,6 +18,7 @@ import { Fabric } from 'src/app/models/Fabric';
 import { Item } from 'src/app/models/Item';
 import { ItemOrder } from 'src/app/models/ItemOrder';
 import { Order } from 'src/app/models/Order';
+import { PaginatedResult } from 'src/app/models/Pagination';
 import { Size } from 'src/app/models/Size';
 import { User } from 'src/app/models/identity/User';
 import { CustomerService } from 'src/app/services/customer.service';
@@ -76,8 +77,7 @@ export class OrderComponent implements OnInit {
   requestMethod: string = 'post';
   order: Order;
   dataSource: any[] = [];
-  customers: Customer[];
-  filteredCustomers: Observable<any[]>;
+  customers: Observable<Customer[]>;
   items: Item[];
   filteredItems: Observable<Item[]>;
   itemColors: Color[];
@@ -374,20 +374,28 @@ export class OrderComponent implements OnInit {
   }
 
   getCustomers() {
-    this._customerService.getCustomers('').subscribe({
-      next: (data: any) => {
-        this.customers = data;
-        this.filteredCustomers = this.form.get('customer').valueChanges.pipe(
-          startWith(''),
-          map((value) => this._filter(value || '', 'customers'))
-        );
-      },
-      error: () =>
-        this._toastrService.error(
-          'Erro ao carregar os clientes',
-          'Erro ao carregar'
-        ),
-    });
+    this.customers = this.form.get('customer').valueChanges.pipe(
+      startWith(''),
+      debounceTime(1000),
+      switchMap((value) => {
+        return this.filterCustomers(value);
+      })
+    );
+  }
+
+  filterCustomers(value: string): Observable<Customer[]> {
+    return this._customerService.getCustomers(1, 25, value).pipe(
+      map((data: PaginatedResult<Customer[]>) => {
+        if (data.result == null) {
+          this._toastrService.warning(
+            'Revise os termos de busca',
+            'Nenhum cliente encontrado'
+          );
+        }
+
+        return data.result;
+      })
+    );
   }
 
   async getItemAttributes(event, itemId: number) {

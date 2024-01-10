@@ -1,8 +1,9 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Customer } from '../models/Customer';
-import { take } from 'rxjs';
+import { Observable, map, take } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { PaginatedResult } from '../models/Pagination';
 
 @Injectable({
   providedIn: 'root',
@@ -12,10 +13,37 @@ export class CustomerService {
 
   constructor(private client: HttpClient) {}
 
-  getCustomers(term: string) {
+  getCustomers(
+    page?: number,
+    itemsPerPage?: number,
+    term?: string
+  ): Observable<PaginatedResult<Customer[]>> {
+    const paginatedResult = new PaginatedResult<Customer[]>();
+
+    let params = new HttpParams();
+
+    if (page != null && itemsPerPage != null) {
+      params = params.append('pageNumber', page.toString());
+      params = params.append('pageSize', itemsPerPage.toString());
+    }
+
+    if (term != null && term.length > 0) params = params.append('term', term);
+
     return this.client
-      .get<Customer[]>(`${this.baseURL}/?term=${term}`)
-      .pipe(take(1));
+      .get<Customer[]>(this.baseURL, { observe: 'response', params })
+      .pipe(
+        take(1),
+        map((response) => {
+          paginatedResult.result = response.body;
+          if (response.headers.has('Pagination')) {
+            paginatedResult.pagination = JSON.parse(
+              response.headers.get('Pagination')
+            );
+          }
+
+          return paginatedResult;
+        })
+      );
   }
 
   getCustomerByID(id: number) {
