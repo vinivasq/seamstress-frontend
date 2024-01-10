@@ -30,7 +30,7 @@
           />
           <mat-autocomplete #customer="matAutocomplete">
             <mat-option
-              *ngFor="let customer of filteredCustomers | async"
+              *ngFor="let customer of customers | async"
               [value]="customer.name"
               (onSelectionChange)="getCustomerId($event, customer.id)"
             >

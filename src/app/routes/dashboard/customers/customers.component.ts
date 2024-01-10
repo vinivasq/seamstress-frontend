@@ -76,7 +76,10 @@ export class CustomersComponent implements OnInit {
           .subscribe({
             next: (data: PaginatedResult<any>) => {
               if (data.result == null) {
-                this._toastrService.warning('Nenhum cliente encontrado.');
+                this._toastrService.warning(
+                  'Revise os termos de busca',
+                  'Nenhum cliente encontrado'
+                );
                 return;
               }
 
