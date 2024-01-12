@@ -19,6 +19,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { environment } from 'src/environments/environment';
 import { UserService } from 'src/app/services/user.service';
 import { User } from 'src/app/models/identity/User';
+import { RemoveAccents } from 'src/helpers/RemoveAccents';
 
 @Component({
   selector: 'app-orders',
@@ -109,8 +110,9 @@ export class OrdersComponent implements OnInit {
           this.dataSource = new MatTableDataSource(data);
           this.dataSource.paginator = this.paginator;
           this.dataSource.sort = this.sort;
-          this.dataSource.filterPredicate = (data, filter) => {
-            const dataStr = data.customer.name + data.description;
+          this.dataSource.filterPredicate = (data, filter: string) => {
+            filter = RemoveAccents(filter);
+            const dataStr = RemoveAccents(data.customer.name);
             return dataStr.indexOf(filter) != -1;
           };
           if (data.length > 0) this.foundOrders = true;
