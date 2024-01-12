@@ -71,9 +71,8 @@ export class CustomersComponent implements OnInit {
     this.pageIndex = 0;
 
     if (!this.searchTerm.observed) {
-      this._spinnerService.isLoading = true;
-
       this.searchTerm.pipe(debounceTime(1000)).subscribe((term) => {
+        this._spinnerService.isLoading = true;
         this._customerService
           .getCustomers(
             this.pagination.currentPage,
