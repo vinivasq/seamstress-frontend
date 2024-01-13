@@ -46,6 +46,7 @@ export class CustomersComponent implements OnInit {
         next: (data: PaginatedResult<any>) => {
           this.customers = data.result;
           this.pagination = data.pagination;
+          this.pageIndex = data.pagination.currentPage;
         },
         error: (error) => {
           console.log(error);
