@@ -26,40 +26,48 @@
   height: 95%;
   padding: 0.5rem 1rem !important;
 }
-.customer__field {
-  font-size: 0.875rem;
-  display: flex;
-  gap: 0.175rem;
-}
-.customer__label {
-  font-size: 0.875rem;
-  font-weight: 500;
-  white-space: nowrap;
-}
-.customer__label-complement {
-  display: flex;
-  align-items: center;
-}
+
 .customer__content-sizings {
   justify-content: space-between;
 }
+
 .sizings {
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
 }
+
+.customer__field {
+  font-size: 0.875rem;
+  display: flex;
+  gap: 0.175rem;
+}
+
 .customer__field-sizing {
   display: flex;
   gap: 0.175rem;
   width: 50%;
 }
+
+.customer__label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.customer__label-complement {
+  display: flex;
+  align-items: center;
+}
+
 .card__buttons {
   width: 100%;
   display: flex;
   justify-content: flex-end;
   gap: 0.5rem;
 }
+
 .card__icon {
   display: flex;
   align-items: center;
@@ -68,7 +76,7 @@
   font-size: 20px;
 }
 
-@media screen and (max-width: 1450px) {
+@media screen and (max-width: 1578px) {
   .customer {
     width: calc(33.5% - 0.5rem);
   }

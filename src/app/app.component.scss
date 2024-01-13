@@ -10,13 +10,19 @@
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  padding: 64px 6rem;
+  padding: 64px 18rem;
 }
 
 .toastr-title {
   letter-spacing: 0.0625em !important;
   font-weight: bold !important;
   text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
+}
+
+@media screen and (max-width: 2200px) {
+  .layout {
+    padding: 64px 6rem;
+  }
 }
 
 @media screen and (max-width: 1280px) {
