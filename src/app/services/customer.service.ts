@@ -64,7 +64,7 @@ export class CustomerService {
       .pipe(take(1));
   }
 
-  public getAddress(cep: number) {
+  public getAddress(cep: string) {
     return this.client
       .get(`https://viacep.com.br/ws/${cep}/json/`)
       .pipe(take(1));

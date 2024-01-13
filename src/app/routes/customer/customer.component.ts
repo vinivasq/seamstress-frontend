@@ -155,7 +155,7 @@ export class CustomerComponent implements OnInit {
     const cep = this.secondGroup.get('cep');
     if (cep.invalid) return;
 
-    this._customerService.getAddress(+cep.getRawValue()).subscribe({
+    this._customerService.getAddress(cep.getRawValue()).subscribe({
       next: (data: any) => {
         this.secondGroup.get('address').patchValue(data.logradouro);
         this.secondGroup.get('city').patchValue(data.localidade);
