@@ -26,11 +26,11 @@
           <div>
             <div class="customer__field">
               <p class="customer__label">Telefone:</p>
-              <p>{{ customer.phoneNumber }}</p>
+              <p>{{ customer.phoneNumber | mask : "(00) 00000-0000" }}</p>
             </div>
             <div class="customer__field">
               <p class="customer__label">CPF:</p>
-              <p>{{ customer.cpF_CNPJ }}</p>
+              <p>{{ customer.cpF_CNPJ | mask : "CPF_CNPJ" }}</p>
             </div>
             <div class="customer__field">
               <p class="customer__label">E-mail:</p>
@@ -60,7 +60,7 @@
           </div>
           <div class="customer__field">
             <p class="customer__label">CEP:</p>
-            <p>{{ customer.cep }}</p>
+            <p>{{ customer.cep | mask : "00000-000" }}</p>
           </div>
           <div>
             <p
