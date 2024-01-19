@@ -384,7 +384,7 @@ export class OrderComponent implements OnInit {
   }
 
   filterCustomers(value: string): Observable<Customer[]> {
-    return this._customerService.getCustomers(1, 25, value).pipe(
+    return this._customerService.getCustomers(0, 25, value).pipe(
       map((data: PaginatedResult<Customer[]>) => {
         if (data.result == null) {
           this._toastrService.warning(
