@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { ToastrService } from 'ngx-toastr';
 import { Subject, debounceTime } from 'rxjs';
 import { DialogComponent } from 'src/app/components/dialog/dialog.component';
+import { TableHeaderComponent } from 'src/app/components/tableHeader/tableHeader.component';
 import { Customer } from 'src/app/models/Customer';
 import { PaginatedResult, Pagination } from 'src/app/models/Pagination';
 import { CustomerService } from 'src/app/services/customer.service';
@@ -14,10 +15,15 @@ import { SpinnerService } from 'src/app/services/spinner.service';
   templateUrl: './customers.component.html',
   styleUrls: ['./customers.component.scss'],
 })
-export class CustomersComponent implements OnInit {
+export class CustomersComponent implements AfterViewInit {
+  @ViewChild(TableHeaderComponent) tableHeaderComponent: TableHeaderComponent;
+
   public customers: Customer[] = [];
-  public pagination = {} as Pagination;
-  pageIndex = 0;
+  public pagination = {
+    currentPage: 0,
+    pageSize: 8,
+    totalItems: 1,
+  } as Pagination;
   searchTerm: Subject<string> = new Subject<string>();
 
   constructor(
@@ -27,13 +33,7 @@ export class CustomersComponent implements OnInit {
     private _spinnerService: SpinnerService
   ) {}
 
-  ngOnInit() {
-    this.pagination = {
-      currentPage: 1,
-      pageSize: 8,
-      totalItems: 1,
-    } as Pagination;
-
+  ngAfterViewInit() {
     this.getCustomers();
   }
 
@@ -41,12 +41,15 @@ export class CustomersComponent implements OnInit {
     this._spinnerService.isLoading = true;
 
     this._customerService
-      .getCustomers(this.pagination.currentPage, this.pagination.pageSize)
+      .getCustomers(
+        this.pagination.currentPage,
+        this.pagination.pageSize,
+        this.tableHeaderComponent.filterValue
+      )
       .subscribe({
         next: (data: PaginatedResult<any>) => {
           this.customers = data.result;
           this.pagination = data.pagination;
-          this.pageIndex = data.pagination.currentPage;
         },
         error: (error) => {
           console.log(error);
@@ -60,16 +63,14 @@ export class CustomersComponent implements OnInit {
   }
 
   pageChange(event: PageEvent) {
-    this.pagination.currentPage = ++event.pageIndex;
+    this.pagination.currentPage = event.pageIndex;
     this.pagination.pageSize = event.pageSize;
-    this.pageIndex = event.pageIndex;
 
     this.getCustomers();
   }
 
   filterCustomers(value: string) {
-    this.pagination.currentPage = 1;
-    this.pageIndex = 0;
+    this.pagination.currentPage = 0;
 
     if (!this.searchTerm.observed) {
       this.searchTerm.pipe(debounceTime(1000)).subscribe((term) => {
