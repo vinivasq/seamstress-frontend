@@ -26,6 +26,7 @@ import { SpinnerService } from 'src/app/services/spinner.service';
 export class ItemComponent implements OnInit {
   isMobile: boolean;
   requestMethod = 'post';
+  itemId = 0;
 
   form = this._formBuilder.group({
     name: ['', Validators.required],
@@ -83,13 +84,13 @@ export class ItemComponent implements OnInit {
   }
 
   loadItem() {
-    const itemId = this._activeRoute.snapshot.paramMap.get('id');
-    if (itemId === null) return;
+    this.itemId = +this._activeRoute.snapshot.paramMap.get('id');
+    if (this.itemId === 0) return;
 
     this._spinner.isLoading = true;
     this.requestMethod = 'put';
 
-    this._itemService.getItemById(+itemId).subscribe({
+    this._itemService.getItemById(this.itemId).subscribe({
       next: async (data: Item) => {
         this.item = { ...data };
 

@@ -17,7 +17,11 @@
   <mat-card-header>
     <div class="card__header">
       <h1>{{ requestMethod == "post" ? "Novo" : "Alterar" }} Modelo</h1>
-      <button mat-stroked-button routerLink="/attributes/measurements">
+      <button
+        *ngIf="requestMethod == 'put'"
+        mat-stroked-button
+        routerLink="/measurements/{{ this.itemId }}"
+      >
         Medidas
       </button>
     </div>
