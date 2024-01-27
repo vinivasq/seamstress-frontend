@@ -12,13 +12,30 @@
         </p>
       </div>
     </div>
-    <button
-      mat-stroked-button
-      color="accent"
-      *ngIf="listButton"
-      routerLink="{{ route }}"
-    >
-      Listar {{ btnLabel }}
-    </button>
+    <div class="toolbar__buttons">
+      <button
+        mat-stroked-button
+        color="accent"
+        *ngIf="listButton"
+        routerLink="{{ route }}"
+      >
+        Listar {{ btnLabel }}
+      </button>
+
+      <button
+        mat-stroked-button
+        *ngIf="showMenu"
+        [matMenuTriggerFor]="attributesMenu"
+      >
+        Detalhes
+        <mat-icon iconPositionEnd>arrow_drop_down</mat-icon>
+      </button>
+      <mat-menu #attributesMenu="matMenu" xPosition="before">
+        <button mat-menu-item routerLink="/attributes/set">Conjuntos</button>
+        <button mat-menu-item routerLink="/attributes/color">Cores</button>
+        <button mat-menu-item routerLink="/attributes/fabric">Tecidos</button>
+        <button mat-menu-item routerLink="/attributes/size">Tamanhos</button>
+      </mat-menu>
+    </div>
   </div>
 </mat-toolbar>

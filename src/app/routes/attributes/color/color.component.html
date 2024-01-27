@@ -3,81 +3,78 @@
   icon="edit_attributes"
   descripton="Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorem hic labore quas aliquam nemo."
   [listButton]="true"
+  [showMenu]="true"
   btnLabel="Modelos"
   route="/dashboard/items"
 >
 </app-title>
 
-<div class="container">
-  <app-attributesNavigation [colorButton]="false"></app-attributesNavigation>
-
-  <div class="attribute">
-    <div class="attribute__field">
-      <mat-form-field
-        class="field__input"
-        appearance="fill"
-        subscriptSizing="dynamic"
+<div class="attribute">
+  <div class="attribute__field">
+    <mat-form-field
+      class="field__input"
+      appearance="fill"
+      subscriptSizing="dynamic"
+    >
+      <mat-label>Cor</mat-label>
+      <input
+        #colorName
+        [(ngModel)]="color.name"
+        matInput
+        placeholder="Off White"
+      />
+    </mat-form-field>
+    <div class="buttons">
+      <button
+        *ngIf="color.id != 0"
+        (click)="clearColor()"
+        class="button"
+        mat-stroked-button
+        color="warn"
       >
-        <mat-label>Cor</mat-label>
-        <input
-          #colorName
-          [(ngModel)]="color.name"
-          matInput
-          placeholder="Off White"
-        />
-      </mat-form-field>
-      <div class="buttons">
-        <button
-          *ngIf="color.id != 0"
-          (click)="clearColor()"
-          class="button"
-          mat-stroked-button
-          color="warn"
-        >
-          <mat-icon>cancel</mat-icon> Cancelar
-        </button>
-        <button
-          (click)="saveColor()"
-          class="button"
-          mat-raised-button
-          color="accent"
-          [disabled]="colorName.value.trim().length === 0"
-        >
-          <mat-icon>check</mat-icon>
-          {{ color.id == 0 ? "Cadastrar" : "Salvar" }}
-        </button>
-      </div>
+        <mat-icon>cancel</mat-icon> Cancelar
+      </button>
+      <button
+        (click)="saveColor()"
+        class="button"
+        mat-raised-button
+        color="accent"
+        [disabled]="colorName.value.trim().length === 0"
+      >
+        <mat-icon>check</mat-icon>
+        {{ color.id == 0 ? "Cadastrar" : "Salvar" }}
+      </button>
     </div>
-
-    <mat-card>
-      <mat-card-header><h2>Cores Disponíveis</h2></mat-card-header>
-      <mat-card-content>
-        <ul class="attribute__list">
-          <li *ngFor="let color of colors">
-            <mat-divider></mat-divider>
-            <div class="list__item">
-              <p class="item__color">{{ color.name }}</p>
-              <div>
-                <button
-                  (click)="loadColor(color.id)"
-                  mat-icon-button
-                  color="accent"
-                >
-                  <mat-icon>edit</mat-icon>
-                </button>
-                <button
-                  (click)="openModal(color.id, color.name)"
-                  mat-icon-button
-                  color="warn"
-                >
-                  <mat-icon>delete</mat-icon>
-                </button>
-              </div>
-            </div>
-            <mat-divider></mat-divider>
-          </li>
-        </ul>
-      </mat-card-content>
-    </mat-card>
   </div>
+
+  <mat-card>
+    <mat-card-header><h2>Cores Disponíveis</h2></mat-card-header>
+    <mat-card-content>
+      <ul class="attribute__list">
+        <li *ngFor="let color of colors">
+          <mat-divider></mat-divider>
+          <div class="list__item">
+            <p class="item__color">{{ color.name }}</p>
+            <div>
+              <button
+                (click)="loadColor(color.id)"
+                mat-icon-button
+                color="accent"
+              >
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button
+                (click)="openModal(color.id, color.name)"
+                mat-icon-button
+                color="warn"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </div>
+          <mat-divider></mat-divider>
+        </li>
+      </ul>
+    </mat-card-content>
+  </mat-card>
 </div>

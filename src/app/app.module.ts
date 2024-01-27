@@ -52,7 +52,6 @@ import { FabricComponent } from './routes/attributes/fabric/fabric.component';
 import { SizeComponent } from './routes/attributes/size/size.component';
 import { SetComponent } from './routes/attributes/set/set.component';
 import { AttributesComponent } from './routes/attributes/attributes.component';
-import { AttributesNavigationComponent } from './components/attributesNavigation/attributesNavigation.component';
 import { CustomersComponent } from './routes/dashboard/customers/customers.component';
 import { CustomerComponent } from './routes/customer/customer.component';
 import { ButtonAddComponent } from './components/buttonAdd/buttonAdd.component';
@@ -78,7 +77,6 @@ import { JwtInterceptor } from './interceptors/jwt.interceptor';
     DialogComponent,
     DialogCarouselComponent,
     AttributesComponent,
-    AttributesNavigationComponent,
     ColorComponent,
     FabricComponent,
     SizeComponent,
