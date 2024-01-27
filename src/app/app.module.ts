@@ -40,6 +40,7 @@ import { DashboardComponent } from './routes/dashboard/dashboard.component';
 import { DialogComponent } from './components/dialog/dialog.component';
 import { DialogCarouselComponent } from './components/dialogCarousel/dialogCarousel.component';
 import { ItemComponent } from './routes/item/item.component';
+import { MeasurementsComponent } from './routes/measurements/measurements.component';
 import { OrderComponent } from './routes/order/order.component';
 import { OrdersComponent } from './routes/dashboard/orders/orders.component';
 import { ProfileComponent } from './routes/user/profile/profile.component';
@@ -83,6 +84,7 @@ import { JwtInterceptor } from './interceptors/jwt.interceptor';
     SetComponent,
     ItemComponent,
     ItemsComponent,
+    MeasurementsComponent,
     OrderComponent,
     OrdersComponent,
     UserComponent,
