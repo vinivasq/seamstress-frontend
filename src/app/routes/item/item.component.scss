@@ -1,3 +1,15 @@
+h1 {
+  margin: 0;
+}
+
+.card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 1rem;
+  width: 100%;
+}
+
 .form {
   display: flex;
   justify-content: space-between;
@@ -26,12 +38,8 @@
 
 .buttons {
   display: flex;
-  gap: 0.5rem;
-  align-self: flex-end;
-}
-
-.button {
-  flex-grow: 1;
+  gap: 1rem;
+  justify-content: flex-end;
 }
 
 .button-image {
@@ -70,5 +78,11 @@
   .dropzone__container {
     width: 100%;
     min-width: 100%;
+  }
+}
+
+@media screen and (max-width: 426px) {
+  .button {
+    width: 100%;
   }
 }
