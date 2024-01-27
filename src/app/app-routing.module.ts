@@ -20,10 +20,25 @@ import { FabricComponent } from './routes/attributes/fabric/fabric.component';
 import { SizeComponent } from './routes/attributes/size/size.component';
 import { SetComponent } from './routes/attributes/set/set.component';
 import { AttributesComponent } from './routes/attributes/attributes.component';
+import { MeasurementsComponent } from './routes/measurements/measurements.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'dashboard/orders', pathMatch: 'full' },
   { path: 'dashboard', redirectTo: 'dashboard/orders', pathMatch: 'full' },
+  { path: 'orders', redirectTo: 'dashboard/orders', pathMatch: 'full' },
+  { path: 'items', redirectTo: 'dashboard/items', pathMatch: 'full' },
+  { path: 'attributes', redirectTo: 'attributes/color', pathMatch: 'full' },
+  { path: 'user', redirectTo: 'user/profile', pathMatch: 'full' },
+  {
+    path: 'customers',
+    redirectTo: 'dashboard/customers',
+    pathMatch: 'full',
+  },
+  {
+    path: 'measurements',
+    redirectTo: 'dashboard/items',
+    pathMatch: 'full',
+  },
 
   {
     path: 'dashboard',
@@ -50,7 +65,6 @@ const routes: Routes = [
     ],
   },
 
-  { path: 'user', redirectTo: 'user/profile', pathMatch: 'full' },
   {
     path: 'user',
     component: UserComponent,
@@ -74,11 +88,6 @@ const routes: Routes = [
     },
     children: [
       {
-        path: 'customers',
-        redirectTo: 'dashboard/customers',
-        pathMatch: 'full',
-      },
-      {
         path: 'customer',
         component: CustomerComponent,
       },
@@ -87,7 +96,6 @@ const routes: Routes = [
         component: CustomerComponent,
       },
 
-      { path: 'orders', redirectTo: 'dashboard/orders', pathMatch: 'full' },
       {
         path: 'order',
         component: OrderComponent,
@@ -97,7 +105,6 @@ const routes: Routes = [
         component: OrderComponent,
       },
 
-      { path: 'items', redirectTo: 'dashboard/items', pathMatch: 'full' },
       {
         path: 'item',
         component: ItemComponent,
@@ -107,7 +114,11 @@ const routes: Routes = [
         component: ItemComponent,
       },
 
-      { path: 'attributes', redirectTo: 'attributes/color', pathMatch: 'full' },
+      {
+        path: 'measurements/:id',
+        component: MeasurementsComponent,
+      },
+
       {
         path: 'attributes',
         component: AttributesComponent,
