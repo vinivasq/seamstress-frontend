@@ -106,7 +106,7 @@
                       </div>
                       <div class="item__field">
                         <h3 class="field__label">Tamanho:</h3>
-                        <p>{{ item.size.name }}</p>
+                        <p>{{ item.itemSize.size.name }}</p>
                       </div>
                       <div class="item__field">
                         <h3 class="field__label">Cor:</h3>
@@ -119,7 +119,9 @@
                     </div>
                     <div
                       class="customer__sizings"
-                      *ngIf="item.size.id === 1 && order.customer.sizings"
+                      *ngIf="
+                        item.itemSize.size.id === 1 && order.customer.sizings
+                      "
                     >
                       <div class="sizings">
                         <div
@@ -293,6 +295,7 @@
 </div>
 <mat-paginator
   [pageSizeOptions]="[5, 10, 25, 100]"
+  showFirstLastButtons
   aria-label="Select page of orders"
   class="table__paginator"
 >
