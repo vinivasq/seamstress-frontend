@@ -158,6 +158,7 @@ export class ItemComponent implements OnInit {
       itemFabrics: this.form.getRawValue().itemFabrics as unknown as number[],
       itemSizes: this.form.getRawValue().itemSizes as unknown as number[],
     };
+    const itemSizes = this.item?.itemSizes;
 
     if (itemAttributes.set?.length === 0) {
       setId = null;
@@ -199,8 +200,26 @@ export class ItemComponent implements OnInit {
       });
     });
     itemAttributes.itemSizes.forEach((is) => {
-      this.item.itemSizes.push({ itemId: this.item.id, sizeId: is });
+      let itemSizeId = itemSizes?.find(
+        (itemSize) => itemSize.sizeId === is
+      )?.id;
+
+      if (itemSizeId) {
+        this.item.itemSizes.push({
+          id: itemSizeId,
+          itemId: this.item.id,
+          sizeId: is,
+        });
+      } else {
+        this.item.itemSizes.push({
+          id: 0,
+          itemId: this.item.id,
+          sizeId: is,
+        });
+      }
     });
+
+    this._spinner.isLoading = false;
 
     this._itemService[this.requestMethod](this.item).subscribe({
       next: () => {
