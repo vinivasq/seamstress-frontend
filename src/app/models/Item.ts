@@ -11,6 +11,6 @@ export interface Item {
   itemColors: ItemColors[];
   itemSizes: ItemSizes[];
   itemFabrics: ItemFabrics[];
-  imageURL?: string;
+  imageURL: string;
   price: number;
 }
