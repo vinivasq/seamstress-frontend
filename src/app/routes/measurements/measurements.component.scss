@@ -1,0 +1,53 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  max-width: 31.25rem;
+  margin: auto;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  margin: auto;
+  gap: 1rem;
+}
+
+.form__header {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.measurements {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-end;
+  width: 100%;
+}
+
+.measurement {
+  display: flex;
+  width: 100%;
+  gap: 0.5rem;
+}
+
+.measure {
+  flex-grow: 1;
+}
+
+.value {
+  max-width: 7.625rem;
+}
+
+.form__footer {
+  padding: 0 1rem 1rem 1rem;
+  text-align: end;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  display: none;
+}
