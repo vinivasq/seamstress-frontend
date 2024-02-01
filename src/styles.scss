@@ -1,5 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
-@use "@angular/material" as mat;
+:root {
+  --mat-select-focused-arrow-color: white !important;
+}
 
 html,
 body {
@@ -28,6 +30,16 @@ p {
 .mat-primary .mat-pseudo-checkbox-checked.mat-pseudo-checkbox-full,
 .mat-primary .mat-pseudo-checkbox-indeterminate.mat-pseudo-checkbox-full {
   background: #69f0ae !important;
+}
+
+.mdc-text-field--focused:not(.mdc-text-field--disabled) .mdc-floating-label {
+  color: white !important;
+}
+
+.mat-primary .mat-pseudo-checkbox-checked.mat-pseudo-checkbox-minimal::after,
+.mat-primary
+  .mat-pseudo-checkbox-indeterminate.mat-pseudo-checkbox-minimal::after {
+  color: #69f0ae !important;
 }
 
 .mat-mdc-tab-body-wrapper {
