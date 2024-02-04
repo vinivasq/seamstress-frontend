@@ -5,11 +5,13 @@ import {
   FormControl,
   Validators,
 } from '@angular/forms';
+import { MatSelectChange } from '@angular/material/select';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { Item } from 'src/app/models/Item';
 import { ItemSizes } from 'src/app/models/ItemSizes';
 import { ItemService } from 'src/app/services/item.service';
+import { ItemSizeService } from 'src/app/services/itemSize.service';
 import { SpinnerService } from 'src/app/services/spinner.service';
 
 @Component({
@@ -24,9 +26,10 @@ export class MeasurementsComponent implements OnInit {
   itemSize: ItemSizes;
 
   form = this._formBuilder.group({
+    id: [0],
     itemId: [0],
-    size: ['', Validators.required],
-    measurements: new FormArray([this.createMeasurement()]),
+    sizeId: ['', Validators.required],
+    measurements: new FormArray([]),
   });
 
   get measurementsArray(): FormArray {
@@ -36,7 +39,7 @@ export class MeasurementsComponent implements OnInit {
   constructor(
     private _formBuilder: FormBuilder,
     private _activeRoute: ActivatedRoute,
-    private _itemService: ItemService,
+    private _itemSizeService: ItemSizeService,
     private _toastrService: ToastrService,
     private _router: Router,
     private _spinner: SpinnerService
@@ -44,24 +47,72 @@ export class MeasurementsComponent implements OnInit {
 
   ngOnInit() {
     this.itemId = +this._activeRoute.snapshot.paramMap.get('id');
-    this.getItem(this.itemId);
+    this.getItemSizes(this.itemId);
   }
 
-  getItem(id: number) {
+  getItemSizes(id: number) {
     this._spinner.isLoading = true;
-    this._itemService
-      .getItemById(id)
+    this._itemSizeService
+      .getItemSizes(id)
       .subscribe({
-        next: (data: Item) => {
-          this.item = data;
-          this.itemSizes = this.item.itemSizes.sort(
-            (a, b) => a.size.id - b.size.id
-          );
+        next: (data: ItemSizes[]) => {
+          this.itemSizes = data;
+          this.itemSizes = this.itemSizes.sort((a, b) => a.size.id - b.size.id);
+          this.itemSize = this.itemSizes[0];
+          this.item = this.itemSize.item;
 
+          const id = this.form.get('id') as FormControl;
           const itemId = this.form.get('itemId') as FormControl;
-          const size = this.form.get('size') as FormControl;
+          const sizeId = this.form.get('sizeId') as FormControl;
+          const measurements = this.form.get('measurements') as FormArray;
+
+          if (this.itemSize.measurements.length > 0) {
+            this.itemSize.measurements.forEach(() => this.addMeasure());
+          }
+
+          id.patchValue(this.itemSize.id);
           itemId.patchValue(this.item.id);
-          size.patchValue(this.itemSizes[0].id);
+          sizeId.patchValue(this.itemSize.sizeId);
+          measurements.patchValue(this.itemSize.measurements);
+        },
+        error: () => {
+          this._toastrService.error('Erro ao buscar modelo');
+          this._router.navigateByUrl('dashboard/items');
+        },
+      })
+      .add(() => (this._spinner.isLoading = false));
+  }
+
+  getItemSize(e: MatSelectChange) {
+    if (!(e.value > 0)) {
+      this._toastrService.error('Tamanho inválido');
+      return;
+    }
+
+    const itemSizeId = this.itemSizes.find(
+      (itemSize) => itemSize.sizeId == e.value
+    ).id;
+
+    this._spinner.isLoading = true;
+    this._itemSizeService
+      .getItemSizeById(itemSizeId)
+      .subscribe({
+        next: (data: ItemSizes) => {
+          this.itemSize = data;
+
+          const id = this.form.get('id') as FormControl;
+          const measurements = this.form.get('measurements') as FormControl;
+          const sizeId = this.form.get('sizeId') as FormControl;
+
+          this.clearMeasurementsArray();
+
+          if (this.itemSize.measurements.length > 0) {
+            this.itemSize.measurements.forEach(() => this.addMeasure());
+          }
+
+          id.patchValue(this.itemSize.id);
+          sizeId.patchValue(this.itemSize.sizeId);
+          measurements.patchValue(this.itemSize.measurements);
         },
         error: () => {
           this._toastrService.error('Erro ao buscar modelo');
@@ -73,6 +124,8 @@ export class MeasurementsComponent implements OnInit {
 
   createMeasurement() {
     return this._formBuilder.group({
+      id: 0,
+      itemSizeId: 0,
       measure: [null, Validators.required],
       value: [null, Validators.required],
     });
@@ -85,7 +138,7 @@ export class MeasurementsComponent implements OnInit {
 
   removeMeasure(index: number) {
     const measurements = this.form.get('measurements') as FormArray;
-    if (index >= 0 && index < measurements.length) {
+    if (index >= 0) {
       measurements.removeAt(index);
     }
   }
@@ -96,6 +149,45 @@ export class MeasurementsComponent implements OnInit {
       return;
     }
 
+    this._spinner.isLoading = true;
+
+    this.itemSize = this.form.getRawValue() as unknown as ItemSizes;
+    this.itemSize.measurements.map((measurement) => {
+      measurement.ItemSizeId = this.itemSize.id;
+    });
+
     console.log(this.form.getRawValue());
+    console.log(this.itemSize);
+
+    this._itemSizeService
+      .updateItemSize(this.itemSize)
+      .subscribe({
+        next: (data: ItemSizes) => {
+          this.itemSize = data;
+
+          console.log(data);
+
+          const id = this.form.get('id') as FormControl;
+          const measurements = this.form.get('measurements') as FormControl;
+          const sizeId = this.form.get('sizeId') as FormControl;
+
+          id.patchValue(this.itemSize.id);
+          sizeId.patchValue(this.itemSize.sizeId);
+          measurements.setValue(this.itemSize.measurements);
+
+          this._toastrService.success('Medida Salva');
+        },
+        error: (error: any) => {
+          this._toastrService.error('Erro ao salvar a medida');
+          console.log(error);
+        },
+      })
+      .add(() => (this._spinner.isLoading = false));
+  }
+
+  clearMeasurementsArray() {
+    while (this.measurementsArray.length !== 0) {
+      this.measurementsArray.removeAt(0);
+    }
   }
 }

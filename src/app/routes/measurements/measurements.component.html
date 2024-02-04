@@ -15,10 +15,13 @@
         <h2>Medidas {{ this.item?.name }}</h2>
         <mat-form-field appearance="outline">
           <mat-label>Tamanho</mat-label>
-          <mat-select formControlName="size">
+          <mat-select
+            formControlName="sizeId"
+            (selectionChange)="getItemSize($event)"
+          >
             <mat-option
               *ngFor="let itemSize of itemSizes"
-              [value]="itemSize.id"
+              [value]="itemSize.size.id"
             >
               {{ itemSize.size.name }}
             </mat-option>
@@ -63,9 +66,14 @@
           </button>
         </div>
 
-        <button mat-icon-button color="accent" (click)="addMeasure()">
-          <mat-icon>add_circle_outline</mat-icon>
-        </button>
+        <div class="measurements__footer">
+          <h3 *ngIf="measurementsArray.length === 0">
+            Nenhuma medida informada para o tamanho.
+          </h3>
+          <button mat-icon-button color="accent" (click)="addMeasure()">
+            <mat-icon>add_circle_outline</mat-icon>
+          </button>
+        </div>
       </div>
     </div>
   </mat-card-content>

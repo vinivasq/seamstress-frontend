@@ -8,5 +8,5 @@ export interface ItemSizes {
   item?: Item;
   sizeId: number;
   size?: Size;
-  meeasurements?: ItemSizeMeasurement[];
+  measurements?: ItemSizeMeasurement[];
 }
