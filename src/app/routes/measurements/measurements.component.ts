@@ -56,7 +56,7 @@ export class MeasurementsComponent implements OnInit {
       .getItemSizes(id)
       .subscribe({
         next: (data: ItemSizes[]) => {
-          this.itemSizes = data;
+          this.itemSizes = data.filter((itemSize) => itemSize.sizeId !== 1);
           this.itemSizes = this.itemSizes.sort((a, b) => a.size.id - b.size.id);
           this.itemSize = this.itemSizes[0];
           this.item = this.itemSize.item;
