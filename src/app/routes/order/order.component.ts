@@ -115,6 +115,16 @@ export class OrderComponent implements OnInit {
     );
   }
 
+  updateItemSizes() {
+    this._itemOrderService.updateItemSizes().subscribe({
+      next: () => this._toastrService.success('Deu certo'),
+      error: (err: any) => {
+        this._toastrService.error('deu errado');
+        console.log(err);
+      },
+    });
+  }
+
   public columnHeader(header: string): string {
     return formatHeader(header);
   }

@@ -11,6 +11,10 @@ export class ItemOrderService {
 
   constructor(private client: HttpClient) {}
 
+  updateItemSizes() {
+    return this.client.get(`${this._baseURL}/updateItemSizes`).pipe(take(1));
+  }
+
   delete(id: number) {
     return this.client.delete(`${this._baseURL}/${id}`).pipe(take(1));
   }

@@ -13,6 +13,9 @@
   <mat-card [formGroup]="form">
     <mat-card-header class="order__header">
       <h1>Informações do pedido</h1>
+      <button mat-raised-button color="primary" (click)="updateItemSizes()">
+        Update ItemSizes
+      </button>
       <!-- <p>Form value: {{ form.value | json }}</p> -->
       <mat-divider></mat-divider>
     </mat-card-header>
