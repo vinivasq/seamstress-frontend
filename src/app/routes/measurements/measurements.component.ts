@@ -163,8 +163,6 @@ export class MeasurementsComponent implements OnInit {
         next: (data: ItemSizes) => {
           this.itemSize = data;
 
-          console.log(data);
-
           const id = this.form.get('id') as FormControl;
           const measurements = this.form.get('measurements') as FormControl;
           const sizeId = this.form.get('sizeId') as FormControl;

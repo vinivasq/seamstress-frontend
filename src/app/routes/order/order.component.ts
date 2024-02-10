@@ -440,7 +440,7 @@ export class OrderComponent implements OnInit {
     this._dialog.open(DialogComponent, {
       data: {
         title: `Deseja excluir o item ${item.item}? `,
-        content: 'Tem certeza qeu deseja excluir o item do pedido?',
+        content: 'Tem certeza que deseja excluir o item do pedido?',
         action: () => {
           this.removeData(id, item);
         },
@@ -452,7 +452,7 @@ export class OrderComponent implements OnInit {
     this._dialog.open(DialogComponent, {
       data: {
         title: `Deseja excluir o pedido? `,
-        content: 'Tem certeza qeu deseja excluir o pedido?',
+        content: 'Tem certeza que deseja excluir o pedido?',
         action: () => {
           this.deleteOrder();
         },
