@@ -12,6 +12,7 @@ export class TitleComponent implements OnInit {
   @Input() btnLabel = '';
   @Input() icon = '';
   @Input() listButton = false;
+  @Input() showMenu = false;
 
   constructor() {}
 

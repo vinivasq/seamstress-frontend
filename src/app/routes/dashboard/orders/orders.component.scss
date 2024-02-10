@@ -32,6 +32,8 @@ tr.order-row:not(.order-expanded-row):active {
   overflow: hidden;
   display: flex;
   justify-content: space-between;
+  z-index: 1;
+  position: relative;
 }
 
 .order__actions {
@@ -90,20 +92,15 @@ tr.order-row:not(.order-expanded-row):active {
   }
 }
 
-.customer__sizings {
+.sizings {
   display: flex;
   flex-direction: column;
+  flex-wrap: wrap;
+  height: 8.8rem;
+  align-items: flex-start;
 
-  .sizings {
-    display: flex;
-    flex-direction: column;
-    flex-wrap: wrap;
-    height: 8.8rem;
-    align-items: flex-start;
-
-    .item__field {
-      margin-right: 1rem;
-    }
+  .item__field {
+    margin-right: 1rem;
   }
 }
 

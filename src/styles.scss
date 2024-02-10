@@ -1,4 +1,7 @@
 /* You can add global styles to this file, and also import other style files */
+:root {
+  --mat-select-focused-arrow-color: white !important;
+}
 
 html,
 body {
@@ -13,10 +16,34 @@ p {
   margin: 0 !important;
 }
 
+.toolbar__content {
+  width: 100%;
+}
+
 .mat-mdc-tab-body-content,
 .mat-mdc-tab-body,
 .mat-mdc-tab-body-active {
   overflow: hidden !important;
+}
+
+.mat-mdc-option.mdc-list-item--selected:not(.mdc-list-item--disabled)
+  .mdc-list-item__primary-text {
+  color: white !important;
+}
+
+.mat-primary .mat-pseudo-checkbox-checked.mat-pseudo-checkbox-full,
+.mat-primary .mat-pseudo-checkbox-indeterminate.mat-pseudo-checkbox-full {
+  background: #69f0ae !important;
+}
+
+.mdc-text-field--focused:not(.mdc-text-field--disabled) .mdc-floating-label {
+  color: white !important;
+}
+
+.mat-primary .mat-pseudo-checkbox-checked.mat-pseudo-checkbox-minimal::after,
+.mat-primary
+  .mat-pseudo-checkbox-indeterminate.mat-pseudo-checkbox-minimal::after {
+  color: #69f0ae !important;
 }
 
 .mat-mdc-tab-body-wrapper {

@@ -40,6 +40,7 @@ import { DashboardComponent } from './routes/dashboard/dashboard.component';
 import { DialogComponent } from './components/dialog/dialog.component';
 import { DialogCarouselComponent } from './components/dialogCarousel/dialogCarousel.component';
 import { ItemComponent } from './routes/item/item.component';
+import { MeasurementsComponent } from './routes/measurements/measurements.component';
 import { OrderComponent } from './routes/order/order.component';
 import { OrdersComponent } from './routes/dashboard/orders/orders.component';
 import { ProfileComponent } from './routes/user/profile/profile.component';
@@ -52,7 +53,6 @@ import { FabricComponent } from './routes/attributes/fabric/fabric.component';
 import { SizeComponent } from './routes/attributes/size/size.component';
 import { SetComponent } from './routes/attributes/set/set.component';
 import { AttributesComponent } from './routes/attributes/attributes.component';
-import { AttributesNavigationComponent } from './components/attributesNavigation/attributesNavigation.component';
 import { CustomersComponent } from './routes/dashboard/customers/customers.component';
 import { CustomerComponent } from './routes/customer/customer.component';
 import { ButtonAddComponent } from './components/buttonAdd/buttonAdd.component';
@@ -78,13 +78,13 @@ import { JwtInterceptor } from './interceptors/jwt.interceptor';
     DialogComponent,
     DialogCarouselComponent,
     AttributesComponent,
-    AttributesNavigationComponent,
     ColorComponent,
     FabricComponent,
     SizeComponent,
     SetComponent,
     ItemComponent,
     ItemsComponent,
+    MeasurementsComponent,
     OrderComponent,
     OrdersComponent,
     UserComponent,

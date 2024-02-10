@@ -1,0 +1,85 @@
+<app-title
+  title="Medidas do Modelo"
+  icon="straighten"
+  descripton="Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorem hic labore quas aliquam nemo."
+  [listButton]="true"
+  btnLabel="Modelo"
+  route="/item/{{ this.itemId }}"
+>
+</app-title>
+
+<mat-card class="container">
+  <mat-card-content>
+    <div [formGroup]="form" class="form">
+      <div class="form__header">
+        <h2>Medidas {{ this.item?.name }}</h2>
+        <mat-form-field appearance="outline">
+          <mat-label>Tamanho</mat-label>
+          <mat-select
+            formControlName="sizeId"
+            (selectionChange)="getItemSize($event)"
+          >
+            <mat-option
+              *ngFor="let itemSize of itemSizes"
+              [value]="itemSize.size.id"
+            >
+              {{ itemSize.size.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div formArrayName="measurements" class="measurements">
+        <div
+          *ngFor="let measurement of measurementsArray.controls; let i = index"
+          [formGroupName]="i"
+          class="measurement"
+        >
+          <mat-form-field class="measure">
+            <mat-label>Medida</mat-label>
+            <input matInput formControlName="measure" maxlength="40" />
+            <mat-error *ngIf="measurement.get('measure').hasError('required')">
+              Campo obrigatório
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field class="value" floatLabel="always">
+            <mat-label>Valor</mat-label>
+            <input
+              matInput
+              formControlName="value"
+              pattern="^\d{1,3}(?:\.\d{1,2})?$"
+              type="number"
+              placeholder="000.00"
+            />
+            <span matTextSuffix>cm</span>
+            <mat-error *ngIf="measurement.get('value').hasError('required')">
+              Campo obrigatório
+            </mat-error>
+            <mat-error *ngIf="measurement.get('value').hasError('pattern')">
+              Medida inválida
+            </mat-error>
+          </mat-form-field>
+
+          <button mat-icon-button color="warn" (click)="removeMeasure(i)">
+            <mat-icon>remove_circle_outline</mat-icon>
+          </button>
+        </div>
+
+        <div class="measurements__footer">
+          <h3 *ngIf="measurementsArray.length === 0">
+            Nenhuma medida informada para o tamanho.
+          </h3>
+          <button mat-icon-button color="accent" (click)="addMeasure()">
+            <mat-icon>add_circle_outline</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+  </mat-card-content>
+  <mat-card-footer class="form__footer">
+    <button mat-raised-button color="accent" (click)="saveMeasurement()">
+      <mat-icon>check</mat-icon>Salvar
+    </button>
+  </mat-card-footer>
+</mat-card>

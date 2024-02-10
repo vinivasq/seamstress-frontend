@@ -90,29 +90,33 @@ export class CustomerComponent implements OnInit {
 
     this.requestMethod = 'patch';
     this._spinnerService.isLoading = true;
-    this._customerService.getCustomerByID(+customerId).subscribe({
-      next: (customer: Customer) => {
-        this.customer = { ...customer };
+    this._customerService
+      .getCustomerByID(+customerId)
+      .subscribe({
+        next: (customer: Customer) => {
+          this.customer = { ...customer };
 
-        const firstFormGroup = this.form.get('firstFormGroup') as FormControl;
-        firstFormGroup.patchValue(this.customer);
+          const firstFormGroup = this.form.get('firstFormGroup') as FormControl;
+          firstFormGroup.patchValue(this.customer);
 
-        const secondFormGroup = this.form.get('secondFormGroup') as FormControl;
-        secondFormGroup.patchValue(this.customer);
+          const secondFormGroup = this.form.get(
+            'secondFormGroup'
+          ) as FormControl;
+          secondFormGroup.patchValue(this.customer);
 
-        const thirdFormGroup = this.form.get('thirdFormGroup') as FormControl;
-        thirdFormGroup.patchValue(this.customer.sizings);
-      },
-      error: (error) => {
-        console.log(error);
-        this._toastr.error(
-          'Não foi possível carregar o cliente',
-          'Erro ao carregar'
-        );
-        this._spinnerService.isLoading = false;
-      },
-      complete: () => (this._spinnerService.isLoading = false),
-    });
+          const thirdFormGroup = this.form.get('thirdFormGroup') as FormControl;
+          thirdFormGroup.patchValue(this.customer.sizings);
+        },
+        error: (error) => {
+          console.log(error);
+          this._toastr.error(
+            'Não foi possível carregar o cliente',
+            'Erro ao carregar'
+          );
+          this._spinnerService.isLoading = false;
+        },
+      })
+      .add(() => (this._spinnerService.isLoading = false));
   }
 
   saveCustomer(): void {
@@ -120,6 +124,8 @@ export class CustomerComponent implements OnInit {
       this._toastr.warning('Campos inválidos');
       return;
     }
+
+    this._spinnerService.isLoading = true;
 
     let sizings = Object.values(this.form.getRawValue().thirdFormGroup).map(
       (value) => value
@@ -138,17 +144,21 @@ export class CustomerComponent implements OnInit {
       ? (this.customer = { ...formValues })
       : (this.customer = { id: this.customer.id, ...formValues });
 
-    this._customerService[this.requestMethod](this.customer).subscribe({
-      next: () => {
-        this._toastr.success('Cliente salvo com sucesso', 'Salvo com sucesso');
+    this._customerService[this.requestMethod](this.customer)
+      .subscribe({
+        next: () => {
+          this._toastr.success(
+            'Cliente salvo com sucesso',
+            'Salvo com sucesso'
+          );
 
-        this._router.navigate(['/dashboard/customers']);
-      },
-      error: (error: HttpErrorResponse) => {
-        this._toastr.error(error.error, 'Erro ao salvar');
-      },
-      complete: () => {},
-    });
+          this._router.navigate(['/dashboard/customers']);
+        },
+        error: (error: HttpErrorResponse) => {
+          this._toastr.error(error.error, 'Erro ao salvar');
+        },
+      })
+      .add(() => (this._spinnerService.isLoading = false));
   }
 
   getAddress() {

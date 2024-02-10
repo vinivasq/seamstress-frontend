@@ -26,6 +26,7 @@ import { SpinnerService } from 'src/app/services/spinner.service';
 export class ItemComponent implements OnInit {
   isMobile: boolean;
   requestMethod = 'post';
+  itemId = 0;
 
   form = this._formBuilder.group({
     name: ['', Validators.required],
@@ -83,62 +84,64 @@ export class ItemComponent implements OnInit {
   }
 
   loadItem() {
-    const itemId = this._activeRoute.snapshot.paramMap.get('id');
-    if (itemId === null) return;
+    this.itemId = +this._activeRoute.snapshot.paramMap.get('id');
+    if (this.itemId === 0) return;
 
     this._spinner.isLoading = true;
     this.requestMethod = 'put';
 
-    this._itemService.getItemById(+itemId).subscribe({
-      next: async (data: Item) => {
-        this.item = { ...data };
+    this._itemService
+      .getItemById(this.itemId)
+      .subscribe({
+        next: async (data: Item) => {
+          this.item = { ...data };
 
-        if (this.item.imageURL?.length > 0) {
-          const images = this.item.imageURL.split(';');
+          if (this.item.imageURL?.length > 0) {
+            const images = this.item.imageURL.split(';');
 
-          images.forEach(async (image) => {
-            const response = await this._imageService.getImage(image);
-            const imageFile = new File([response], image);
+            images.forEach(async (image) => {
+              const response = await this._imageService.getImage(image);
+              const imageFile = new File([response], image);
 
-            this.images.push(imageFile);
-          });
-        }
+              this.images.push(imageFile);
+            });
+          }
 
-        const name = this.form.get('name') as FormControl;
-        name.patchValue(this.item.name);
+          const name = this.form.get('name') as FormControl;
+          name.patchValue(this.item.name);
 
-        const set = this.form.get('set') as FormControl;
-        set.patchValue(this.item.set?.name);
+          const set = this.form.get('set') as FormControl;
+          set.patchValue(this.item.set?.name);
 
-        const imageURL = this.form.get('imageURL') as FormControl;
-        imageURL.patchValue(this.item.imageURL);
+          const imageURL = this.form.get('imageURL') as FormControl;
+          imageURL.patchValue(this.item.imageURL);
 
-        const price = this.form.get('price') as FormControl;
-        price.patchValue(this.item.price);
+          const price = this.form.get('price') as FormControl;
+          price.patchValue(this.item.price);
 
-        const itemColors = this.form.get('itemColors') as FormControl;
-        itemColors.patchValue(
-          this.item.itemColors.map((color: ItemColors) => color.colorId)
-        );
+          const itemColors = this.form.get('itemColors') as FormControl;
+          itemColors.patchValue(
+            this.item.itemColors.map((color: ItemColors) => color.colorId)
+          );
 
-        const itemFabrics = this.form.get('itemFabrics') as FormControl;
-        itemFabrics.patchValue(
-          this.item.itemFabrics.map((fabric: ItemFabrics) => fabric.fabricId)
-        );
+          const itemFabrics = this.form.get('itemFabrics') as FormControl;
+          itemFabrics.patchValue(
+            this.item.itemFabrics.map((fabric: ItemFabrics) => fabric.fabricId)
+          );
 
-        const itemSizes = this.form.get('itemSizes') as FormControl;
-        itemSizes.patchValue(
-          this.item.itemSizes.map((size: ItemSizes) => size.sizeId)
-        );
-      },
-      error: () => {
-        this._toastrService.error(
-          'Não foi possível carregar o modelo',
-          'Erro ao carregar'
-        );
-      },
-      complete: () => (this._spinner.isLoading = false),
-    });
+          const itemSizes = this.form.get('itemSizes') as FormControl;
+          itemSizes.patchValue(
+            this.item.itemSizes.map((size: ItemSizes) => size.sizeId)
+          );
+        },
+        error: () => {
+          this._toastrService.error(
+            'Não foi possível carregar o modelo',
+            'Erro ao carregar'
+          );
+        },
+      })
+      .add(() => (this._spinner.isLoading = false));
   }
 
   async saveItem() {
@@ -157,6 +160,7 @@ export class ItemComponent implements OnInit {
       itemFabrics: this.form.getRawValue().itemFabrics as unknown as number[],
       itemSizes: this.form.getRawValue().itemSizes as unknown as number[],
     };
+    const itemSizes = this.item?.itemSizes;
 
     if (itemAttributes.set?.length === 0) {
       setId = null;
@@ -198,30 +202,49 @@ export class ItemComponent implements OnInit {
       });
     });
     itemAttributes.itemSizes.forEach((is) => {
-      this.item.itemSizes.push({ itemId: this.item.id, sizeId: is });
+      let itemSizeId = itemSizes?.find(
+        (itemSize) => itemSize.sizeId === is
+      )?.id;
+
+      if (itemSizeId) {
+        this.item.itemSizes.push({
+          id: itemSizeId,
+          itemId: this.item.id,
+          sizeId: is,
+        });
+      } else {
+        this.item.itemSizes.push({
+          id: 0,
+          itemId: this.item.id,
+          sizeId: is,
+        });
+      }
     });
 
-    this._itemService[this.requestMethod](this.item).subscribe({
-      next: () => {
-        this._toastrService.success(
-          'Modelo salvo com sucesso',
-          'Salvo com sucesso'
-        );
+    this._spinner.isLoading = false;
 
-        this.form.reset();
-        this.images = null;
-        this._router.navigate(['/item']);
-      },
-      error: () => {
-        console.log('erro');
+    this._itemService[this.requestMethod](this.item)
+      .subscribe({
+        next: () => {
+          this._toastrService.success(
+            'Modelo salvo com sucesso',
+            'Salvo com sucesso'
+          );
 
-        this._toastrService.error(
-          'Não foi possível salvar o modelo',
-          'Erro ao salvar'
-        );
-      },
-      complete: () => (this._spinner.isLoading = false),
-    });
+          this.form.reset();
+          this.images = null;
+          this._router.navigate(['/item']);
+        },
+        error: () => {
+          console.log('erro');
+
+          this._toastrService.error(
+            'Não foi possível salvar o modelo',
+            'Erro ao salvar'
+          );
+        },
+      })
+      .add(() => (this._spinner.isLoading = false));
   }
 
   onSelect(event) {
@@ -245,25 +268,28 @@ export class ItemComponent implements OnInit {
         title: `Deseja excluir o modelo ${item.name}?`,
         content: 'Tem certeza que deseja excluir o modelo?',
         action: () => {
-          this._itemService.delete(item.id).subscribe({
-            next: (result: any) => {
-              if (result.message === 'Deletado com sucesso') {
-                this._toastrService.success(
-                  'Modelo deletado com sucesso',
-                  'Modelo deletado'
+          this._spinner.isLoading = true;
+          this._itemService
+            .delete(item.id)
+            .subscribe({
+              next: (result: any) => {
+                if (result.message === 'Deletado com sucesso') {
+                  this._toastrService.success(
+                    'Modelo deletado com sucesso',
+                    'Modelo deletado'
+                  );
+                  this._router.navigate(['/dashboard/items']);
+                }
+              },
+              error: (error) => {
+                console.log(error);
+                this._toastrService.error(
+                  'Erro ao deletar',
+                  'Ocorreu um erro ao deletar o modelo'
                 );
-                this._router.navigate(['/dashboard/items']);
-              }
-            },
-            error: (error) => {
-              console.log(error);
-              this._toastrService.error(
-                'Erro ao deletar',
-                'Ocorreu um erro ao deletar o modelo'
-              );
-            },
-            complete: () => {},
-          });
+              },
+            })
+            .add(() => (this._spinner.isLoading = false));
         },
       },
     });

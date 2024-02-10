@@ -115,25 +115,28 @@ export class CustomersComponent implements AfterViewInit {
         title: `Deseja excluir o(a) cliente ${name}?`,
         content: 'Tem certeza qeu deseja excluir o(a) cliente?',
         action: () => {
-          this._customerService.deleteCustomer(id).subscribe({
-            next: (result: any) => {
-              if (result.message === 'Deletado com sucesso') {
-                this._toastrService.success(
-                  'Cliente deletado com sucesso',
-                  'Cliente deletado'
+          this._spinnerService.isLoading = true;
+          this._customerService
+            .deleteCustomer(id)
+            .subscribe({
+              next: (result: any) => {
+                if (result.message === 'Deletado com sucesso') {
+                  this._toastrService.success(
+                    'Cliente deletado com sucesso',
+                    'Cliente deletado'
+                  );
+                  this.getCustomers();
+                }
+              },
+              error: (error) => {
+                console.log(error);
+                this._toastrService.error(
+                  'Não foi possível deletar o cliente',
+                  'Erro ao deletar'
                 );
-                this.getCustomers();
-              }
-            },
-            error: (error) => {
-              console.log(error);
-              this._toastrService.error(
-                'Não foi possível deletar o cliente',
-                'Erro ao deletar'
-              );
-            },
-            complete: () => {},
-          });
+              },
+            })
+            .add(() => (this._spinnerService.isLoading = false));
         },
       },
     });
