@@ -1,6 +1,6 @@
 export class ItemSizeMeasurement {
-  Id: number;
-  ItemSizeId: number;
-  Measure: string;
-  Value: number;
+  id: number;
+  itemSizeId: number;
+  measure: string;
+  value: number;
 }

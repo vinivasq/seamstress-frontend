@@ -153,11 +153,9 @@ export class MeasurementsComponent implements OnInit {
 
     this.itemSize = this.form.getRawValue() as unknown as ItemSizes;
     this.itemSize.measurements.map((measurement) => {
-      measurement.ItemSizeId = this.itemSize.id;
+      measurement.itemSizeId = this.itemSize.id;
+      measurement.measure = measurement.measure.trim();
     });
-
-    console.log(this.form.getRawValue());
-    console.log(this.itemSize);
 
     this._itemSizeService
       .updateItemSize(this.itemSize)
