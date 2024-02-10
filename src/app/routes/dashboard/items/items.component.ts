@@ -36,19 +36,21 @@ export class ItemsComponent implements OnInit {
   getItems() {
     this._spinner.isLoading = true;
 
-    this._itemService.getItems().subscribe({
-      next: (data: any) => {
-        this.dataSource = new MatTableDataSource(data);
-        this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
-      },
-      error: () =>
-        this._toastrService.error(
-          'Erro ao listar os modelos',
-          'Erro ao listar'
-        ),
-      complete: () => (this._spinner.isLoading = false),
-    });
+    this._itemService
+      .getItems()
+      .subscribe({
+        next: (data: any) => {
+          this.dataSource = new MatTableDataSource(data);
+          this.dataSource.paginator = this.paginator;
+          this.dataSource.sort = this.sort;
+        },
+        error: () =>
+          this._toastrService.error(
+            'Erro ao listar os modelos',
+            'Erro ao listar'
+          ),
+      })
+      .add(() => (this._spinner.isLoading = false));
   }
 
   filterItems(value: string) {

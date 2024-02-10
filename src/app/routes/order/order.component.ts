@@ -237,40 +237,44 @@ export class OrderComponent implements OnInit {
     this._spinner.isLoading = true;
     this.requestMethod = 'put';
 
-    this._orderService.getOrderById(+orderId).subscribe({
-      next: (data: Order) => {
-        this.order = data;
+    this._orderService
+      .getOrderById(+orderId)
+      .subscribe({
+        next: (data: Order) => {
+          this.order = data;
 
-        this.form.patchValue({
-          customer: this.order.customer.name,
-          customerId: this.order.customer.id,
-          executor: this.order.executor.name,
-          executorId: this.order.executor.id,
-          orderedAt: this.order.orderedAt,
-          deadline: this.order.deadline,
-          description: this.order.description,
-          total: this.order.total,
-        });
-
-        for (let i = 0; i < this.order.itemOrders.length; i++) {
-          this.itemOrders.push(this.createItemOrder(this.order.itemOrders[i]));
-
-          const { item, ...itemOrderResponse } = this.order.itemOrders[i];
-
-          this.addData({
-            ...itemOrderResponse,
-            item: item.name,
-            price: item.price,
+          this.form.patchValue({
+            customer: this.order.customer.name,
+            customerId: this.order.customer.id,
+            executor: this.order.executor.name,
+            executorId: this.order.executor.id,
+            orderedAt: this.order.orderedAt,
+            deadline: this.order.deadline,
+            description: this.order.description,
+            total: this.order.total,
           });
-        }
-      },
-      error: () =>
-        this._toastrService.error(
-          'Não foi possível carregar o pedido',
-          'Erro ao carregar'
-        ),
-      complete: () => (this._spinner.isLoading = false),
-    });
+
+          for (let i = 0; i < this.order.itemOrders.length; i++) {
+            this.itemOrders.push(
+              this.createItemOrder(this.order.itemOrders[i])
+            );
+
+            const { item, ...itemOrderResponse } = this.order.itemOrders[i];
+
+            this.addData({
+              ...itemOrderResponse,
+              item: item.name,
+              price: item.price,
+            });
+          }
+        },
+        error: () =>
+          this._toastrService.error(
+            'Não foi possível carregar o pedido',
+            'Erro ao carregar'
+          ),
+      })
+      .add(() => (this._spinner.isLoading = false));
   }
 
   saveOrder() {
@@ -301,28 +305,29 @@ export class OrderComponent implements OnInit {
       ...formValues,
     };
 
-    this._orderService[this.requestMethod](this.order).subscribe({
-      next: () => {
-        this._toastrService.success(
-          `${
-            this.requestMethod === 'post' ? 'Cadastrado' : 'Salvo'
-          } com sucesso`,
-          'Pedido salvo com sucesso'
-        );
-        this.form.reset();
-        this.itemOrders.clear();
-        this.newItemOrder.reset();
-        this.dataSource = [];
-        this.disableAttributes();
-        this._router.navigate(['./order']);
-      },
-      error: () =>
-        this._toastrService.error(
-          'Erro ao cadastrar o pedido',
-          'Erro ao Cadastrar'
-        ),
-      complete: () => (this._spinner.isLoading = false),
-    });
+    this._orderService[this.requestMethod](this.order)
+      .subscribe({
+        next: () => {
+          this._toastrService.success(
+            `${
+              this.requestMethod === 'post' ? 'Cadastrado' : 'Salvo'
+            } com sucesso`,
+            'Pedido salvo com sucesso'
+          );
+          this.form.reset();
+          this.itemOrders.clear();
+          this.newItemOrder.reset();
+          this.dataSource = [];
+          this.disableAttributes();
+          this._router.navigate(['./order']);
+        },
+        error: () =>
+          this._toastrService.error(
+            'Erro ao cadastrar o pedido',
+            'Erro ao Cadastrar'
+          ),
+      })
+      .add(() => (this._spinner.isLoading = false));
   }
 
   deleteOrder() {
