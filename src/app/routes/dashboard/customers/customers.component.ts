@@ -6,6 +6,7 @@ import { Subject, debounceTime } from 'rxjs';
 import { DialogComponent } from 'src/app/components/dialog/dialog.component';
 import { TableHeaderComponent } from 'src/app/components/tableHeader/tableHeader.component';
 import { Customer } from 'src/app/models/Customer';
+import { PageParams } from 'src/app/models/PageParams';
 import { PaginatedResult, Pagination } from 'src/app/models/Pagination';
 import { CustomerService } from 'src/app/services/customer.service';
 import { SpinnerService } from 'src/app/services/spinner.service';
@@ -42,9 +43,11 @@ export class CustomersComponent implements AfterViewInit {
 
     this._customerService
       .getCustomers(
-        this.pagination.currentPage,
-        this.pagination.pageSize,
-        this.tableHeaderComponent.filterValue
+        new PageParams(
+          this.pagination.currentPage,
+          this.pagination.pageSize,
+          this.tableHeaderComponent.filterValue
+        )
       )
       .subscribe({
         next: (data: PaginatedResult<any>) => {
@@ -77,9 +80,11 @@ export class CustomersComponent implements AfterViewInit {
         this._spinnerService.isLoading = true;
         this._customerService
           .getCustomers(
-            this.pagination.currentPage,
-            this.pagination.pageSize,
-            term
+            new PageParams(
+              this.pagination.currentPage,
+              this.pagination.pageSize,
+              term
+            )
           )
           .subscribe({
             next: (data: PaginatedResult<any>) => {

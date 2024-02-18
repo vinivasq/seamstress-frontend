@@ -1,5 +1,4 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
 import { MatDrawer } from '@angular/material/sidenav';
 import { DrawerService } from './services/drawer.service';
 import { User } from './models/identity/User';
