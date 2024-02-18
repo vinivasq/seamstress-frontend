@@ -1,8 +1,10 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { take } from 'rxjs';
+import { Observable, map, take } from 'rxjs';
 import { Order } from '../models/Order';
 import { environment } from 'src/environments/environment';
+import { OrderParams } from '../models/OrderParams';
+import { PaginatedResult } from '../models/Pagination';
 
 @Injectable()
 export class OrderService {
@@ -10,8 +12,45 @@ export class OrderService {
 
   constructor(private client: HttpClient) {}
 
-  getOrders() {
-    return this.client.get(this.baseURL).pipe(take(1));
+  getOrders(orderParams: OrderParams): Observable<PaginatedResult<Order[]>> {
+    const paginatedResult = new PaginatedResult<Order[]>();
+    let params = new HttpParams();
+
+    params = params.append('pageNumber', orderParams.page);
+    params = params.append('pageSize', orderParams.itemsPerPage);
+    params = params.append(
+      'orderedAtStart',
+      orderParams.orderedAtStart.toISOString()
+    );
+    params = params.append(
+      'orderedAtEnd',
+      orderParams.orderedAtEnd.toISOString()
+    );
+
+    if (orderParams.term != null && orderParams.term.length > 0)
+      params = params.append('term', orderParams.term);
+
+    if (orderParams.customerId != null && orderParams.customerId > 0)
+      params = params.append('customerId', orderParams.customerId);
+
+    if (orderParams.steps != null && orderParams.steps.length > 0)
+      params = params.appendAll({ steps: orderParams.steps });
+
+    return this.client
+      .get<Order[]>(this.baseURL, { observe: 'response', params })
+      .pipe(
+        take(1),
+        map((response) => {
+          paginatedResult.result = response.body;
+          if (response.headers.has('Pagination')) {
+            paginatedResult.pagination = JSON.parse(
+              response.headers.get('Pagination')
+            );
+          }
+
+          return paginatedResult;
+        })
+      );
   }
 
   getPendingOrders() {

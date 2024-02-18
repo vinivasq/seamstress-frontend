@@ -1,0 +1,91 @@
+<app-title
+  [title]="'Consulta de pedidos'"
+  [listButton]="true"
+  [route]="'/dashboard/orders'"
+  [descripton]="
+    'Lorem ipsum dolor sit amet consectetur adipisicing elit. Praesentium laudantium atque alias'
+  "
+  [btnLabel]="'Pendentes'"
+  [icon]="'search'"
+></app-title>
+
+<div class="container">
+  <mat-card [formGroup]="form">
+    <mat-card-header class="order__header">
+      <h1>Filtros</h1>
+      <mat-divider></mat-divider>
+    </mat-card-header>
+    <mat-card-content class="order__info">
+      <div class="info__container">
+        <mat-form-field class="info__field">
+          <mat-label>Cliente</mat-label>
+          <input
+            matInput
+            formControlName="customer"
+            type="text"
+            placeholder="Selecione um Cliente"
+            aria-label="Cliente"
+            [matAutocomplete]="customer"
+          />
+          <mat-autocomplete #customer="matAutocomplete">
+            <mat-option
+              *ngFor="let customer of customers | async"
+              [value]="customer.name"
+              (onSelectionChange)="getCustomerId($event, customer.id)"
+            >
+              {{ customer.name }}
+            </mat-option>
+          </mat-autocomplete>
+          <mat-error *ngIf="form.get('customer')?.hasError('required')">
+            O campo "Cliente" não pode ficar vazio
+          </mat-error>
+        </mat-form-field>
+
+        <div class="info__container">
+          <mat-form-field class="info__field">
+            <mat-label>Período</mat-label>
+            <mat-date-range-input [formGroup]="range" [rangePicker]="picker">
+              <input
+                matStartDate
+                formControlName="start"
+                placeholder="Início"
+              />
+              <input matEndDate formControlName="end" placeholder="Fim" />
+            </mat-date-range-input>
+            <mat-datepicker-toggle
+              matIconSuffix
+              [for]="picker"
+            ></mat-datepicker-toggle>
+            <mat-date-range-picker #picker></mat-date-range-picker>
+
+            <mat-error
+              *ngIf="
+                range.get('start')?.hasError('required') ||
+                range.get('end')?.hasError('required')
+              "
+              >Data inválida</mat-error
+            >
+          </mat-form-field>
+
+          <mat-form-field class="info__field">
+            <mat-label>Status</mat-label>
+            <mat-select formControlName="steps" multiple>
+              <mat-option *ngFor="let step of steps" [value]="step.value">{{
+                step.label
+              }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+    </mat-card-content>
+    <mat-card-actions [align]="'end'">
+      <p style="margin: auto !important">
+        Selected range: {{ form.value | json }}
+      </p>
+      <button mat-raised-button color="accent" (click)="searchOrders()">
+        <mat-icon>search</mat-icon>
+        Buscar
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>
