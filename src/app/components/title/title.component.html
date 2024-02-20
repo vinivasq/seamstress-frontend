@@ -23,6 +23,14 @@
       </button>
 
       <button
+        *ngIf="this.router.url === '/dashboard/orders'"
+        mat-stroked-button
+        routerLink="/report/orders"
+      >
+        Consultar
+      </button>
+
+      <button
         mat-stroked-button
         *ngIf="showMenu"
         [matMenuTriggerFor]="attributesMenu"
