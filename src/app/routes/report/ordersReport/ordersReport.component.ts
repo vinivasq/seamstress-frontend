@@ -137,12 +137,21 @@ export class OrdersReportComponent implements OnInit {
       .getOrders(orderParams)
       .subscribe({
         next: (data) => {
-          this.dataSource = new MatTableDataSource(data.result);
-          this.pagination = data.pagination;
-          this.dataSource.sort = this.sort;
-          if (data.result.length > 0) this.foundOrders = true;
-
-          console.log(data);
+          if (data.result) {
+            this.dataSource = new MatTableDataSource(data.result);
+            this.foundOrders = true;
+            this.pagination = data.pagination;
+            this.dataSource.sort = this.sort;
+          } else {
+            this.dataSource = null;
+            this.pagination = {
+              currentPage: 0,
+              pageSize: 10,
+              totalItems: 1,
+            } as Pagination;
+            this.foundOrders = false;
+            this._toastrService.info('Nenhum pedido encontrado');
+          }
         },
         error: (err: any) => {
           this._toastrService.error('Erro ao buscar pedidos');
