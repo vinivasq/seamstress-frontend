@@ -29,6 +29,88 @@
   width: 100%;
 }
 
+tr.order-detail-row {
+  height: 0;
+}
+
+.order-detail {
+  background-color: #3a3a3a;
+  padding: 0rem 0.5rem;
+  box-shadow: 0px 2px 5px inset #252525a9;
+  border-radius: 4px;
+  overflow: hidden;
+  display: flex;
+  justify-content: space-between;
+  z-index: 1;
+  position: relative;
+}
+
+.order__tab__item {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0 0.5rem;
+}
+
+.item {
+  padding: 1rem;
+}
+
+.item__image {
+  height: 9.375rem;
+  width: auto;
+}
+
+.item__attributes {
+  .item__field {
+    p {
+      white-space: nowrap;
+    }
+  }
+}
+
+.item__description {
+  display: flex;
+  flex-grow: 1;
+  gap: 2rem;
+  width: 100%;
+  align-items: flex-start;
+
+  overflow-x: auto;
+}
+
+.item__field {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  .field__label {
+    margin: 0;
+    white-space: nowrap;
+    font-weight: 500;
+  }
+}
+
+.sizings {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  height: 8.8rem;
+  align-items: flex-start;
+
+  .item__field {
+    margin-right: 1rem;
+  }
+}
+
+.no-orders {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.5rem 0;
+  background-color: #424242;
+  color: #e4e4e4be;
+}
+
 @media screen and (max-width: 768px) {
   .order__header {
     h1 {
@@ -50,5 +132,10 @@
     width: 100%;
     overflow-x: scroll;
     overflow-y: hidden;
+  }
+
+  .table__paginator {
+    padding-bottom: 0.5rem;
+    border-radius: 0px 0px 5px 5px;
   }
 }
