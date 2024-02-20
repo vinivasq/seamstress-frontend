@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-title',
@@ -13,8 +14,11 @@ export class TitleComponent implements OnInit {
   @Input() icon = '';
   @Input() listButton = false;
   @Input() showMenu = false;
+  router: Router;
 
-  constructor() {}
+  constructor(_router: Router) {
+    this.router = _router;
+  }
 
   ngOnInit() {}
 }

@@ -21,6 +21,8 @@ import { SizeComponent } from './routes/attributes/size/size.component';
 import { SetComponent } from './routes/attributes/set/set.component';
 import { AttributesComponent } from './routes/attributes/attributes.component';
 import { MeasurementsComponent } from './routes/measurements/measurements.component';
+import { ReportComponent } from './routes/report/report.component';
+import { OrdersReportComponent } from './routes/report/ordersReport/ordersReport.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'dashboard/orders', pathMatch: 'full' },
@@ -57,6 +59,22 @@ const routes: Routes = [
       {
         path: 'items',
         component: ItemsComponent,
+        canActivate: [roleGuard],
+        data: {
+          role: ['admin', 'requester'],
+        },
+      },
+    ],
+  },
+
+  {
+    path: 'report',
+    component: ReportComponent,
+    canActivate: [authGuard],
+    children: [
+      {
+        path: 'orders',
+        component: OrdersReportComponent,
         canActivate: [roleGuard],
         data: {
           role: ['admin', 'requester'],

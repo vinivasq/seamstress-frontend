@@ -4,6 +4,7 @@ import { Customer } from '../models/Customer';
 import { Observable, map, take } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { PaginatedResult } from '../models/Pagination';
+import { PageParams } from '../models/PageParams';
 
 @Injectable({
   providedIn: 'root',
@@ -14,20 +15,17 @@ export class CustomerService {
   constructor(private client: HttpClient) {}
 
   getCustomers(
-    page?: number,
-    itemsPerPage?: number,
-    term?: string
+    pageParams: PageParams
   ): Observable<PaginatedResult<Customer[]>> {
     const paginatedResult = new PaginatedResult<Customer[]>();
 
     let params = new HttpParams();
 
-    if (page != null && itemsPerPage != null) {
-      params = params.append('pageNumber', page.toString());
-      params = params.append('pageSize', itemsPerPage.toString());
-    }
+    params = params.append('pageNumber', pageParams.page);
+    params = params.append('pageSize', pageParams.itemsPerPage);
 
-    if (term != null && term.length > 0) params = params.append('term', term);
+    if (pageParams.term != null && pageParams.term.length > 0)
+      params = params.append('term', pageParams.term);
 
     return this.client
       .get<Customer[]>(this.baseURL, { observe: 'response', params })

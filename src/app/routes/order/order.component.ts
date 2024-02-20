@@ -18,6 +18,7 @@ import { Fabric } from 'src/app/models/Fabric';
 import { Item } from 'src/app/models/Item';
 import { ItemOrder } from 'src/app/models/ItemOrder';
 import { Order } from 'src/app/models/Order';
+import { PageParams } from 'src/app/models/PageParams';
 import { PaginatedResult } from 'src/app/models/Pagination';
 import { Size } from 'src/app/models/Size';
 import { User } from 'src/app/models/identity/User';
@@ -389,18 +390,20 @@ export class OrderComponent implements OnInit {
   }
 
   filterCustomers(value: string): Observable<Customer[]> {
-    return this._customerService.getCustomers(0, 25, value).pipe(
-      map((data: PaginatedResult<Customer[]>) => {
-        if (data.result == null) {
-          this._toastrService.warning(
-            'Revise os termos de busca',
-            'Nenhum cliente encontrado'
-          );
-        }
+    return this._customerService
+      .getCustomers(new PageParams(0, 25, value))
+      .pipe(
+        map((data: PaginatedResult<Customer[]>) => {
+          if (data.result == null) {
+            this._toastrService.warning(
+              'Revise os termos de busca',
+              'Nenhum cliente encontrado'
+            );
+          }
 
-        return data.result;
-      })
-    );
+          return data.result;
+        })
+      );
   }
 
   async getItemAttributes(event, itemId: number) {
