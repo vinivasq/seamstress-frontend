@@ -5,6 +5,7 @@ export interface Customer {
   name: string;
   address: string;
   city: string;
+  uf: string;
   neighborhood: string;
   number: number;
   complement?: string;

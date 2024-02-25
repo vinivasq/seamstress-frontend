@@ -62,12 +62,13 @@
             <p class="customer__label">CEP:</p>
             <p>{{ customer.cep | mask : "00000-000" }}</p>
           </div>
-          <div>
-            <p
-              *ngIf="customer.complement"
-              class="customer__label customer__label-complement"
-            >
-              Complemento <mat-icon>keyboard_arrow_down</mat-icon>
+          <div class="customer__field">
+            <p class="customer__label">UF:</p>
+            <p>{{ customer.uf }}</p>
+          </div>
+          <div class="customer__field">
+            <p *ngIf="customer.complement" class="customer__label">
+              Complemento:
             </p>
             <p>{{ customer.complement }}</p>
           </div>
