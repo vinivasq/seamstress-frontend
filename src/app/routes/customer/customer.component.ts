@@ -173,6 +173,11 @@ export class CustomerComponent implements OnInit {
 
     this._customerService.getAddress(cep.getRawValue()).subscribe({
       next: (data: Address) => {
+        if (data.erro) {
+          this._toastr.error('CEP não localizado');
+          return;
+        }
+
         this.secondGroup.get('address').patchValue(data.logradouro);
         this.secondGroup.get('city').patchValue(data.localidade);
         this.secondGroup.get('neighborhood').patchValue(data.bairro);

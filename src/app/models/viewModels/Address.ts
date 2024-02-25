@@ -9,6 +9,7 @@ export class Address {
   gia: string;
   ddd: string;
   siafi: string;
+  erro?: string;
 
   constructor() {}
 }
