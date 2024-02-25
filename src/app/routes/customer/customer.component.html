@@ -126,6 +126,18 @@
             </mat-form-field>
 
             <mat-form-field class="form__fieldGroup-item">
+              <mat-label>UF</mat-label>
+              <mat-select formControlName="uf">
+                <mat-option *ngFor="let UF of UFs" [value]="UF">
+                  {{ UF }}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="secondGroup.get('uf')?.hasError('required')"
+                >Campo obrigatório</mat-error
+              >
+            </mat-form-field>
+
+            <mat-form-field class="form__fieldGroup-item">
               <mat-label>N° Residência</mat-label>
               <input
                 matInput

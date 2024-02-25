@@ -10,6 +10,9 @@ import { Customer } from 'src/app/models/Customer';
 import { ToastrService } from 'ngx-toastr';
 import { SpinnerService } from 'src/app/services/spinner.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { IBGEService } from 'src/app/services/IBGE.service';
+import { UF } from 'src/app/models/viewModels/UF';
+import { Address } from 'src/app/models/viewModels/Address';
 
 @Component({
   selector: 'app-customer',
@@ -19,6 +22,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 export class CustomerComponent implements OnInit {
   requestMethod = 'post';
   customer = {} as Customer;
+  UFs: string[];
   stepperOrientation: Observable<StepperOrientation>;
 
   get firstGroup(): any {
@@ -40,6 +44,7 @@ export class CustomerComponent implements OnInit {
     }),
     secondFormGroup: this._formBuilder.group({
       cep: ['', [Validators.required]],
+      uf: ['', [Validators.required]],
       address: ['', [Validators.required]],
       city: ['', [Validators.required]],
       neighborhood: ['', [Validators.required]],
@@ -70,6 +75,7 @@ export class CustomerComponent implements OnInit {
     private _activeRoute: ActivatedRoute,
     private _router: Router,
     private _customerService: CustomerService,
+    private _IBGEService: IBGEService,
     private _toastr: ToastrService,
     private _spinnerService: SpinnerService
   ) {
@@ -80,7 +86,7 @@ export class CustomerComponent implements OnInit {
 
   ngOnInit() {
     this._matStepperIntl.optionalLabel = 'Opcional';
-
+    this.getUFs();
     this.loadCustomer();
   }
 
@@ -166,10 +172,11 @@ export class CustomerComponent implements OnInit {
     if (cep.invalid) return;
 
     this._customerService.getAddress(cep.getRawValue()).subscribe({
-      next: (data: any) => {
+      next: (data: Address) => {
         this.secondGroup.get('address').patchValue(data.logradouro);
         this.secondGroup.get('city').patchValue(data.localidade);
         this.secondGroup.get('neighborhood').patchValue(data.bairro);
+        this.secondGroup.get('uf').patchValue(data.uf.toUpperCase());
       },
       error: (error) => {
         console.log(error);
@@ -177,6 +184,20 @@ export class CustomerComponent implements OnInit {
           'Não foi possível encontrar o endereço',
           'Erro ao buscar endereço'
         );
+      },
+    });
+  }
+
+  getUFs() {
+    this._IBGEService.getUFs().subscribe({
+      next: (data: UF[]) => {
+        this.UFs = data.map((UF) => {
+          return UF.sigla;
+        });
+      },
+      error: (err) => {
+        this._toastr.error('Erro ao buscar UFs');
+        console.log(err);
       },
     });
   }
