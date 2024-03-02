@@ -23,10 +23,11 @@ import { AttributesComponent } from './routes/attributes/attributes.component';
 import { MeasurementsComponent } from './routes/measurements/measurements.component';
 import { ReportComponent } from './routes/report/report.component';
 import { OrdersReportComponent } from './routes/report/ordersReport/ordersReport.component';
+import { AdminComponent } from './routes/dashboard/admin/admin.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: 'dashboard/orders', pathMatch: 'full' },
-  { path: 'dashboard', redirectTo: 'dashboard/orders', pathMatch: 'full' },
+  { path: '', redirectTo: 'dashboard/admin', pathMatch: 'full' },
+  { path: 'dashboard', redirectTo: 'dashboard/admin', pathMatch: 'full' },
   { path: 'orders', redirectTo: 'dashboard/orders', pathMatch: 'full' },
   { path: 'items', redirectTo: 'dashboard/items', pathMatch: 'full' },
   { path: 'attributes', redirectTo: 'attributes/color', pathMatch: 'full' },
@@ -48,6 +49,14 @@ const routes: Routes = [
     canActivate: [authGuard],
     children: [
       { path: 'orders', component: OrdersComponent },
+      {
+        path: 'admin',
+        component: AdminComponent,
+        canActivate: [roleGuard],
+        data: {
+          role: ['admin', 'requester'],
+        },
+      },
       {
         path: 'customers',
         component: CustomersComponent,

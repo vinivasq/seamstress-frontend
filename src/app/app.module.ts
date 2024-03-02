@@ -37,6 +37,7 @@ import { MAT_DATE_LOCALE, MatNativeDateModule } from '@angular/material/core';
 
 import { AppComponent } from './app.component';
 import { DashboardComponent } from './routes/dashboard/dashboard.component';
+import { AdminComponent } from './routes/dashboard/admin/admin.component';
 import { ReportComponent } from './routes/report/report.component';
 import { OrdersReportComponent } from './routes/report/ordersReport/ordersReport.component';
 import { DialogComponent } from './components/dialog/dialog.component';
@@ -77,6 +78,7 @@ import { JwtInterceptor } from './interceptors/jwt.interceptor';
   declarations: [
     AppComponent,
     DashboardComponent,
+    AdminComponent,
     ReportComponent,
     OrdersReportComponent,
     DialogComponent,
