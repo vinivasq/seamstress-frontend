@@ -9,6 +9,7 @@ import { NgxMaskDirective, NgxMaskPipe, provideNgxMask } from 'ngx-mask';
 import { ToastrModule } from 'ngx-toastr';
 import { NgxDropzoneModule } from 'ngx-dropzone';
 import { NgxMatNumberInputSpinnerModule } from 'ngx-mat-number-input-spinner';
+import { NgChartsModule } from 'ng2-charts';
 
 import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -33,11 +34,11 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatBadgeModule } from '@angular/material/badge';
+
 import { MAT_DATE_LOCALE, MatNativeDateModule } from '@angular/material/core';
 
 import { AppComponent } from './app.component';
 import { DashboardComponent } from './routes/dashboard/dashboard.component';
-import { AdminComponent } from './routes/dashboard/admin/admin.component';
 import { ReportComponent } from './routes/report/report.component';
 import { OrdersReportComponent } from './routes/report/ordersReport/ordersReport.component';
 import { DialogComponent } from './components/dialog/dialog.component';
@@ -78,7 +79,6 @@ import { JwtInterceptor } from './interceptors/jwt.interceptor';
   declarations: [
     AppComponent,
     DashboardComponent,
-    AdminComponent,
     ReportComponent,
     OrdersReportComponent,
     DialogComponent,
@@ -142,6 +142,7 @@ import { JwtInterceptor } from './interceptors/jwt.interceptor';
     MatBadgeModule,
     NgxDropzoneModule,
     NgxMatNumberInputSpinnerModule,
+    NgChartsModule,
     ToastrModule.forRoot({
       timeOut: 4000,
       positionClass: 'toast-bottom-right',
