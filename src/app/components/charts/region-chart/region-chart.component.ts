@@ -15,10 +15,10 @@ import { ChartColors } from 'src/helpers/chartColors';
       <mat-card-content>
         <canvas
           baseChart
-          class="chart"
-          [data]="pieChartData"
-          [type]="pieChartType"
-          [options]="pieChartOptions"
+          class="chart regionChart"
+          [data]="chartData"
+          [type]="chartType"
+          [options]="chartOptions"
         >
         </canvas>
       </mat-card-content>
@@ -31,16 +31,16 @@ export class RegionChartComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  public pieChartOptions: ChartConfiguration['options'] = {
+  public chartOptions: ChartConfiguration['options'] = {
     plugins: {
       legend: {
         display: true,
-        position: 'bottom',
+        position: 'left',
       },
     },
   };
-  public pieChartData: ChartData<'pie', number[], string | string[]> = {
-    labels: [['Download', 'Sales'], ['In Store Sales'], 'Mail Sales'],
+  public chartData: ChartData<'doughnut', number[], string | string[]> = {
+    labels: ['RS', 'SP', 'RJ'],
     datasets: [
       {
         data: [300, 500, 100],
@@ -48,9 +48,9 @@ export class RegionChartComponent implements OnInit {
           (color) => color.backgroundColor
         ),
         borderColor: ChartColors.analog.map((color) => color.backgroundColor),
-        hoverOffset: 4,
+        hoverOffset: 6,
       },
     ],
   };
-  public pieChartType: ChartType = 'pie';
+  public chartType: ChartType = 'doughnut';
 }
