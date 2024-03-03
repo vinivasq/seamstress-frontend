@@ -44,22 +44,25 @@ export class ChartColors {
 
   static mono = [
     {
-      backgroundColor: '#7C1FA3',
-      borderColor: '#601C8B',
-    },
-    {
-      backgroundColor: '#612B79',
-      borderColor: '#4C2063',
+      backgroundColor: '#2E2333',
+      borderColor: '#1F1823',
     },
     {
       backgroundColor: '#43294E',
       borderColor: '#341D3B',
     },
     {
-      backgroundColor: '#2E2333',
-      borderColor: '#1F1823',
+      backgroundColor: '#612B79',
+      borderColor: '#4C2063',
+    },
+    {
+      backgroundColor: '#7C1FA3',
+      borderColor: '#601C8B',
     },
   ];
 
-  static accent = ['#69F0AE'];
+  static accent = {
+    backgroundColor: '#69f0ae20',
+    borderColor: '#69F0AE',
+  };
 }
