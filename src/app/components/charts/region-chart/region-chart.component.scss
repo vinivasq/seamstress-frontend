@@ -1,5 +1,7 @@
-mat-card-title {
-  margin-bottom: 1rem;
+mat-card-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 0 1rem 0;
 }
 
 .chart-container {

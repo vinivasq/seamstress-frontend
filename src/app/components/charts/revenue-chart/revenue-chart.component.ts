@@ -4,14 +4,18 @@ import { MatCardModule } from '@angular/material/card';
 import { NgChartsModule } from 'ng2-charts';
 import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
 import { ChartColors } from 'src/helpers/chartColors';
+import { ChartPeriodComponent } from '../chart-period/chart-period.component';
 
 @Component({
   selector: 'app-revenue-chart',
   standalone: true,
-  imports: [CommonModule, MatCardModule, NgChartsModule],
+  imports: [CommonModule, MatCardModule, NgChartsModule, ChartPeriodComponent],
   template: `
     <mat-card class="chart-container elevation">
-      <mat-card-title>Faturamento por período</mat-card-title>
+      <mat-card-header>
+        <mat-card-title>Faturamento por período</mat-card-title>
+        <app-char-period (valueChange)="filterChart($event)"></app-char-period>
+      </mat-card-header>
       <div>
         <canvas
           baseChart
@@ -51,6 +55,10 @@ export class RevenueChartComponent implements OnInit {
   ];
 
   ngOnInit(): void {}
+
+  filterChart(value: string) {
+    console.log(value);
+  }
 
   public chartOptions: ChartConfiguration['options'] = {
     plugins: {
