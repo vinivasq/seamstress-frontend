@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RegionChartComponent } from 'src/app/components/charts/region-chart/region-chart.component';
 import { MatCardModule } from '@angular/material/card';
 import { RevenueChartComponent } from 'src/app/components/charts/revenue-chart/revenue-chart.component';
+import { StatisticsComponent } from 'src/app/components/statistics/statistics.component';
 
 @Component({
   selector: 'app-admin',
@@ -11,6 +12,7 @@ import { RevenueChartComponent } from 'src/app/components/charts/revenue-chart/r
     CommonModule,
     RegionChartComponent,
     RevenueChartComponent,
+    StatisticsComponent,
     MatCardModule,
   ],
   templateUrl: './admin.component.html',
