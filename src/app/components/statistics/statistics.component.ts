@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { StatisticComponent } from './statistic/statistic.component';
+import data from 'src/app/json/statistics.json';
 
 @Component({
   selector: 'app-statistics',
@@ -10,48 +11,15 @@ import { StatisticComponent } from './statistic/statistic.component';
   template: `
     <div class="statistics">
       <app-statistic
-        value="R$ 1.234,99"
-        label="Faturamento do mês atual"
-        icon="bar_chart"
-      ></app-statistic>
-
-      <app-statistic
-        value="Ecommerce"
-        label="Top plataforma de venda"
-        icon="bar_chart"
-      ></app-statistic>
-
-      <app-statistic
-        value="Maxi Kaftan"
-        label="Top modelo"
-        icon="pie_chart"
-      ></app-statistic>
-
-      <app-statistic
-        value="SP"
-        label="Top região"
-        icon="pie_chart"
-      ></app-statistic>
-
-      <app-statistic
-        value="1234"
-        label="Total de pedidos"
-        icon="list"
-      ></app-statistic>
-
-      <app-statistic
-        value="1234"
-        label="Total de clientes"
-        icon="people"
-      ></app-statistic>
-
-      <app-statistic
-        value="1234"
-        label="Total de modelos"
-        icon="local_offer"
+        *ngFor="let statistic of statistics"
+        value="{{ statistic.value }}"
+        label="{{ statistic.label }}"
+        icon="{{ statistic.icon }}"
       ></app-statistic>
     </div>
   `,
   styleUrls: ['./statistics.component.scss'],
 })
-export class StatisticsComponent {}
+export class StatisticsComponent {
+  statistics = data;
+}

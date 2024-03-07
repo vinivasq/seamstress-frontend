@@ -1,0 +1,17 @@
+[
+  {
+    "value": "R$ 1.234,99",
+    "label": "Faturamento do mês atual",
+    "icon": "bar_chart"
+  },
+  {
+    "value": "Ecommerce",
+    "label": "Top plataforma de venda",
+    "icon": "bar_chart"
+  },
+  { "value": "Maxi Kaftan", "label": "Top modelo", "icon": "pie_chart" },
+  { "value": "SP", "label": "Top região", "icon": "pie_chart" },
+  { "value": "1234", "label": "Total de pedidos", "icon": "list" },
+  { "value": "1234", "label": "Total de clientes", "icon": "people" },
+  { "value": "1234", "label": "Total de modelos", "icon": "local_offer" }
+]
