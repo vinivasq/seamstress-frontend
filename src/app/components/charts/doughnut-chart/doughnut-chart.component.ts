@@ -7,7 +7,7 @@ import { ChartColors } from 'src/helpers/chartColors';
 import { ChartPeriodComponent } from '../chart-period/chart-period.component';
 
 @Component({
-  selector: 'app-region-chart',
+  selector: 'app-doughnut-chart',
   standalone: true,
   imports: [CommonModule, NgChartsModule, MatCardModule, ChartPeriodComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -20,7 +20,7 @@ import { ChartPeriodComponent } from '../chart-period/chart-period.component';
       <mat-card-content>
         <canvas
           baseChart
-          class="chart regionChart"
+          class="chart doughnutChart"
           [data]="chartData"
           [type]="chartType"
           [options]="chartOptions"
@@ -29,9 +29,9 @@ import { ChartPeriodComponent } from '../chart-period/chart-period.component';
       </mat-card-content>
     </mat-card>
   `,
-  styleUrls: ['./region-chart.component.scss'],
+  styleUrls: ['./doughnut-chart.component.scss'],
 })
-export class RegionChartComponent implements OnInit {
+export class DoughnutChartComponent implements OnInit {
   filterValue: string;
 
   constructor() {}
