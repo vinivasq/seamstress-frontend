@@ -7,7 +7,7 @@ import { ChartColors } from 'src/helpers/chartColors';
 import { ChartPeriodComponent } from '../chart-period/chart-period.component';
 
 @Component({
-  selector: 'app-revenue-chart',
+  selector: 'app-bar-line-chart',
   standalone: true,
   imports: [CommonModule, MatCardModule, NgChartsModule, ChartPeriodComponent],
   template: `
@@ -19,7 +19,7 @@ import { ChartPeriodComponent } from '../chart-period/chart-period.component';
       <div>
         <canvas
           baseChart
-          class="chart barChart"
+          class="chart barLineChart"
           [data]="chartData"
           [type]="chartType"
           [options]="chartOptions"
@@ -28,9 +28,9 @@ import { ChartPeriodComponent } from '../chart-period/chart-period.component';
       </div>
     </mat-card>
   `,
-  styleUrls: ['./revenue-chart.component.scss'],
+  styleUrls: ['./bar-line-chart.component.scss'],
 })
-export class RevenueChartComponent implements OnInit {
+export class BarLineChartComponent implements OnInit {
   mockDataSets = [
     {
       data: [140, 45, 200, 290, 180, 120, 300, 30, 25, 220, 95, 55],

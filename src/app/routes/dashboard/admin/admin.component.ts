@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
-import { RevenueChartComponent } from 'src/app/components/charts/revenue-chart/revenue-chart.component';
+import { BarLineChartComponent } from 'src/app/components/charts/bar-line-chart/bar-line-chart.component';
 import { StatisticsComponent } from 'src/app/components/statistics/statistics.component';
 import { DoughnutChartComponent } from 'src/app/components/charts/doughnut-chart/doughnut-chart.component';
 
@@ -11,7 +11,7 @@ import { DoughnutChartComponent } from 'src/app/components/charts/doughnut-chart
   imports: [
     CommonModule,
     DoughnutChartComponent,
-    RevenueChartComponent,
+    BarLineChartComponent,
     StatisticsComponent,
     MatCardModule,
   ],
