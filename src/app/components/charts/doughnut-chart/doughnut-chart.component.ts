@@ -1,10 +1,16 @@
-import { CUSTOM_ELEMENTS_SCHEMA, Component, OnInit } from '@angular/core';
+import {
+  CUSTOM_ELEMENTS_SCHEMA,
+  Component,
+  Input,
+  OnInit,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
 import { NgChartsModule } from 'ng2-charts';
 import { MatCardModule } from '@angular/material/card';
 import { ChartColors } from 'src/helpers/chartColors';
 import { ChartPeriodComponent } from '../chart-period/chart-period.component';
+import * as data from 'src/app/json/region-data.json';
 
 @Component({
   selector: 'app-doughnut-chart',
@@ -14,7 +20,7 @@ import { ChartPeriodComponent } from '../chart-period/chart-period.component';
   template: `
     <mat-card class="chart-container elevation">
       <mat-card-header>
-        <mat-card-title>Pedidos por região</mat-card-title>
+        <mat-card-title>{{ title }}</mat-card-title>
         <app-char-period (valueChange)="filterChart($event)"></app-char-period>
       </mat-card-header>
       <mat-card-content>
@@ -32,17 +38,11 @@ import { ChartPeriodComponent } from '../chart-period/chart-period.component';
   styleUrls: ['./doughnut-chart.component.scss'],
 })
 export class DoughnutChartComponent implements OnInit {
-  filterValue: string;
-
-  constructor() {}
-
-  ngOnInit(): void {}
-
-  filterChart(value: string) {
-    console.log(value);
-  }
-
-  public chartOptions: ChartConfiguration['options'] = {
+  @Input() source: string;
+  @Input() title: string;
+  chartData: ChartData<'doughnut', number[], string | string[]>;
+  chartType: ChartType = 'doughnut';
+  chartOptions: ChartConfiguration['options'] = {
     plugins: {
       legend: {
         display: true,
@@ -50,18 +50,30 @@ export class DoughnutChartComponent implements OnInit {
       },
     },
   };
-  public chartData: ChartData<'doughnut', number[], string | string[]> = {
-    labels: ['RS', 'SP', 'RJ'],
-    datasets: [
-      {
-        data: [300, 500, 100],
-        backgroundColor: ChartColors.analog.map(
-          (color) => color.backgroundColor
-        ),
-        borderColor: ChartColors.analog.map((color) => color.backgroundColor),
-        hoverOffset: 6,
-      },
-    ],
-  };
-  public chartType: ChartType = 'doughnut';
+
+  ngOnInit(): void {
+    this.getChartData();
+  }
+
+  filterChart(value: string) {
+    console.log(value);
+  }
+
+  getChartData() {
+    const dataResponse = data;
+
+    this.chartData = {
+      labels: dataResponse.labels,
+      datasets: [
+        {
+          data: dataResponse.dataSets,
+          backgroundColor: ChartColors.analog.map(
+            (color) => color.backgroundColor
+          ),
+          borderColor: ChartColors.analog.map((color) => color.backgroundColor),
+          hoverOffset: 6,
+        },
+      ],
+    };
+  }
 }

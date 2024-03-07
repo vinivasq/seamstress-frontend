@@ -1,13 +1,25 @@
 <div class="container">
   <div class="charts">
     <div class="charts__top">
-      <app-doughnut-chart></app-doughnut-chart>
-      <app-doughnut-chart></app-doughnut-chart>
+      <app-doughnut-chart
+        title="Pedidos por Região"
+        source="region"
+      ></app-doughnut-chart>
+      <app-doughnut-chart
+        title="Modelos mais vendidos"
+        source="models"
+      ></app-doughnut-chart>
     </div>
 
     <div class="charts__bottom">
-      <app-bar-line-chart></app-bar-line-chart>
-      <app-bar-line-chart></app-bar-line-chart>
+      <app-bar-line-chart
+        title="Faturamento no período"
+        source="revenue"
+      ></app-bar-line-chart>
+      <app-bar-line-chart
+        title="Pedidos no período"
+        source="orders"
+      ></app-bar-line-chart>
     </div>
   </div>
 
