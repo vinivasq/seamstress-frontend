@@ -9,7 +9,11 @@ import { MatCardModule } from '@angular/material/card';
   imports: [CommonModule, MatCardModule, MatIconModule],
   template: `
     <mat-card class="statistic elevation">
-      <mat-icon> {{ icon }} </mat-icon>
+      <mat-icon
+        [ngStyle]="{ 'background-color': backGroundColor, color: color }"
+      >
+        {{ icon }}
+      </mat-icon>
       <div class="statistic__content">
         <span>{{ value }}</span>
         <p>{{ label }}</p>
@@ -23,4 +27,5 @@ export class StatisticComponent {
   @Input() label: string;
   @Input() icon: string;
   @Input() color: string;
+  @Input() backGroundColor: string;
 }
