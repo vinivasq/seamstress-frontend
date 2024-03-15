@@ -9,8 +9,39 @@ mat-card-header {
   border-radius: 0.5rem;
 }
 
+.header {
+  display: flex;
+  justify-content: space-between;
+
+  .header__info {
+    p {
+      font-weight: 300;
+    }
+  }
+}
+
 .doughnutChart {
+  width: 100%;
   max-height: 15rem;
+}
+
+.period {
+  font-weight: 300;
+  align-self: end;
+}
+
+.notFound {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+mat-card-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .elevation {
