@@ -1,9 +1,9 @@
-export class RevenueChart {
+export class BarLineChart {
   labels: Array<string>;
-  dataSets: Array<RevenueDataSet>;
+  dataSets: Array<BarLineDataSet>;
 }
 
-class RevenueDataSet {
+class BarLineDataSet {
   data: Array<string>;
   type: string;
   label: string;
