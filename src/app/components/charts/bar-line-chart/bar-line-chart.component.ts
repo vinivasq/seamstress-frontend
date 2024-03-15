@@ -88,6 +88,6 @@ export class BarLineChartComponent implements OnInit {
   }
 
   filterChart(value: string) {
-    console.log(value);
+    console.log(value.split('&'));
   }
 }

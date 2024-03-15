@@ -1,8 +1,8 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
-
+import moment from 'moment';
 @Component({
   selector: 'app-char-period',
   standalone: true,
@@ -19,29 +19,42 @@ import { MatSelectModule } from '@angular/material/select';
   `,
   styleUrls: ['./chart-period.component.scss'],
 })
-export class ChartPeriodComponent {
+export class ChartPeriodComponent implements OnInit {
   @Output() valueChange = new EventEmitter<string>();
 
   filterOptions = [
     {
       text: 'Esta Semana',
       value: 'weekly',
+      startDate: moment().subtract(moment().day(), 'day').toISOString(),
     },
     {
       text: 'Este Mes',
       value: 'monthly',
+      startDate: moment()
+        .subtract(moment().date() - 1, 'day')
+        .toISOString(),
     },
     {
       text: 'Este Ano',
       value: 'yearly',
-    },
-    {
-      text: 'Período',
-      value: new Date(),
+      startDate: moment()
+        .subtract(moment().dayOfYear() - 1, 'day')
+        .toISOString(),
     },
   ];
 
+  ngOnInit() {
+    this.setFilterValue('weekly');
+  }
+
   setFilterValue(value: string) {
-    this.valueChange.emit(value);
+    const { startDate } = this.filterOptions.find(
+      (option) => option.value === value
+    );
+
+    const period = `${startDate}&${moment().toISOString()}`;
+
+    this.valueChange.emit(period);
   }
 }
