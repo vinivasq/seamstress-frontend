@@ -104,6 +104,30 @@
         </mat-form-field>
 
         <mat-form-field class="info__field">
+          <mat-label>Plataforma de venda</mat-label>
+          <input
+            matInput
+            formControlName="salePlatform"
+            type="text"
+            placeholder="Selecione uma plataforma"
+            aria-label="Plataforma de venda"
+            [matAutocomplete]="salePlatform"
+          />
+          <mat-autocomplete #salePlatform="matAutocomplete">
+            <mat-option
+              *ngFor="let salePlatform of salePlatforms"
+              [value]="salePlatform.name"
+              (onSelectionChange)="getSalePlatformId($event, salePlatform.id)"
+            >
+              {{ salePlatform.name }}
+            </mat-option>
+          </mat-autocomplete>
+          <mat-error *ngIf="form.get('salePlatform')?.hasError('required')">
+            O campo "Plataforma de venda" não pode ficar vazio
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="info__field">
           <mat-label>Observações do pedido</mat-label>
           <textarea
             matInput
