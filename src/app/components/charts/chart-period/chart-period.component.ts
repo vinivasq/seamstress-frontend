@@ -10,7 +10,7 @@ import moment from 'moment';
   template: `
     <mat-form-field appearance="outline">
       <mat-label>Período</mat-label>
-      <mat-select (valueChange)="setFilterValue($event)" value="weekly">
+      <mat-select (valueChange)="setFilterValue($event)" value="monthly">
         <mat-option *ngFor="let filter of filterOptions" [value]="filter.value">
           {{ filter.text }}
         </mat-option>
@@ -29,7 +29,7 @@ export class ChartPeriodComponent implements OnInit {
       startDate: moment().subtract(moment().day(), 'day').toISOString(),
     },
     {
-      text: 'Este Mes',
+      text: 'Este Mês',
       value: 'monthly',
       startDate: moment()
         .subtract(moment().date() - 1, 'day')
@@ -45,7 +45,7 @@ export class ChartPeriodComponent implements OnInit {
   ];
 
   ngOnInit() {
-    this.setFilterValue('weekly');
+    this.setFilterValue('monthly');
   }
 
   setFilterValue(value: string) {
