@@ -5,17 +5,17 @@ export class StatisticsMapping {
       color: '#69F0AE',
       backGroundColor: '#69F0AE42',
     },
-    'Top plataforma de venda': {
+    'Melhor plataforma de venda': {
       icon: 'bar_chart',
       color: '#69F0AE',
       backGroundColor: '#69F0AE42',
     },
-    'Top modelo': {
+    'Modelo mais vendido': {
       icon: 'pie_chart',
       color: '#d283f4',
       backGroundColor: '#7B1FA242',
     },
-    'Top região': {
+    'Região mais recorrente': {
       icon: 'pie_chart',
       color: '#d283f4',
       backGroundColor: '#7B1FA242',

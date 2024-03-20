@@ -3,8 +3,9 @@ import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { StatisticComponent } from './statistic/statistic.component';
 import { Statistic } from 'src/app/models/viewModels/Statistic';
-import data from 'src/app/json/statistics.json';
 import { StatisticsMapping } from 'src/helpers/statisticsMapping';
+import { StatisticsService } from 'src/app/services/statistics.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-statistics',
@@ -27,17 +28,34 @@ import { StatisticsMapping } from 'src/helpers/statisticsMapping';
 export class StatisticsComponent implements OnInit {
   statistics: Statistic[];
 
-  ngOnInit(): void {
-    this.statistics = data.map((data): Statistic => {
-      const { icon, color, backGroundColor } =
-        StatisticsMapping.mapping[data.label];
-      return {
-        label: data.label,
-        value: data.value,
-        icon,
-        color,
-        backGroundColor,
-      };
+  constructor(
+    private _statisticsService: StatisticsService,
+    private _toastrService: ToastrService
+  ) {}
+
+  ngOnInit() {
+    this.getStatistics();
+  }
+
+  getStatistics() {
+    this._statisticsService.getStatistics().subscribe({
+      next: (data: Statistic[]) => {
+        this.statistics = data.map((data): Statistic => {
+          const { icon, color, backGroundColor } =
+            StatisticsMapping.mapping[data.label];
+          return {
+            label: data.label,
+            value: data.value,
+            icon,
+            color,
+            backGroundColor,
+          };
+        });
+      },
+      error: (error: Error) => {
+        this._toastrService.error('Erro ao recuperar estatísticas');
+        console.log(error);
+      },
     });
   }
 }
