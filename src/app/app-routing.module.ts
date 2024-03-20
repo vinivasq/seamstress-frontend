@@ -137,20 +137,20 @@ const routes: Routes = [
         component: MeasurementsComponent,
       },
 
-      {
-        path: 'attributes',
-        component: AttributesComponent,
-        canActivate: [authGuard, roleGuard],
-        data: {
-          role: ['admin', 'requester'],
-        },
-        children: [
-          { path: 'color', component: ColorComponent },
-          { path: 'fabric', component: FabricComponent },
-          { path: 'size', component: SizeComponent },
-          { path: 'set', component: SetComponent },
-        ],
-      },
+      // {
+      //   path: 'attributes',
+      //   component: AttributesComponent,
+      //   canActivate: [authGuard, roleGuard],
+      //   data: {
+      //     role: ['admin', 'requester'],
+      //   },
+      //   children: [
+      //     { path: 'color', component: ColorComponent },
+      //     { path: 'fabric', component: FabricComponent },
+      //     { path: 'size', component: SizeComponent },
+      //     { path: 'set', component: SetComponent },
+      //   ],
+      // },
     ],
   },
 
