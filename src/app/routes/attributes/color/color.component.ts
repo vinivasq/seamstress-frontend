@@ -120,8 +120,6 @@ export class ColorComponent implements OnInit {
   setActiveState(id: number, state: boolean) {
     this._attributeService.setActiveState(id, state).subscribe({
       next: (data: Color) => {
-        console.log(data);
-
         if (data.isActive === state) {
           this._toastrService.success('Cor inativada');
         } else {

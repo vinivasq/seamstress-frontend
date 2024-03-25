@@ -48,6 +48,19 @@ export class CustomerService {
     return this.client.get<Customer>(`${this.baseURL}/${id}`).pipe(take(1));
   }
 
+  checkFK(id: number) {
+    return this.client.get(`${this.baseURL}/fk/${id}`).pipe(take(1));
+  }
+
+  setActiveState(id: number, state: boolean) {
+    let params = new HttpParams();
+    params = params.append('state', state);
+
+    return this.client
+      .patch(`${this.baseURL}/active/${id}`, { observe: 'response', params })
+      .pipe(take(1));
+  }
+
   deleteCustomer(id: number) {
     return this.client.delete(`${this.baseURL}/${id}`).pipe(take(1));
   }

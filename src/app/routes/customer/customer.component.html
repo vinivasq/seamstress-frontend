@@ -95,6 +95,15 @@
           </mat-form-field>
         </div>
         <div class="form__buttons">
+          <button
+            *ngIf="this.requestMethod === 'patch'"
+            mat-stroked-button
+            (click)="openModal()"
+            color="warn"
+          >
+            <mat-icon>delete</mat-icon>
+            Excluir
+          </button>
           <button mat-stroked-button matStepperNext color="accent">
             Próximo
           </button>

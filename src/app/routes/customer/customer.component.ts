@@ -13,6 +13,8 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { IBGEService } from 'src/app/services/IBGE.service';
 import { UF } from 'src/app/models/viewModels/UF';
 import { Address } from 'src/app/models/viewModels/Address';
+import { DialogComponent } from 'src/app/components/dialog/dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-customer',
@@ -77,6 +79,7 @@ export class CustomerComponent implements OnInit {
     private _customerService: CustomerService,
     private _IBGEService: IBGEService,
     private _toastr: ToastrService,
+    private _dialog: MatDialog,
     private _spinnerService: SpinnerService
   ) {
     this.stepperOrientation = this._breakpointObserver
@@ -148,7 +151,11 @@ export class CustomerComponent implements OnInit {
 
     this.requestMethod === 'post'
       ? (this.customer = { ...formValues })
-      : (this.customer = { id: this.customer.id, ...formValues });
+      : (this.customer = {
+          id: this.customer.id,
+          isActive: this.customer.isActive,
+          ...formValues,
+        });
 
     this._customerService[this.requestMethod](this.customer)
       .subscribe({
@@ -205,5 +212,71 @@ export class CustomerComponent implements OnInit {
         console.log(err);
       },
     });
+  }
+
+  openModal() {
+    this._customerService.checkFK(this.customer.id).subscribe({
+      next: (data: boolean) => {
+        if (data === true) {
+          this._dialog.open(DialogComponent, {
+            data: {
+              title: `Deseja inativar o(a) cliente ${this.customer.name}?`,
+              content: `Existem pedidos com este cliente, sua exclusão não será possível.
+                Deseja inativar?`,
+              action: () => this.setActiveState(this.customer.id, false),
+            },
+          });
+        } else {
+          this._dialog.open(DialogComponent, {
+            data: {
+              title: `Deseja excluir o(a) cliente ${this.customer.name}?`,
+              content: 'Tem certeza qeu deseja excluir o(a) cliente?',
+              action: () => this.deleteCustomer(this.customer.id),
+            },
+          });
+        }
+      },
+      error: (error: HttpErrorResponse) => this._toastr.error(error.error),
+    });
+  }
+
+  setActiveState(id: number, state: boolean) {
+    this._customerService.setActiveState(id, state).subscribe({
+      next: (data: Customer) => {
+        if (data.isActive === state) {
+          this._toastr.success('Cliente inativado');
+        } else {
+          this._toastr.warning('O cliente não foi alterado');
+        }
+        this._router.navigate(['/dashboard/customers']);
+      },
+      error: (error: HttpErrorResponse) =>
+        this._toastr.error(error.error, 'Erro ao alterar o cliente'),
+    });
+  }
+
+  deleteCustomer(id: number) {
+    this._spinnerService.isLoading = true;
+    this._customerService
+      .deleteCustomer(id)
+      .subscribe({
+        next: (result: any) => {
+          if (result.message === 'Deletado com sucesso') {
+            this._toastr.success(
+              'Cliente deletado com sucesso',
+              'Cliente deletado'
+            );
+            this._router.navigate(['/dashboard/customers']);
+          }
+        },
+        error: (error) => {
+          console.log(error);
+          this._toastr.error(
+            'Não foi possível deletar o cliente',
+            'Erro ao deletar'
+          );
+        },
+      })
+      .add(() => (this._spinnerService.isLoading = false));
   }
 }
