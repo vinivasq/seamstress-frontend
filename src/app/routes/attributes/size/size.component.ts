@@ -69,15 +69,13 @@ export class SizeComponent implements OnInit {
   openModal(id: number, name: string) {
     this._attributeService.checkFK(id).subscribe({
       next: (data: boolean) => {
-        console.log(data);
-
         if (data === true) {
           this._dialog.open(DialogComponent, {
             data: {
-              title: `Deseja excluir o tamanho ${name}?`,
-              content: `Existem itens de pedido com este temanho, sua exclusão não será possível.
+              title: `Deseja inativar o tamanho ${name}?`,
+              content: `Existem itens de pedido com este tamanho, sua exclusão não será possível.
                 Deseja inativar?`,
-              action: () => this.deleteSize(id),
+              action: () => this.setActiveState(id, false),
             },
           });
         } else {
@@ -99,7 +97,7 @@ export class SizeComponent implements OnInit {
     this._attributeService.setActiveState(id, state).subscribe({
       next: (data: Size) => {
         if (data.isActive === state) {
-          this._toastrService.success('Tamanho alterado');
+          this._toastrService.success('Tamanho inativado');
         } else {
           this._toastrService.warning('O tamanho não foi alterado');
         }
