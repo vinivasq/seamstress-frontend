@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { take } from 'rxjs';
 import { environment } from 'src/environments/environment';
@@ -25,12 +25,25 @@ export class AttributeService {
     return this.client.get(`${this._baseURL}/${id}`).pipe(take(1));
   }
 
+  checkFK(id: number) {
+    return this.client.get(`${this._baseURL}/fk/${id}`).pipe(take(1));
+  }
+
   post(model: any) {
     return this.client.post(this._baseURL, model).pipe(take(1));
   }
 
   put(model: any) {
     return this.client.put(`${this._baseURL}/${model.id}`, model).pipe(take(1));
+  }
+
+  setActiveState(id: number, state: boolean) {
+    let params = new HttpParams();
+    params = params.append('state', state);
+
+    return this.client
+      .patch(`${this._baseURL}/${id}`, { observe: 'response', params })
+      .pipe(take(1));
   }
 
   delete(id: number) {
