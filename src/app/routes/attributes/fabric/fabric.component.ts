@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
@@ -90,12 +91,43 @@ export class FabricComponent implements OnInit {
   }
 
   openModal(id: number, name: string) {
-    this._dialog.open(DialogComponent, {
-      data: {
-        title: `Deseja excluir o tecido ${name}?`,
-        content: 'Tem certeza que deseja excluir o tecido?',
-        action: () => this.deleteFabric(id),
+    this._attributeService.checkFK(id).subscribe({
+      next: (data: boolean) => {
+        if (data === true) {
+          this._dialog.open(DialogComponent, {
+            data: {
+              title: `Deseja inativar o tecido ${name}?`,
+              content: `Existem itens de pedido com este tecido, sua exclusão não será possível.
+                Deseja inativar?`,
+              action: () => this.setActiveState(id, false),
+            },
+          });
+        } else {
+          this._dialog.open(DialogComponent, {
+            data: {
+              title: `Deseja excluir o tecido ${name}?`,
+              content: 'Tem certeza que deseja excluir o tecido?',
+              action: () => this.deleteFabric(id),
+            },
+          });
+        }
       },
+      error: (error: HttpErrorResponse) =>
+        this._toastrService.error(error.error),
+    });
+  }
+
+  setActiveState(id: number, state: boolean) {
+    this._attributeService.setActiveState(id, state).subscribe({
+      next: (data: Fabric) => {
+        if (data.isActive === state) {
+          this._toastrService.success('Tecido inativado');
+        } else {
+          this._toastrService.warning('O tecido não foi alterado');
+        }
+      },
+      error: (error: HttpErrorResponse) =>
+        this._toastrService.error(error.error, 'Erro ao alterar o tecido'),
     });
   }
 

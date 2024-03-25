@@ -96,7 +96,7 @@ export class SetComponent implements OnInit {
         if (data === true) {
           this._dialog.open(DialogComponent, {
             data: {
-              title: `Deseja Inativar o conjunto ${name}?`,
+              title: `Deseja inativar o conjunto ${name}?`,
               content: `Existem modelos com este conjunto, sua exclusão não será possível.
                 Deseja inativar?`,
               action: () => this.setActiveState(id, false),
