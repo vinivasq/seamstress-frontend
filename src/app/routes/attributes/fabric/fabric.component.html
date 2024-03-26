@@ -77,4 +77,28 @@
       </ul>
     </mat-card-content>
   </mat-card>
+
+  <mat-card *ngIf="this.inactiveFabrics.length > 0">
+    <mat-card-header><h2>Cores Inativas</h2></mat-card-header>
+    <mat-card-content>
+      <ul class="attribute__list">
+        <li *ngFor="let fabric of inactiveFabrics">
+          <mat-divider></mat-divider>
+          <div class="list__item">
+            <p class="item__color">{{ fabric.name }}</p>
+            <div>
+              <button
+                (click)="setActiveState(fabric.id, true)"
+                mat-icon-button
+                color="accent"
+              >
+                <mat-icon>check</mat-icon>
+              </button>
+            </div>
+          </div>
+          <mat-divider></mat-divider>
+        </li>
+      </ul>
+    </mat-card-content>
+  </mat-card>
 </div>

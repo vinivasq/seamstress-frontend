@@ -1,4 +1,4 @@
-import { HttpErrorResponse } from '@angular/common/http';
+import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
@@ -14,6 +14,7 @@ import { SpinnerService } from 'src/app/services/spinner.service';
 })
 export class SizeComponent implements OnInit {
   public sizes: Size[];
+  public inactiveSizes: Size[];
   size: Size = { id: 0, name: '' };
 
   constructor(
@@ -35,7 +36,10 @@ export class SizeComponent implements OnInit {
       .getAttributes()
       .subscribe({
         next: (data: Size[]) => {
-          this.sizes = data;
+          if (data?.length > 0) {
+            this.sizes = data.filter((size) => size.isActive);
+            this.inactiveSizes = data.filter((size) => !size.isActive);
+          }
         },
         error: () => {
           this._toastrService.error(
@@ -95,12 +99,21 @@ export class SizeComponent implements OnInit {
 
   setActiveState(id: number, state: boolean) {
     this._attributeService.setActiveState(id, state).subscribe({
-      next: (data: Size) => {
-        if (data.isActive === state) {
-          this._toastrService.success('Tamanho inativado');
+      next: (data: HttpResponse<Size>) => {
+        if (data.status === 200) {
+          if (data.body.isActive === state) {
+            if (state === false) {
+              this._toastrService.success('Tamanho inativado');
+            } else {
+              this._toastrService.success('Tamanho habilitado');
+            }
+          } else {
+            this._toastrService.warning('O tamanho não foi alterado');
+          }
         } else {
-          this._toastrService.warning('O tamanho não foi alterado');
+          this._toastrService.warning('Houve um problema ao alterar o tamanho');
         }
+        this.getSizes();
       },
       error: (error: HttpErrorResponse) =>
         this._toastrService.error(error.error, 'Erro ao alterar o tamanho'),

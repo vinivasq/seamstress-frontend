@@ -1,4 +1,4 @@
-import { HttpErrorResponse } from '@angular/common/http';
+import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
@@ -14,6 +14,7 @@ import { SpinnerService } from 'src/app/services/spinner.service';
 })
 export class FabricComponent implements OnInit {
   public fabrics: Fabric[];
+  public inactiveFabrics: Fabric[];
   fabric: Fabric = { id: 0, name: '' };
   requestMethod = 'post';
 
@@ -36,7 +37,10 @@ export class FabricComponent implements OnInit {
       .getAttributes()
       .subscribe({
         next: (data: Fabric[]) => {
-          this.fabrics = data;
+          if (data?.length > 0) {
+            this.fabrics = data.filter((fabric) => fabric.isActive);
+            this.inactiveFabrics = data.filter((fabric) => !fabric.isActive);
+          }
         },
         error: () => {
           this._toastrService.error(
@@ -119,12 +123,21 @@ export class FabricComponent implements OnInit {
 
   setActiveState(id: number, state: boolean) {
     this._attributeService.setActiveState(id, state).subscribe({
-      next: (data: Fabric) => {
-        if (data.isActive === state) {
-          this._toastrService.success('Tecido inativado');
+      next: (data: HttpResponse<Fabric>) => {
+        if (data.status === 200) {
+          if (data.body.isActive === state) {
+            if (state === false) {
+              this._toastrService.success('Tecido inativado');
+            } else {
+              this._toastrService.success('Tecido habilitado');
+            }
+          } else {
+            this._toastrService.warning('O tecido não foi alterado');
+          }
         } else {
-          this._toastrService.warning('O tecido não foi alterado');
+          this._toastrService.warning('Houve um problema ao alterar o tecido');
         }
+        this.getFabrics();
       },
       error: (error: HttpErrorResponse) =>
         this._toastrService.error(error.error, 'Erro ao alterar o tecido'),

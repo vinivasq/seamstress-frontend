@@ -1,4 +1,4 @@
-import { HttpErrorResponse } from '@angular/common/http';
+import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
@@ -14,6 +14,7 @@ import { SpinnerService } from 'src/app/services/spinner.service';
 })
 export class SetComponent implements OnInit {
   public sets: Set[];
+  public inactiveSets: Set[];
   set: Set = { id: 0, name: '' };
   requestMethod = 'post';
 
@@ -36,7 +37,10 @@ export class SetComponent implements OnInit {
       .getAttributes()
       .subscribe({
         next: (data: Set[]) => {
-          this.sets = data;
+          if (data?.length > 0) {
+            this.sets = data.filter((set) => set.isActive);
+            this.inactiveSets = data.filter((set) => !set.isActive);
+          }
         },
         error: () => {
           this._toastrService.error(
@@ -119,12 +123,23 @@ export class SetComponent implements OnInit {
 
   setActiveState(id: number, state: boolean) {
     this._attributeService.setActiveState(id, state).subscribe({
-      next: (data: Set) => {
-        if (data.isActive === state) {
-          this._toastrService.success('Conjunto inativado');
+      next: (data: HttpResponse<Set>) => {
+        if (data.status === 200) {
+          if (data.body.isActive === state) {
+            if (state === false) {
+              this._toastrService.success('Conjunto inativado');
+            } else {
+              this._toastrService.success('Conjunto habilitado');
+            }
+          } else {
+            this._toastrService.warning('O conjunto não foi alterado');
+          }
         } else {
-          this._toastrService.warning('O conjunto não foi alterado');
+          this._toastrService.warning(
+            'Houve um problema ao alterar o conjunto'
+          );
         }
+        this.getSets();
       },
       error: (error: HttpErrorResponse) =>
         this._toastrService.error(error.error, 'Erro ao alterar o conjunto'),
