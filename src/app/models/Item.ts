@@ -13,4 +13,5 @@ export interface Item {
   itemFabrics: ItemFabrics[];
   imageURL: string;
   price: number;
+  isActive?: boolean;
 }

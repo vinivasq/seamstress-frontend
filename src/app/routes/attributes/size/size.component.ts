@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
@@ -66,12 +67,43 @@ export class SizeComponent implements OnInit {
   }
 
   openModal(id: number, name: string) {
-    this._dialog.open(DialogComponent, {
-      data: {
-        title: `Deseja excluir o tamanho ${name}?`,
-        content: 'Tem certeza que deseja excluir o tamanho?',
-        action: () => this.deleteSize(id),
+    this._attributeService.checkFK(id).subscribe({
+      next: (data: boolean) => {
+        if (data === true) {
+          this._dialog.open(DialogComponent, {
+            data: {
+              title: `Deseja inativar o tamanho ${name}?`,
+              content: `Existem itens de pedido com este tamanho, sua exclusão não será possível.
+                Deseja inativar?`,
+              action: () => this.setActiveState(id, false),
+            },
+          });
+        } else {
+          this._dialog.open(DialogComponent, {
+            data: {
+              title: `Deseja excluir o tamanho ${name}?`,
+              content: 'Tem certeza que deseja excluir o tamanho?',
+              action: () => this.deleteSize(id),
+            },
+          });
+        }
       },
+      error: (error: HttpErrorResponse) =>
+        this._toastrService.error(error.error),
+    });
+  }
+
+  setActiveState(id: number, state: boolean) {
+    this._attributeService.setActiveState(id, state).subscribe({
+      next: (data: Size) => {
+        if (data.isActive === state) {
+          this._toastrService.success('Tamanho inativado');
+        } else {
+          this._toastrService.warning('O tamanho não foi alterado');
+        }
+      },
+      error: (error: HttpErrorResponse) =>
+        this._toastrService.error(error.error, 'Erro ao alterar o tamanho'),
     });
   }
 
@@ -84,11 +116,8 @@ export class SizeComponent implements OnInit {
         );
         this.getSizes();
       },
-      error: () => {
-        this._toastrService.error(
-          'Não foi possível deletar o tamanho',
-          'Erro ao deletar'
-        );
+      error: (error: HttpErrorResponse) => {
+        this._toastrService.error(error.error, 'Erro ao deletar');
       },
     });
   }

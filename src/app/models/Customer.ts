@@ -14,4 +14,5 @@ export interface Customer {
   phoneNumber: string;
   email: string;
   sizings?: Sizings;
+  isActive?: boolean;
 }

@@ -3,7 +3,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { ToastrService } from 'ngx-toastr';
 import { Subject, debounceTime } from 'rxjs';
-import { DialogComponent } from 'src/app/components/dialog/dialog.component';
 import { TableHeaderComponent } from 'src/app/components/tableHeader/tableHeader.component';
 import { Customer } from 'src/app/models/Customer';
 import { PageParams } from 'src/app/models/PageParams';
@@ -30,7 +29,6 @@ export class CustomersComponent implements AfterViewInit {
   constructor(
     private _customerService: CustomerService,
     private _toastrService: ToastrService,
-    private _dialog: MatDialog,
     private _spinnerService: SpinnerService
   ) {}
 
@@ -112,38 +110,5 @@ export class CustomersComponent implements AfterViewInit {
     }
 
     this.searchTerm.next(value);
-  }
-
-  openModal(id: number, name: string) {
-    this._dialog.open(DialogComponent, {
-      data: {
-        title: `Deseja excluir o(a) cliente ${name}?`,
-        content: 'Tem certeza qeu deseja excluir o(a) cliente?',
-        action: () => {
-          this._spinnerService.isLoading = true;
-          this._customerService
-            .deleteCustomer(id)
-            .subscribe({
-              next: (result: any) => {
-                if (result.message === 'Deletado com sucesso') {
-                  this._toastrService.success(
-                    'Cliente deletado com sucesso',
-                    'Cliente deletado'
-                  );
-                  this.getCustomers();
-                }
-              },
-              error: (error) => {
-                console.log(error);
-                this._toastrService.error(
-                  'Não foi possível deletar o cliente',
-                  'Erro ao deletar'
-                );
-              },
-            })
-            .add(() => (this._spinnerService.isLoading = false));
-        },
-      },
-    });
   }
 }

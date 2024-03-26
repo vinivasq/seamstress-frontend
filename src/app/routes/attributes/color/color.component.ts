@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
@@ -90,12 +91,43 @@ export class ColorComponent implements OnInit {
   }
 
   openModal(id: number, name: string) {
-    this._dialog.open(DialogComponent, {
-      data: {
-        title: `Deseja excluir a cor ${name}?`,
-        content: 'Tem certeza que deseja excluir a cor?',
-        action: () => this.deleteColor(id),
+    this._attributeService.checkFK(id).subscribe({
+      next: (data: boolean) => {
+        if (data === true) {
+          this._dialog.open(DialogComponent, {
+            data: {
+              title: `Deseja inativar a cor ${name}?`,
+              content: `Existem itens de pedido com esta cor, sua exclusão não será possível.
+                Deseja inativar?`,
+              action: () => this.setActiveState(id, false),
+            },
+          });
+        } else {
+          this._dialog.open(DialogComponent, {
+            data: {
+              title: `Deseja excluir a cor ${name}?`,
+              content: 'Tem certeza que deseja excluir a cor?',
+              action: () => this.deleteColor(id),
+            },
+          });
+        }
       },
+      error: (error: HttpErrorResponse) =>
+        this._toastrService.error(error.error),
+    });
+  }
+
+  setActiveState(id: number, state: boolean) {
+    this._attributeService.setActiveState(id, state).subscribe({
+      next: (data: Color) => {
+        if (data.isActive === state) {
+          this._toastrService.success('Cor inativada');
+        } else {
+          this._toastrService.warning('A cor não foi alterada');
+        }
+      },
+      error: (error: HttpErrorResponse) =>
+        this._toastrService.error(error.error, 'Erro ao alterar a cor'),
     });
   }
 
