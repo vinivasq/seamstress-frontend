@@ -17,6 +17,7 @@ import { ItemFabrics } from 'src/app/models/ItemFabrics';
 import { ItemSizes } from 'src/app/models/ItemSizes';
 import { ImageService } from 'src/app/services/image.service';
 import { SpinnerService } from 'src/app/services/spinner.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-item',
@@ -177,6 +178,7 @@ export class ItemComponent implements OnInit {
       itemSizes: [],
       imageURL: null,
       price: price as unknown as number,
+      isActive: this.item?.isActive,
     };
 
     if (this.images?.length > 0) {
@@ -263,36 +265,71 @@ export class ItemComponent implements OnInit {
   }
 
   public openDialog(item: Item) {
-    this._dialog.open(DialogComponent, {
-      data: {
-        title: `Deseja excluir o modelo ${item.name}?`,
-        content: 'Tem certeza que deseja excluir o modelo?',
-        action: () => {
-          this._spinner.isLoading = true;
-          this._itemService
-            .delete(item.id)
-            .subscribe({
-              next: (result: any) => {
-                if (result.message === 'Deletado com sucesso') {
-                  this._toastrService.success(
-                    'Modelo deletado com sucesso',
-                    'Modelo deletado'
-                  );
-                  this._router.navigate(['/dashboard/items']);
-                }
-              },
-              error: (error) => {
-                console.log(error);
-                this._toastrService.error(
-                  'Erro ao deletar',
-                  'Ocorreu um erro ao deletar o modelo'
-                );
-              },
-            })
-            .add(() => (this._spinner.isLoading = false));
-        },
+    this._itemService.checkFK(this.item.id).subscribe({
+      next: (data: boolean) => {
+        if (data === true) {
+          this._dialog.open(DialogComponent, {
+            data: {
+              title: `Deseja inativar o modelo ${this.item.name}?`,
+              content: `Existem itens de pedidos com este modelo, sua exclusão não será possível.
+                Deseja inativar?`,
+              action: () => this.setActiveState(this.item.id, false),
+            },
+          });
+        } else {
+          this._dialog.open(DialogComponent, {
+            data: {
+              title: `Deseja excluir o modelo ${this.item.name}?`,
+              content: 'Tem certeza qeu deseja excluir o modelo?',
+              action: () => this.deleteItem(this.item.id),
+            },
+          });
+        }
       },
+      error: (error: HttpErrorResponse) =>
+        this._toastrService.error(error.error),
     });
+  }
+
+  setActiveState(id: number, state: boolean) {
+    this._itemService.setActiveState(id, state).subscribe({
+      next: (data: Item) => {
+        console.log(data);
+        if (data.isActive === state) {
+          this._toastrService.success('Modelo inativado');
+        } else {
+          this._toastrService.warning('O modelo não foi alterado');
+        }
+        this._router.navigate(['/dashboard/items']);
+      },
+      error: (error: HttpErrorResponse) =>
+        this._toastrService.error(error.error, 'Erro ao alterar o modelo'),
+    });
+  }
+
+  deleteItem(id: number) {
+    this._spinner.isLoading = true;
+    this._itemService
+      .delete(id)
+      .subscribe({
+        next: (result: any) => {
+          if (result.message === 'Deletado com sucesso') {
+            this._toastrService.success(
+              'Modelo deletado com sucesso',
+              'Modelo deletado'
+            );
+            this._router.navigate(['/dashboard/items']);
+          }
+        },
+        error: (error) => {
+          console.log(error);
+          this._toastrService.error(
+            'Erro ao deletar',
+            'Ocorreu um erro ao deletar o modelo'
+          );
+        },
+      })
+      .add(() => (this._spinner.isLoading = false));
   }
 
   getSets() {
