@@ -279,20 +279,7 @@ export class OrderComponent implements OnInit {
   }
 
   saveOrder() {
-    if (!this.form.valid) {
-      this._toastrService.warning(
-        'Verifique os campos obrigatórios',
-        'Campos inválidos'
-      );
-      return;
-    }
-    if (this.itemOrders.length === 0) {
-      this._toastrService.warning(
-        'Não é possível salvar um pedido sem itens',
-        'Pedido inválido'
-      );
-      return;
-    }
+    if (this.validate() == false) return;
 
     this._spinner.isLoading = true;
 
@@ -348,6 +335,44 @@ export class OrderComponent implements OnInit {
     });
   }
 
+  validate(): boolean {
+    if (!this.form.valid) {
+      this._toastrService.warning(
+        'Verifique os campos obrigatórios',
+        'Campos inválidos'
+      );
+      return false;
+    }
+
+    console.log(this.form.get('customerId'));
+
+    if (this.form.get('customerId').value == null) {
+      this._toastrService.warning(
+        'Selecione um cliente da lista disponível',
+        'Cliente inválido'
+      );
+      return false;
+    }
+
+    if (this.form.get('executorId').value == null) {
+      this._toastrService.warning(
+        'Selecione uma produção da lista disponível',
+        'Produção inválida'
+      );
+      return false;
+    }
+
+    if (this.itemOrders.length === 0) {
+      this._toastrService.warning(
+        'Não é possível salvar um pedido sem itens',
+        'Pedido inválido'
+      );
+      return false;
+    }
+
+    return true;
+  }
+
   getItems() {
     this._itemService.getItems().subscribe({
       next: (data: Item[]) => {
@@ -394,13 +419,6 @@ export class OrderComponent implements OnInit {
       .getCustomers(new PageParams(0, 25, value))
       .pipe(
         map((data: PaginatedResult<Customer[]>) => {
-          if (data.result == null) {
-            this._toastrService.warning(
-              'Revise os termos de busca',
-              'Nenhum cliente encontrado'
-            );
-          }
-
           return data.result;
         })
       );
