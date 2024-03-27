@@ -17,7 +17,7 @@ import { ItemFabrics } from 'src/app/models/ItemFabrics';
 import { ItemSizes } from 'src/app/models/ItemSizes';
 import { ImageService } from 'src/app/services/image.service';
 import { SpinnerService } from 'src/app/services/spinner.service';
-import { HttpErrorResponse } from '@angular/common/http';
+import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-item',
@@ -27,6 +27,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 export class ItemComponent implements OnInit {
   isMobile: boolean;
   requestMethod = 'post';
+  hasFks: boolean;
   itemId = 0;
 
   form = this._formBuilder.group({
@@ -91,56 +92,67 @@ export class ItemComponent implements OnInit {
     this._spinner.isLoading = true;
     this.requestMethod = 'put';
 
+    this._itemService.getItemById(this.itemId).subscribe({
+      next: async (data: Item) => {
+        this.item = { ...data };
+
+        if (this.item.imageURL?.length > 0) {
+          const images = this.item.imageURL.split(';');
+
+          images.forEach(async (image) => {
+            const response = await this._imageService.getImage(image);
+            const imageFile = new File([response], image);
+
+            this.images.push(imageFile);
+          });
+        }
+
+        const name = this.form.get('name') as FormControl;
+        name.patchValue(this.item.name);
+
+        const set = this.form.get('set') as FormControl;
+        set.patchValue(this.item.set?.name);
+
+        const imageURL = this.form.get('imageURL') as FormControl;
+        imageURL.patchValue(this.item.imageURL);
+
+        const price = this.form.get('price') as FormControl;
+        price.patchValue(this.item.price);
+
+        const itemColors = this.form.get('itemColors') as FormControl;
+        itemColors.patchValue(
+          this.item.itemColors.map((color: ItemColors) => color.colorId)
+        );
+
+        const itemFabrics = this.form.get('itemFabrics') as FormControl;
+        itemFabrics.patchValue(
+          this.item.itemFabrics.map((fabric: ItemFabrics) => fabric.fabricId)
+        );
+
+        const itemSizes = this.form.get('itemSizes') as FormControl;
+        itemSizes.patchValue(
+          this.item.itemSizes.map((size: ItemSizes) => size.sizeId)
+        );
+      },
+      error: () => {
+        this._toastrService.error(
+          'Não foi possível carregar o modelo',
+          'Erro ao carregar'
+        );
+      },
+    });
+
     this._itemService
-      .getItemById(this.itemId)
+      .checkFK(this.itemId)
       .subscribe({
-        next: async (data: Item) => {
-          this.item = { ...data };
-
-          if (this.item.imageURL?.length > 0) {
-            const images = this.item.imageURL.split(';');
-
-            images.forEach(async (image) => {
-              const response = await this._imageService.getImage(image);
-              const imageFile = new File([response], image);
-
-              this.images.push(imageFile);
-            });
-          }
-
-          const name = this.form.get('name') as FormControl;
-          name.patchValue(this.item.name);
-
-          const set = this.form.get('set') as FormControl;
-          set.patchValue(this.item.set?.name);
-
-          const imageURL = this.form.get('imageURL') as FormControl;
-          imageURL.patchValue(this.item.imageURL);
-
-          const price = this.form.get('price') as FormControl;
-          price.patchValue(this.item.price);
-
-          const itemColors = this.form.get('itemColors') as FormControl;
-          itemColors.patchValue(
-            this.item.itemColors.map((color: ItemColors) => color.colorId)
-          );
-
-          const itemFabrics = this.form.get('itemFabrics') as FormControl;
-          itemFabrics.patchValue(
-            this.item.itemFabrics.map((fabric: ItemFabrics) => fabric.fabricId)
-          );
-
-          const itemSizes = this.form.get('itemSizes') as FormControl;
-          itemSizes.patchValue(
-            this.item.itemSizes.map((size: ItemSizes) => size.sizeId)
-          );
+        next: (data: boolean) => {
+          this.hasFks = data;
         },
-        error: () => {
+        error: (error: HttpErrorResponse) =>
           this._toastrService.error(
-            'Não foi possível carregar o modelo',
-            'Erro ao carregar'
-          );
-        },
+            error.error,
+            'Erro ao checar por relacionamentos'
+          ),
       })
       .add(() => (this._spinner.isLoading = false));
   }
@@ -264,43 +276,45 @@ export class ItemComponent implements OnInit {
     }
   }
 
-  public openDialog(item: Item) {
-    this._itemService.checkFK(this.item.id).subscribe({
-      next: (data: boolean) => {
-        if (data === true) {
-          this._dialog.open(DialogComponent, {
-            data: {
-              title: `Deseja inativar o modelo ${this.item.name}?`,
-              content: `Existem itens de pedidos com este modelo, sua exclusão não será possível.
-                Deseja inativar?`,
-              action: () => this.setActiveState(this.item.id, false),
-            },
-          });
-        } else {
-          this._dialog.open(DialogComponent, {
-            data: {
-              title: `Deseja excluir o modelo ${this.item.name}?`,
-              content: 'Tem certeza qeu deseja excluir o modelo?',
-              action: () => this.deleteItem(this.item.id),
-            },
-          });
-        }
+  public deleteDialog() {
+    this._dialog.open(DialogComponent, {
+      data: {
+        title: `Deseja excluir o modelo ${this.item.name}?`,
+        content: 'Tem certeza que deseja excluir o modelo?',
+        action: () => this.deleteItem(this.item.id),
       },
-      error: (error: HttpErrorResponse) =>
-        this._toastrService.error(error.error),
+    });
+  }
+
+  public inactiveDialog() {
+    this._dialog.open(DialogComponent, {
+      data: {
+        title: `Deseja inativar o modelo ${this.item.name}?`,
+        content: `Existem itens de pedidos com este modelo, sua exclusão não será possível.
+            Deseja inativar?`,
+        action: () => this.setActiveState(this.item.id, false),
+      },
     });
   }
 
   setActiveState(id: number, state: boolean) {
     this._itemService.setActiveState(id, state).subscribe({
-      next: (data: Item) => {
-        console.log(data);
-        if (data.isActive === state) {
-          this._toastrService.success('Modelo inativado');
+      next: (data: HttpResponse<Item>) => {
+        if (data.status === 200) {
+          if (data.body.isActive === state) {
+            if (state === false) {
+              this._toastrService.success('Modelo inativado');
+              this._router.navigate(['/dashboard/items']);
+            } else {
+              this._toastrService.success('Modelo habilitado');
+              this.loadItem();
+            }
+          } else {
+            this._toastrService.warning('O modelo não foi alterado');
+          }
         } else {
-          this._toastrService.warning('O modelo não foi alterado');
+          this._toastrService.warning('Houve um erro ao alterar o modelo');
         }
-        this._router.navigate(['/dashboard/items']);
       },
       error: (error: HttpErrorResponse) =>
         this._toastrService.error(error.error, 'Erro ao alterar o modelo'),
