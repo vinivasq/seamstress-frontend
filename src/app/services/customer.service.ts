@@ -1,4 +1,4 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Customer } from '../models/Customer';
 import { Observable, map, take } from 'rxjs';
@@ -52,12 +52,19 @@ export class CustomerService {
     return this.client.get(`${this.baseURL}/fk/${id}`).pipe(take(1));
   }
 
-  setActiveState(id: number, state: boolean) {
+  setActiveState(
+    id: number,
+    state: boolean
+  ): Observable<any | HttpResponse<any>> {
     let params = new HttpParams();
     params = params.append('state', state);
 
     return this.client
-      .patch(`${this.baseURL}/active/${id}`, { observe: 'response', params })
+      .patch(
+        `${this.baseURL}/active/${id}`,
+        {},
+        { observe: 'response', params }
+      )
       .pipe(take(1));
   }
 

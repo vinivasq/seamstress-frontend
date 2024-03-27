@@ -9,7 +9,7 @@ import { CustomerService } from 'src/app/services/customer.service';
 import { Customer } from 'src/app/models/Customer';
 import { ToastrService } from 'ngx-toastr';
 import { SpinnerService } from 'src/app/services/spinner.service';
-import { HttpErrorResponse } from '@angular/common/http';
+import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { IBGEService } from 'src/app/services/IBGE.service';
 import { UF } from 'src/app/models/viewModels/UF';
 import { Address } from 'src/app/models/viewModels/Address';
@@ -23,6 +23,7 @@ import { MatDialog } from '@angular/material/dialog';
 })
 export class CustomerComponent implements OnInit {
   requestMethod = 'post';
+  hasFks: boolean;
   customer = {} as Customer;
   UFs: string[];
   stepperOrientation: Observable<StepperOrientation>;
@@ -99,31 +100,37 @@ export class CustomerComponent implements OnInit {
 
     this.requestMethod = 'patch';
     this._spinnerService.isLoading = true;
+    this._customerService.getCustomerByID(+customerId).subscribe({
+      next: (customer: Customer) => {
+        this.customer = { ...customer };
+
+        const firstFormGroup = this.form.get('firstFormGroup') as FormControl;
+        firstFormGroup.patchValue(this.customer);
+
+        const secondFormGroup = this.form.get('secondFormGroup') as FormControl;
+        secondFormGroup.patchValue(this.customer);
+
+        const thirdFormGroup = this.form.get('thirdFormGroup') as FormControl;
+        thirdFormGroup.patchValue(this.customer.sizings);
+      },
+      error: (error) => {
+        console.log(error);
+        this._toastr.error(
+          'Não foi possível carregar o cliente',
+          'Erro ao carregar'
+        );
+        this._spinnerService.isLoading = false;
+      },
+    });
+
     this._customerService
-      .getCustomerByID(+customerId)
+      .checkFK(+customerId)
       .subscribe({
-        next: (customer: Customer) => {
-          this.customer = { ...customer };
-
-          const firstFormGroup = this.form.get('firstFormGroup') as FormControl;
-          firstFormGroup.patchValue(this.customer);
-
-          const secondFormGroup = this.form.get(
-            'secondFormGroup'
-          ) as FormControl;
-          secondFormGroup.patchValue(this.customer);
-
-          const thirdFormGroup = this.form.get('thirdFormGroup') as FormControl;
-          thirdFormGroup.patchValue(this.customer.sizings);
+        next: (data: boolean) => {
+          this.hasFks = data;
         },
-        error: (error) => {
-          console.log(error);
-          this._toastr.error(
-            'Não foi possível carregar o cliente',
-            'Erro ao carregar'
-          );
-          this._spinnerService.isLoading = false;
-        },
+        error: (error: HttpErrorResponse) =>
+          this._toastr.error(error.error, 'Erro ao checar por relacionamentos'),
       })
       .add(() => (this._spinnerService.isLoading = false));
   }
@@ -214,44 +221,48 @@ export class CustomerComponent implements OnInit {
     });
   }
 
-  openModal() {
-    this._customerService.checkFK(this.customer.id).subscribe({
-      next: (data: boolean) => {
-        if (data === true) {
-          this._dialog.open(DialogComponent, {
-            data: {
-              title: `Deseja inativar o(a) cliente ${this.customer.name}?`,
-              content: `Existem pedidos com este cliente, sua exclusão não será possível.
-                Deseja inativar?`,
-              action: () => this.setActiveState(this.customer.id, false),
-            },
-          });
-        } else {
-          this._dialog.open(DialogComponent, {
-            data: {
-              title: `Deseja excluir o(a) cliente ${this.customer.name}?`,
-              content: 'Tem certeza qeu deseja excluir o(a) cliente?',
-              action: () => this.deleteCustomer(this.customer.id),
-            },
-          });
-        }
+  public deleteDialog() {
+    this._dialog.open(DialogComponent, {
+      data: {
+        title: `Deseja excluir o(a) cliente ${this.customer.name}?`,
+        content: 'Tem certeza que deseja excluir o(a) cliente?',
+        action: () => this.deleteCustomer(this.customer.id),
       },
-      error: (error: HttpErrorResponse) => this._toastr.error(error.error),
+    });
+  }
+
+  public inactiveDialog() {
+    this._dialog.open(DialogComponent, {
+      data: {
+        title: `Deseja inativar o(a) cliente ${this.customer.name}?`,
+        content: `Existem itens de pedidos com este cliente, sua exclusão não será possível.
+            Deseja inativar?`,
+        action: () => this.setActiveState(this.customer.id, false),
+      },
     });
   }
 
   setActiveState(id: number, state: boolean) {
     this._customerService.setActiveState(id, state).subscribe({
-      next: (data: Customer) => {
-        if (data.isActive === state) {
-          this._toastr.success('Cliente inativado');
+      next: (data: HttpResponse<Customer>) => {
+        if (data.status === 200) {
+          if (data.body.isActive === state) {
+            if (state === false) {
+              this._toastr.success('cliente inativado');
+              this._router.navigate(['/dashboard/customers']);
+            } else {
+              this._toastr.success('cliente habilitado');
+              this.loadCustomer();
+            }
+          } else {
+            this._toastr.warning('O(a) cliente não foi alterado');
+          }
         } else {
-          this._toastr.warning('O cliente não foi alterado');
+          this._toastr.warning('Houve um erro ao alterar o(a) cliente');
         }
-        this._router.navigate(['/dashboard/customers']);
       },
       error: (error: HttpErrorResponse) =>
-        this._toastr.error(error.error, 'Erro ao alterar o cliente'),
+        this._toastr.error(error.error, 'Erro ao alterar o(a) cliente'),
     });
   }
 

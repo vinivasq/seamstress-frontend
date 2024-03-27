@@ -95,15 +95,44 @@
           </mat-form-field>
         </div>
         <div class="form__buttons">
-          <button
-            *ngIf="this.requestMethod === 'patch'"
-            mat-stroked-button
-            (click)="openModal()"
-            color="warn"
-          >
-            <mat-icon>delete</mat-icon>
-            Excluir
-          </button>
+          <div class="form__buttons" *ngIf="requestMethod == 'patch'">
+            <button
+              *ngIf="this.hasFks == false"
+              class="button"
+              mat-stroked-button
+              color="warn"
+              aria-label="Icon Button to delete an customer"
+              (click)="deleteDialog()"
+            >
+              <mat-icon>delete</mat-icon>
+              Excluir
+            </button>
+
+            <button
+              *ngIf="this.hasFks && this.customer.isActive"
+              class="button"
+              mat-stroked-button
+              color="warn"
+              aria-label="Icon Button to inactivate an customer"
+              (click)="inactiveDialog()"
+            >
+              <mat-icon>block</mat-icon>
+              Inativar
+            </button>
+
+            <button
+              *ngIf="this.customer.isActive == false"
+              class="button"
+              mat-stroked-button
+              color="accent"
+              aria-label="Icon Button to activate an customer"
+              (click)="setActiveState(customer.id, true)"
+            >
+              <mat-icon>check</mat-icon>
+              Ativar
+            </button>
+          </div>
+
           <button mat-stroked-button matStepperNext color="accent">
             Próximo
           </button>
