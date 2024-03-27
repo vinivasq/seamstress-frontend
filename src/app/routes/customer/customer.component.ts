@@ -9,10 +9,12 @@ import { CustomerService } from 'src/app/services/customer.service';
 import { Customer } from 'src/app/models/Customer';
 import { ToastrService } from 'ngx-toastr';
 import { SpinnerService } from 'src/app/services/spinner.service';
-import { HttpErrorResponse } from '@angular/common/http';
+import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { IBGEService } from 'src/app/services/IBGE.service';
-import { Address } from 'src/app/models/viewModels/address/Address';
-import { UF } from 'src/app/models/viewModels/address/UF';
+import { UF } from 'src/app/models/viewModels/UF';
+import { Address } from 'src/app/models/viewModels/Address';
+import { DialogComponent } from 'src/app/components/dialog/dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-customer',
@@ -21,6 +23,7 @@ import { UF } from 'src/app/models/viewModels/address/UF';
 })
 export class CustomerComponent implements OnInit {
   requestMethod = 'post';
+  hasFks: boolean;
   customer = {} as Customer;
   UFs: string[];
   stepperOrientation: Observable<StepperOrientation>;
@@ -77,6 +80,7 @@ export class CustomerComponent implements OnInit {
     private _customerService: CustomerService,
     private _IBGEService: IBGEService,
     private _toastr: ToastrService,
+    private _dialog: MatDialog,
     private _spinnerService: SpinnerService
   ) {
     this.stepperOrientation = this._breakpointObserver
@@ -96,31 +100,37 @@ export class CustomerComponent implements OnInit {
 
     this.requestMethod = 'patch';
     this._spinnerService.isLoading = true;
+    this._customerService.getCustomerByID(+customerId).subscribe({
+      next: (customer: Customer) => {
+        this.customer = { ...customer };
+
+        const firstFormGroup = this.form.get('firstFormGroup') as FormControl;
+        firstFormGroup.patchValue(this.customer);
+
+        const secondFormGroup = this.form.get('secondFormGroup') as FormControl;
+        secondFormGroup.patchValue(this.customer);
+
+        const thirdFormGroup = this.form.get('thirdFormGroup') as FormControl;
+        thirdFormGroup.patchValue(this.customer.sizings);
+      },
+      error: (error) => {
+        console.log(error);
+        this._toastr.error(
+          'Não foi possível carregar o cliente',
+          'Erro ao carregar'
+        );
+        this._spinnerService.isLoading = false;
+      },
+    });
+
     this._customerService
-      .getCustomerByID(+customerId)
+      .checkFK(+customerId)
       .subscribe({
-        next: (customer: Customer) => {
-          this.customer = { ...customer };
-
-          const firstFormGroup = this.form.get('firstFormGroup') as FormControl;
-          firstFormGroup.patchValue(this.customer);
-
-          const secondFormGroup = this.form.get(
-            'secondFormGroup'
-          ) as FormControl;
-          secondFormGroup.patchValue(this.customer);
-
-          const thirdFormGroup = this.form.get('thirdFormGroup') as FormControl;
-          thirdFormGroup.patchValue(this.customer.sizings);
+        next: (data: boolean) => {
+          this.hasFks = data;
         },
-        error: (error) => {
-          console.log(error);
-          this._toastr.error(
-            'Não foi possível carregar o cliente',
-            'Erro ao carregar'
-          );
-          this._spinnerService.isLoading = false;
-        },
+        error: (error: HttpErrorResponse) =>
+          this._toastr.error(error.error, 'Erro ao checar por relacionamentos'),
       })
       .add(() => (this._spinnerService.isLoading = false));
   }
@@ -148,7 +158,11 @@ export class CustomerComponent implements OnInit {
 
     this.requestMethod === 'post'
       ? (this.customer = { ...formValues })
-      : (this.customer = { id: this.customer.id, ...formValues });
+      : (this.customer = {
+          id: this.customer.id,
+          isActive: this.customer.isActive,
+          ...formValues,
+        });
 
     this._customerService[this.requestMethod](this.customer)
       .subscribe({
@@ -205,5 +219,75 @@ export class CustomerComponent implements OnInit {
         console.log(err);
       },
     });
+  }
+
+  public deleteDialog() {
+    this._dialog.open(DialogComponent, {
+      data: {
+        title: `Deseja excluir o(a) cliente ${this.customer.name}?`,
+        content: 'Tem certeza que deseja excluir o(a) cliente?',
+        action: () => this.deleteCustomer(this.customer.id),
+      },
+    });
+  }
+
+  public inactiveDialog() {
+    this._dialog.open(DialogComponent, {
+      data: {
+        title: `Deseja inativar o(a) cliente ${this.customer.name}?`,
+        content: `Existem itens de pedidos com este cliente, sua exclusão não será possível.
+            Deseja inativar?`,
+        action: () => this.setActiveState(this.customer.id, false),
+      },
+    });
+  }
+
+  setActiveState(id: number, state: boolean) {
+    this._customerService.setActiveState(id, state).subscribe({
+      next: (data: HttpResponse<Customer>) => {
+        if (data.status === 200) {
+          if (data.body.isActive === state) {
+            if (state === false) {
+              this._toastr.success('cliente inativado');
+              this._router.navigate(['/dashboard/customers']);
+            } else {
+              this._toastr.success('cliente habilitado');
+              this.loadCustomer();
+            }
+          } else {
+            this._toastr.warning('O(a) cliente não foi alterado');
+          }
+        } else {
+          this._toastr.warning('Houve um erro ao alterar o(a) cliente');
+        }
+      },
+      error: (error: HttpErrorResponse) =>
+        this._toastr.error(error.error, 'Erro ao alterar o(a) cliente'),
+    });
+  }
+
+  deleteCustomer(id: number) {
+    this._spinnerService.isLoading = true;
+    this._customerService
+      .deleteCustomer(id)
+      .subscribe({
+        next: (result: any) => {
+          if (result.message === 'Deletado com sucesso') {
+            this._toastr.success(
+              'Cliente deletado com sucesso',
+              'Cliente deletado'
+            );
+            this._router.navigate(['/dashboard/customers']);
+          }
+        },
+        error: (error) => {
+          console.log(error);
+          this._toastr.error(
+            'Não foi possível deletar o cliente',
+            'Erro ao deletar'
+          );
+        },
+      })
+      .add(() => (this._spinnerService.isLoading = false));
   }
 }

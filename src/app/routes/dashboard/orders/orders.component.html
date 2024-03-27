@@ -121,7 +121,7 @@
                       class="sizings"
                       *ngIf="
                         item.size.id !== 1 &&
-                        item.itemSize.measurements.length > 0
+                        item.itemSize?.measurements?.length > 0
                       "
                     >
                       <div

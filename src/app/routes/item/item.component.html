@@ -151,17 +151,44 @@
           </mat-form-field>
         </div>
         <div class="buttons">
-          <button
-            *ngIf="requestMethod == 'put'"
-            class="button"
-            mat-stroked-button
-            color="warn"
-            aria-label="Icon Button to delete an item"
-            (click)="openDialog(item)"
-          >
-            <mat-icon>delete</mat-icon>
-            Excluir
-          </button>
+          <div *ngIf="requestMethod == 'put'">
+            <button
+              *ngIf="this.hasFks == false"
+              class="button"
+              mat-stroked-button
+              color="warn"
+              aria-label="Icon Button to delete an item"
+              (click)="deleteDialog()"
+            >
+              <mat-icon>delete</mat-icon>
+              Excluir
+            </button>
+
+            <button
+              *ngIf="this.hasFks && this.item.isActive"
+              class="button"
+              mat-stroked-button
+              color="warn"
+              aria-label="Icon Button to inactivate an item"
+              (click)="inactiveDialog()"
+            >
+              <mat-icon>block</mat-icon>
+              Inativar
+            </button>
+
+            <button
+              *ngIf="this.hasFks && this.item.isActive == false"
+              class="button"
+              mat-stroked-button
+              color="accent"
+              aria-label="Icon Button to activate an item"
+              (click)="setActiveState(item.id, true)"
+            >
+              <mat-icon>check</mat-icon>
+              Ativar
+            </button>
+          </div>
+
           <button
             class="button"
             mat-raised-button

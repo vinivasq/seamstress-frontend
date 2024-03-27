@@ -1,3 +1,4 @@
+import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
@@ -13,6 +14,7 @@ import { SpinnerService } from 'src/app/services/spinner.service';
 })
 export class SizeComponent implements OnInit {
   public sizes: Size[];
+  public inactiveSizes: Size[];
   size: Size = { id: 0, name: '' };
 
   constructor(
@@ -34,7 +36,10 @@ export class SizeComponent implements OnInit {
       .getAttributes()
       .subscribe({
         next: (data: Size[]) => {
-          this.sizes = data;
+          if (data?.length > 0) {
+            this.sizes = data.filter((size) => size.isActive);
+            this.inactiveSizes = data.filter((size) => !size.isActive);
+          }
         },
         error: () => {
           this._toastrService.error(
@@ -66,12 +71,52 @@ export class SizeComponent implements OnInit {
   }
 
   openModal(id: number, name: string) {
-    this._dialog.open(DialogComponent, {
-      data: {
-        title: `Deseja excluir o tamanho ${name}?`,
-        content: 'Tem certeza que deseja excluir o tamanho?',
-        action: () => this.deleteSize(id),
+    this._attributeService.checkFK(id).subscribe({
+      next: (data: boolean) => {
+        if (data === true) {
+          this._dialog.open(DialogComponent, {
+            data: {
+              title: `Deseja inativar o tamanho ${name}?`,
+              content: `Existem itens de pedido com este tamanho, sua exclusão não será possível.
+                Deseja inativar?`,
+              action: () => this.setActiveState(id, false),
+            },
+          });
+        } else {
+          this._dialog.open(DialogComponent, {
+            data: {
+              title: `Deseja excluir o tamanho ${name}?`,
+              content: 'Tem certeza que deseja excluir o tamanho?',
+              action: () => this.deleteSize(id),
+            },
+          });
+        }
       },
+      error: (error: HttpErrorResponse) =>
+        this._toastrService.error(error.error),
+    });
+  }
+
+  setActiveState(id: number, state: boolean) {
+    this._attributeService.setActiveState(id, state).subscribe({
+      next: (data: HttpResponse<Size>) => {
+        if (data.status === 200) {
+          if (data.body.isActive === state) {
+            if (state === false) {
+              this._toastrService.success('Tamanho inativado');
+            } else {
+              this._toastrService.success('Tamanho habilitado');
+            }
+          } else {
+            this._toastrService.warning('O tamanho não foi alterado');
+          }
+        } else {
+          this._toastrService.warning('Houve um problema ao alterar o tamanho');
+        }
+        this.getSizes();
+      },
+      error: (error: HttpErrorResponse) =>
+        this._toastrService.error(error.error, 'Erro ao alterar o tamanho'),
     });
   }
 
@@ -84,11 +129,8 @@ export class SizeComponent implements OnInit {
         );
         this.getSizes();
       },
-      error: () => {
-        this._toastrService.error(
-          'Não foi possível deletar o tamanho',
-          'Erro ao deletar'
-        );
+      error: (error: HttpErrorResponse) => {
+        this._toastrService.error(error.error, 'Erro ao deletar');
       },
     });
   }

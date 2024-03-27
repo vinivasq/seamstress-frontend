@@ -1,3 +1,4 @@
+import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
@@ -13,6 +14,7 @@ import { SpinnerService } from 'src/app/services/spinner.service';
 })
 export class ColorComponent implements OnInit {
   public colors: Color[];
+  public inactiveColors: Color[];
   color: Color = { id: 0, name: '' };
   requestMethod = 'post';
 
@@ -35,7 +37,10 @@ export class ColorComponent implements OnInit {
       .getAttributes()
       .subscribe({
         next: (data: Color[]) => {
-          this.colors = data;
+          if (data?.length > 0) {
+            this.colors = data.filter((color) => color.isActive);
+            this.inactiveColors = data.filter((color) => !color.isActive);
+          }
         },
         error: () => {
           this._toastrService.error(
@@ -90,12 +95,52 @@ export class ColorComponent implements OnInit {
   }
 
   openModal(id: number, name: string) {
-    this._dialog.open(DialogComponent, {
-      data: {
-        title: `Deseja excluir a cor ${name}?`,
-        content: 'Tem certeza que deseja excluir a cor?',
-        action: () => this.deleteColor(id),
+    this._attributeService.checkFK(id).subscribe({
+      next: (data: boolean) => {
+        if (data === true) {
+          this._dialog.open(DialogComponent, {
+            data: {
+              title: `Deseja inativar a cor ${name}?`,
+              content: `Existem itens de pedido com esta cor, sua exclusão não será possível.
+                Deseja inativar?`,
+              action: () => this.setActiveState(id, false),
+            },
+          });
+        } else {
+          this._dialog.open(DialogComponent, {
+            data: {
+              title: `Deseja excluir a cor ${name}?`,
+              content: 'Tem certeza que deseja excluir a cor?',
+              action: () => this.deleteColor(id),
+            },
+          });
+        }
       },
+      error: (error: HttpErrorResponse) =>
+        this._toastrService.error(error.error),
+    });
+  }
+
+  setActiveState(id: number, state: boolean) {
+    this._attributeService.setActiveState(id, state).subscribe({
+      next: (data: HttpResponse<Color>) => {
+        if (data.status === 200) {
+          if (data.body.isActive === state) {
+            if (state === false) {
+              this._toastrService.success('Cor inativada');
+            } else {
+              this._toastrService.success('Cor habilitada');
+            }
+          } else {
+            this._toastrService.warning('A cor não foi alterada');
+          }
+        } else {
+          this._toastrService.warning('Houve um problema ao alterar a cor');
+        }
+        this.getColors();
+      },
+      error: (error: HttpErrorResponse) =>
+        this._toastrService.error(error.error, 'Erro ao alterar a cor'),
     });
   }
 

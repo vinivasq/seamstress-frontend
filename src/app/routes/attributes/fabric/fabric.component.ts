@@ -1,3 +1,4 @@
+import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
@@ -13,6 +14,7 @@ import { SpinnerService } from 'src/app/services/spinner.service';
 })
 export class FabricComponent implements OnInit {
   public fabrics: Fabric[];
+  public inactiveFabrics: Fabric[];
   fabric: Fabric = { id: 0, name: '' };
   requestMethod = 'post';
 
@@ -35,7 +37,10 @@ export class FabricComponent implements OnInit {
       .getAttributes()
       .subscribe({
         next: (data: Fabric[]) => {
-          this.fabrics = data;
+          if (data?.length > 0) {
+            this.fabrics = data.filter((fabric) => fabric.isActive);
+            this.inactiveFabrics = data.filter((fabric) => !fabric.isActive);
+          }
         },
         error: () => {
           this._toastrService.error(
@@ -90,12 +95,52 @@ export class FabricComponent implements OnInit {
   }
 
   openModal(id: number, name: string) {
-    this._dialog.open(DialogComponent, {
-      data: {
-        title: `Deseja excluir o tecido ${name}?`,
-        content: 'Tem certeza que deseja excluir o tecido?',
-        action: () => this.deleteFabric(id),
+    this._attributeService.checkFK(id).subscribe({
+      next: (data: boolean) => {
+        if (data === true) {
+          this._dialog.open(DialogComponent, {
+            data: {
+              title: `Deseja inativar o tecido ${name}?`,
+              content: `Existem itens de pedido com este tecido, sua exclusão não será possível.
+                Deseja inativar?`,
+              action: () => this.setActiveState(id, false),
+            },
+          });
+        } else {
+          this._dialog.open(DialogComponent, {
+            data: {
+              title: `Deseja excluir o tecido ${name}?`,
+              content: 'Tem certeza que deseja excluir o tecido?',
+              action: () => this.deleteFabric(id),
+            },
+          });
+        }
       },
+      error: (error: HttpErrorResponse) =>
+        this._toastrService.error(error.error),
+    });
+  }
+
+  setActiveState(id: number, state: boolean) {
+    this._attributeService.setActiveState(id, state).subscribe({
+      next: (data: HttpResponse<Fabric>) => {
+        if (data.status === 200) {
+          if (data.body.isActive === state) {
+            if (state === false) {
+              this._toastrService.success('Tecido inativado');
+            } else {
+              this._toastrService.success('Tecido habilitado');
+            }
+          } else {
+            this._toastrService.warning('O tecido não foi alterado');
+          }
+        } else {
+          this._toastrService.warning('Houve um problema ao alterar o tecido');
+        }
+        this.getFabrics();
+      },
+      error: (error: HttpErrorResponse) =>
+        this._toastrService.error(error.error, 'Erro ao alterar o tecido'),
     });
   }
 

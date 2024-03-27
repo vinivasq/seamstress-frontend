@@ -1,3 +1,4 @@
+import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
@@ -13,6 +14,7 @@ import { SpinnerService } from 'src/app/services/spinner.service';
 })
 export class SetComponent implements OnInit {
   public sets: Set[];
+  public inactiveSets: Set[];
   set: Set = { id: 0, name: '' };
   requestMethod = 'post';
 
@@ -35,7 +37,10 @@ export class SetComponent implements OnInit {
       .getAttributes()
       .subscribe({
         next: (data: Set[]) => {
-          this.sets = data;
+          if (data?.length > 0) {
+            this.sets = data.filter((set) => set.isActive);
+            this.inactiveSets = data.filter((set) => !set.isActive);
+          }
         },
         error: () => {
           this._toastrService.error(
@@ -90,12 +95,54 @@ export class SetComponent implements OnInit {
   }
 
   openModal(id: number, name: string) {
-    this._dialog.open(DialogComponent, {
-      data: {
-        title: `Deseja excluir o conjunto ${name}?`,
-        content: 'Tem certeza que deseja excluir o conjunto?',
-        action: () => this.deleteSet(id),
+    this._attributeService.checkFK(id).subscribe({
+      next: (data: boolean) => {
+        if (data === true) {
+          this._dialog.open(DialogComponent, {
+            data: {
+              title: `Deseja inativar o conjunto ${name}?`,
+              content: `Existem modelos com este conjunto, sua exclusão não será possível.
+                Deseja inativar?`,
+              action: () => this.setActiveState(id, false),
+            },
+          });
+        } else {
+          this._dialog.open(DialogComponent, {
+            data: {
+              title: `Deseja excluir o conjunto ${name}?`,
+              content: 'Tem certeza que deseja excluir o conjunto?',
+              action: () => this.deleteSet(id),
+            },
+          });
+        }
       },
+      error: (error: HttpErrorResponse) =>
+        this._toastrService.error(error.error),
+    });
+  }
+
+  setActiveState(id: number, state: boolean) {
+    this._attributeService.setActiveState(id, state).subscribe({
+      next: (data: HttpResponse<Set>) => {
+        if (data.status === 200) {
+          if (data.body.isActive === state) {
+            if (state === false) {
+              this._toastrService.success('Conjunto inativado');
+            } else {
+              this._toastrService.success('Conjunto habilitado');
+            }
+          } else {
+            this._toastrService.warning('O conjunto não foi alterado');
+          }
+        } else {
+          this._toastrService.warning(
+            'Houve um problema ao alterar o conjunto'
+          );
+        }
+        this.getSets();
+      },
+      error: (error: HttpErrorResponse) =>
+        this._toastrService.error(error.error, 'Erro ao alterar o conjunto'),
     });
   }
 

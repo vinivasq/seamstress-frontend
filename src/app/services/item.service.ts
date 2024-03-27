@@ -1,6 +1,6 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { firstValueFrom, take } from 'rxjs';
+import { Observable, firstValueFrom, take } from 'rxjs';
 import { Item } from '../models/Item';
 import { environment } from 'src/environments/environment';
 
@@ -24,6 +24,22 @@ export class ItemService {
     return await firstValueFrom(
       this.client.get(`${this.baseURL}/${id}`).pipe(take(1))
     );
+  }
+
+  checkFK(id: number) {
+    return this.client.get(`${this.baseURL}/fk/${id}`).pipe(take(1));
+  }
+
+  setActiveState(
+    id: number,
+    state: boolean
+  ): Observable<any | HttpResponse<any>> {
+    let params = new HttpParams();
+    params = params.append('state', state);
+
+    return this.client
+      .patch(`${this.baseURL}/${id}`, {}, { observe: 'response', params })
+      .pipe(take(1));
   }
 
   post(model: Item) {
