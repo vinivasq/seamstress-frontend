@@ -260,6 +260,8 @@ export class OrderComponent implements OnInit {
             customerId: this.order.customer.id,
             executor: this.order.executor.name,
             executorId: this.order.executor.id,
+            salePlatform: this.order.salePlatform?.name,
+            salePlatformId: this.order.salePlatform?.id,
             orderedAt: this.order.orderedAt,
             deadline: this.order.deadline,
             description: this.order.description,
