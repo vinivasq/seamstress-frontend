@@ -35,17 +35,17 @@ import moment from 'moment';
       <mat-card-content>
         <canvas
           baseChart
-          *ngIf="foundData == false"
+          *ngIf="foundData"
           class="doughnutChart"
           [data]="chartData"
           [type]="chartType"
           [options]="chartOptions"
         >
         </canvas>
-        <span class="period" *ngIf="foundData == false"
+        <span class="period" *ngIf="foundData"
           >{{ periodBegin }} - {{ periodEnd }}</span
         >
-        <span *ngIf="foundData" class="notFound">
+        <span *ngIf="foundData == false" class="notFound">
           <mat-icon>search</mat-icon>
           Nenhum dado encontrado
         </span>
@@ -73,12 +73,16 @@ export class DoughnutChartComponent {
   };
 
   constructor(
-    private chartService: ChartService,
+    private _chartService: ChartService,
     private _toastrService: ToastrService
   ) {}
 
   filterChart(value: string) {
     const [periodBegin, periodEnd] = value.split('&');
+
+    // const periodBegin = '2024-03-01T03:00:00.000Z';
+    // const periodEnd = '2024-03-30T03:00:00.000Z';
+
     this.getChartData(periodBegin, periodEnd);
   }
 
@@ -86,11 +90,11 @@ export class DoughnutChartComponent {
     this.periodBegin = moment(new Date(periodBegin)).format('DD/MM/yyyy');
     this.periodEnd = moment(new Date(periodEnd)).format('DD/MM/yyyy');
 
-    this.chartService
+    this._chartService
       .getDoughnutChart(this.source, periodBegin, periodEnd)
       .subscribe({
         next: (data: HttpResponse<DoughnutChart>) => {
-          this.foundData = false;
+          this.foundData = true;
 
           if (data.status === 200) {
             const dataResponse = data.body;
@@ -110,7 +114,7 @@ export class DoughnutChartComponent {
               ],
             };
           } else if (data.status === 204) {
-            this.foundData = true;
+            this.foundData = false;
             this._toastrService.info(
               'Selecione outro período',
               'Nenhum dado encontrado'
