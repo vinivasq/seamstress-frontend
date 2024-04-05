@@ -6,11 +6,23 @@ import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
 import { ChartColors } from 'src/helpers/chartColors';
 import { ChartPeriodComponent } from '../chart-period/chart-period.component';
 import * as data from 'src/app/json/revenue-data.json';
+import { ChartService } from 'src/app/services/chart.service';
+import { ToastrService } from 'ngx-toastr';
+import moment from 'moment';
+import { HttpResponse } from '@angular/common/http';
+import { BarLineChart } from 'src/app/models/viewModels/charts/BarLineChart';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-bar-line-chart',
   standalone: true,
-  imports: [CommonModule, MatCardModule, NgChartsModule, ChartPeriodComponent],
+  imports: [
+    CommonModule,
+    MatCardModule,
+    MatIconModule,
+    NgChartsModule,
+    ChartPeriodComponent,
+  ],
   template: `
     <mat-card class="chart-container elevation">
       <mat-card-header>
@@ -21,19 +33,27 @@ import * as data from 'src/app/json/revenue-data.json';
         <canvas
           baseChart
           class="chart barLineChart"
+          *ngIf="foundData"
           [data]="chartData"
           [type]="chartType"
           [options]="chartOptions"
         >
         </canvas>
+        <span *ngIf="foundData == false" class="notFound">
+          <mat-icon>search</mat-icon>
+          Nenhum dado encontrado
+        </span>
       </div>
     </mat-card>
   `,
   styleUrls: ['./bar-line-chart.component.scss'],
 })
-export class BarLineChartComponent implements OnInit {
+export class BarLineChartComponent {
   @Input() source: string;
   @Input() title: string;
+  periodBegin: string;
+  periodEnd: string;
+  foundData: boolean = false;
   chartData: ChartData<'bar'>;
   chartType: ChartType = 'bar';
   chartOptions: ChartConfiguration['options'] = {
@@ -60,34 +80,68 @@ export class BarLineChartComponent implements OnInit {
     },
   };
 
-  ngOnInit(): void {
-    this.getChartData();
-  }
-
-  getChartData() {
-    const dataResponse = data;
-
-    this.chartData = {
-      labels: dataResponse.labels,
-      datasets: dataResponse.dataSets.map((dataSet: any, index: number) => {
-        const totalDataSet = dataSet.label.toLowerCase() === 'total';
-        return {
-          data: dataSet.data,
-          label: dataSet.label,
-          type: dataSet.type,
-          backgroundColor: totalDataSet
-            ? ChartColors.accent.backgroundColor
-            : ChartColors.mono[index].backgroundColor,
-          borderColor: totalDataSet
-            ? ChartColors.accent.borderColor
-            : ChartColors.mono[index].backgroundColor,
-          fill: totalDataSet,
-        };
-      }),
-    };
-  }
+  constructor(
+    private _chartService: ChartService,
+    private _toastrService: ToastrService
+  ) {}
 
   filterChart(value: string) {
-    console.log(value.split('&'));
+    const [periodBegin, periodEnd] = value.split('&');
+
+    // const periodBegin = '2024-03-10T03:00:00.000Z';
+    // const periodEnd = '2024-03-16T03:00:00.000Z';
+
+    this.getChartData(periodBegin, periodEnd);
+  }
+
+  getChartData(periodBegin: string, periodEnd: string) {
+    this.periodBegin = moment(new Date(periodBegin)).format('DD/MM/yyyy');
+    this.periodEnd = moment(new Date(periodEnd)).format('DD/MM/yyyy');
+
+    this._chartService
+      .getBarLineChart(this.source, periodBegin, periodEnd)
+      .subscribe({
+        next: (data: HttpResponse<BarLineChart>) => {
+          if (data.status === 200) {
+            const dataResponse = data.body;
+            if (dataResponse.dataSets[0].data.length > 0) {
+              this.foundData = true;
+              this.chartData = {
+                labels: dataResponse.labels,
+                datasets: dataResponse.dataSets.map(
+                  (dataSet: any, index: number) => {
+                    const totalDataSet =
+                      dataSet.label.toLowerCase() === 'total';
+                    return {
+                      data: dataSet.data,
+                      label: dataSet.label,
+                      type: dataSet.type,
+                      backgroundColor: totalDataSet
+                        ? ChartColors.accent.backgroundColor
+                        : ChartColors.mono[index].backgroundColor,
+                      borderColor: totalDataSet
+                        ? ChartColors.accent.borderColor
+                        : ChartColors.mono[index].backgroundColor,
+                      fill: totalDataSet,
+                    };
+                  }
+                ),
+              };
+            }
+          } else if (data.status === 204) {
+            this.foundData = false;
+            this._toastrService.info(
+              'Selecione outro período',
+              'Nenhum dado encontrado'
+            );
+          }
+        },
+        error: (error: Error) => {
+          this._toastrService.error('Erro ao recuperar gráfico');
+          console.log(
+            `Ocorreu um erro ao recuperar o gráfico de ${this.source}: ${error.message}`
+          );
+        },
+      });
   }
 }
