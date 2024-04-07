@@ -5,7 +5,6 @@ import { NgChartsModule } from 'ng2-charts';
 import { ChartConfiguration, ChartData, ChartType } from 'chart.js';
 import { ChartColors } from 'src/helpers/chartColors';
 import { ChartPeriodComponent } from '../chart-period/chart-period.component';
-import * as data from 'src/app/json/revenue-data.json';
 import { ChartService } from 'src/app/services/chart.service';
 import { ToastrService } from 'ngx-toastr';
 import moment from 'moment';
@@ -87,10 +86,6 @@ export class BarLineChartComponent {
 
   filterChart(value: string) {
     const [periodBegin, periodEnd] = value.split('&');
-
-    // const periodBegin = '2024-03-10T03:00:00.000Z';
-    // const periodEnd = '2024-03-16T03:00:00.000Z';
-
     this.getChartData(periodBegin, periodEnd);
   }
 
@@ -118,11 +113,12 @@ export class BarLineChartComponent {
                       type: dataSet.type,
                       backgroundColor: totalDataSet
                         ? ChartColors.accent.backgroundColor
-                        : ChartColors.mono[index].backgroundColor,
+                        : ChartColors.analog[index].backgroundColor,
                       borderColor: totalDataSet
                         ? ChartColors.accent.borderColor
-                        : ChartColors.mono[index].backgroundColor,
+                        : ChartColors.analog[index].backgroundColor,
                       fill: totalDataSet,
+                      pointBackgroundColor: '#FFF',
                     };
                   }
                 ),

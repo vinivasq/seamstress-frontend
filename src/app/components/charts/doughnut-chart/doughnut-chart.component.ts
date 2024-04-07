@@ -79,10 +79,6 @@ export class DoughnutChartComponent {
 
   filterChart(value: string) {
     const [periodBegin, periodEnd] = value.split('&');
-
-    // const periodBegin = '2024-03-01T03:00:00.000Z';
-    // const periodEnd = '2024-03-30T03:00:00.000Z';
-
     this.getChartData(periodBegin, periodEnd);
   }
 
