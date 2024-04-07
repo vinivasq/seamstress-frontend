@@ -20,12 +20,14 @@ import { ItemOrder } from 'src/app/models/ItemOrder';
 import { Order } from 'src/app/models/Order';
 import { PageParams } from 'src/app/models/PageParams';
 import { PaginatedResult } from 'src/app/models/Pagination';
+import { SalePlatform } from 'src/app/models/SalePlatform';
 import { Size } from 'src/app/models/Size';
 import { User } from 'src/app/models/identity/User';
 import { CustomerService } from 'src/app/services/customer.service';
 import { ItemService } from 'src/app/services/item.service';
 import { ItemOrderService } from 'src/app/services/itemOrder.service';
 import { OrderService } from 'src/app/services/order.service';
+import { SalePlatformService } from 'src/app/services/salePlatform.service';
 import { SpinnerService } from 'src/app/services/spinner.service';
 import { UserService } from 'src/app/services/user.service';
 import { formatHeader } from 'src/helpers/ColumnHeaders';
@@ -47,6 +49,8 @@ export class OrderComponent implements OnInit {
     customer: ['', [Validators.required]],
     executorId: [null],
     executor: ['', [Validators.required]],
+    salePlatformId: [null],
+    salePlatform: ['', [Validators.required]],
     orderedAt: [null as Date, [Validators.required]],
     deadline: [null as Date, [Validators.required]],
     description: [''],
@@ -86,6 +90,7 @@ export class OrderComponent implements OnInit {
   itemSizes: Size[];
   executors: User[];
   filteredExecutors: Observable<any[]>;
+  salePlatforms: SalePlatform[];
 
   constructor(
     private _formBuilder: FormBuilder,
@@ -96,6 +101,7 @@ export class OrderComponent implements OnInit {
     private _itemOrderService: ItemOrderService,
     private _customerService: CustomerService,
     private _userService: UserService,
+    private _salePlatformService: SalePlatformService,
     private _toastrService: ToastrService,
     private _spinner: SpinnerService,
     private _dialog: MatDialog
@@ -105,6 +111,7 @@ export class OrderComponent implements OnInit {
     this.getItems();
     this.getCustomers();
     this.getExecutors();
+    this.getSalePlatforms();
     this.loadOrder();
   }
 
@@ -125,6 +132,10 @@ export class OrderComponent implements OnInit {
   }
   getExecutorId(event, executorId: number) {
     if (event.isUserInput) this.form.get('executorId')?.setValue(executorId);
+  }
+  getSalePlatformId(event, salePlatformId: number) {
+    if (event.isUserInput)
+      this.form.get('salePlatformId')?.setValue(salePlatformId);
   }
 
   addItemOrder() {
@@ -249,6 +260,8 @@ export class OrderComponent implements OnInit {
             customerId: this.order.customer.id,
             executor: this.order.executor.name,
             executorId: this.order.executor.id,
+            salePlatform: this.order.salePlatform?.name,
+            salePlatformId: this.order.salePlatform?.id,
             orderedAt: this.order.orderedAt,
             deadline: this.order.deadline,
             description: this.order.description,
@@ -327,11 +340,7 @@ export class OrderComponent implements OnInit {
         );
         this._router.navigate(['/dashboard/orders']);
       },
-      error: () =>
-        this._toastrService.error(
-          'Erro ao deletar o pedido',
-          'Erro ao deletar'
-        ),
+      error: () => this._toastrService.error('Erro ao deletar o pedido'),
     });
   }
 
@@ -382,11 +391,17 @@ export class OrderComponent implements OnInit {
           map((value) => this._filter(value || '', 'items'))
         );
       },
+      error: () => this._toastrService.error('Erro ao carregar os modelos'),
+    });
+  }
+
+  getSalePlatforms() {
+    this._salePlatformService.getSalePlatforms().subscribe({
+      next: (data: SalePlatform[]) => {
+        this.salePlatforms = data;
+      },
       error: () =>
-        this._toastrService.error(
-          'Erro ao carregar os modelos',
-          'Erro ao carregar'
-        ),
+        this._toastrService.error('Erro ao carregar as plataformas de venda'),
     });
   }
 

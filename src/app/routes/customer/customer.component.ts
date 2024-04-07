@@ -11,8 +11,8 @@ import { ToastrService } from 'ngx-toastr';
 import { SpinnerService } from 'src/app/services/spinner.service';
 import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { IBGEService } from 'src/app/services/IBGE.service';
-import { UF } from 'src/app/models/viewModels/UF';
-import { Address } from 'src/app/models/viewModels/Address';
+import { UF } from 'src/app/models/viewModels/address/UF';
+import { Address } from 'src/app/models/viewModels/address/Address';
 import { DialogComponent } from 'src/app/components/dialog/dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 

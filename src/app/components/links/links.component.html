@@ -18,6 +18,15 @@
     <li
       class="link"
       (click)="drawer.close()"
+      routerLink="/dashboard/admin"
+      routerLinkActive="link-active"
+      *ngIf="user.role.toLowerCase() === 'admin'"
+    >
+      <p>Métricas</p>
+    </li>
+    <li
+      class="link"
+      (click)="drawer.close()"
       routerLink="/dashboard/orders"
       routerLinkActive="link-active"
     >

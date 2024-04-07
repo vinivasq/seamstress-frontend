@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { User } from 'src/app/models/identity/User';
 import { UserLogin } from 'src/app/models/identity/UserLogin';
 import { UserService } from 'src/app/services/user.service';
 
@@ -23,7 +24,15 @@ export class LoginComponent implements OnInit {
   public login(): void {
     this._userService.login(this.model).subscribe({
       next: () => {
-        this._router.navigateByUrl('/dashboard');
+        this._userService.currentUser$
+          .subscribe((data: User) => {
+            if (data.role.toLowerCase() === 'admin') {
+              this._router.navigateByUrl('/dashboard/admin');
+            } else {
+              this._router.navigateByUrl('/dashboard/orders');
+            }
+          })
+          .unsubscribe();
       },
       error: (err: any) => {
         if (err.status === 401)
