@@ -54,7 +54,7 @@ const routes: Routes = [
         component: AdminComponent,
         canActivate: [roleGuard],
         data: {
-          role: ['admin', 'requester'],
+          role: ['admin'],
         },
       },
       {
