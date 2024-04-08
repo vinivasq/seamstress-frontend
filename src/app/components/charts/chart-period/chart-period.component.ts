@@ -53,7 +53,10 @@ export class ChartPeriodComponent implements OnInit {
       (option) => option.value === value
     );
 
-    const period = `${startDate}&${moment().toISOString()}`;
+    const periodBegin = moment(startDate).subtract(1, 'day').toISOString();
+    const periodEnd = moment().subtract(1, 'day').toISOString();
+
+    const period = `${periodBegin}&${periodEnd}`;
 
     this.valueChange.emit(period);
   }
