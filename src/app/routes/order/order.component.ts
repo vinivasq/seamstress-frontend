@@ -58,13 +58,23 @@ export class OrderComponent implements OnInit {
     itemOrders: this._formBuilder.array([]),
   });
 
-  newItemOrder = this._formBuilder.group({
-    itemId: [0],
+  itemOrder = this._formBuilder.group({
+    id: [0],
     orderId: [0],
+    itemId: [null, [Validators.required]],
     item: ['', [Validators.required]],
-    color: new FormControl({ value: '', disabled: true }, Validators.required),
-    fabric: new FormControl({ value: '', disabled: true }, Validators.required),
-    size: new FormControl({ value: '', disabled: true }, Validators.required),
+    colorId: new FormControl(
+      { value: null, disabled: true },
+      Validators.required
+    ),
+    fabricId: new FormControl(
+      { value: null, disabled: true },
+      Validators.required
+    ),
+    sizeId: new FormControl(
+      { value: null, disabled: true },
+      Validators.required
+    ),
     amount: new FormControl({ value: 0, disabled: true }, Validators.required),
     description: new FormControl({ value: '', disabled: true }),
     price: [0],
@@ -139,16 +149,14 @@ export class OrderComponent implements OnInit {
   }
 
   addItemOrder() {
-    if (!this.newItemOrder.valid) {
+    if (!this.itemOrder.valid) {
       this._toastrService.warning(
         'Verifique os campos obrigatórios',
         'Campos inválidos'
       );
       return;
     }
-    const itemOrder = this.newItemOrder.getRawValue();
-    const total = this.form.get('total').value;
-    itemOrder.price = itemOrder.price * itemOrder.amount;
+    const itemOrder = this.itemOrder.getRawValue();
     itemOrder.orderId = this.order?.id ?? 0;
 
     this.form
@@ -386,7 +394,7 @@ export class OrderComponent implements OnInit {
     this._itemService.getItems().subscribe({
       next: (data: Item[]) => {
         this.items = data;
-        this.filteredItems = this.newItemOrder.get('item').valueChanges.pipe(
+        this.filteredItems = this.itemOrder.get('item').valueChanges.pipe(
           startWith(''),
           map((value) => this._filter(value || '', 'items'))
         );
@@ -445,13 +453,13 @@ export class OrderComponent implements OnInit {
       itemId
     )) as Item;
 
-    const newItemOrder = this.newItemOrder as FormGroup;
+    const itemOrder = this.itemOrder as FormGroup;
     let colors: Color[] = [];
     let fabrics: Fabric[] = [];
     let sizes: Size[] = [];
 
-    newItemOrder.get('itemId')?.setValue(itemId);
-    newItemOrder.get('price')?.setValue(itemResponse.price);
+    itemOrder.get('itemId')?.setValue(itemId);
+    itemOrder.get('price')?.setValue(itemResponse.price);
 
     for (let i = 0; i < itemResponse.itemColors.length; ++i) {
       colors.push(itemResponse.itemColors[i].color);
@@ -497,18 +505,18 @@ export class OrderComponent implements OnInit {
   }
 
   enableAttributes() {
-    this.newItemOrder.get('color').enable();
-    this.newItemOrder.get('fabric').enable();
-    this.newItemOrder.get('size').enable();
-    this.newItemOrder.get('amount').enable();
-    this.newItemOrder.get('description').enable();
+    this.itemOrder.get('colorId').enable();
+    this.itemOrder.get('fabricId').enable();
+    this.itemOrder.get('sizeId').enable();
+    this.itemOrder.get('amount').enable();
+    this.itemOrder.get('description').enable();
   }
 
   disableAttributes() {
-    this.newItemOrder.get('color').disable();
-    this.newItemOrder.get('fabric').disable();
-    this.newItemOrder.get('size').disable();
-    this.newItemOrder.get('amount').disable();
-    this.newItemOrder.get('description').disable();
+    this.itemOrder.get('colorId').disable();
+    this.itemOrder.get('fabricId').disable();
+    this.itemOrder.get('sizeId').disable();
+    this.itemOrder.get('amount').disable();
+    this.itemOrder.get('description').disable();
   }
 }
