@@ -222,33 +222,33 @@ export class OrderComponent implements OnInit {
       this._itemOrderService
         .delete(itemOrder.id)
         .subscribe({
-        next: (result: any) => {
-          if (result.message === 'Deletado com sucesso') {
-                this._toastrService.success(
-                  'Item deletado com sucesso',
-                  'Item deletado'
-                );
+          next: (result: any) => {
+            if (result.message === 'Deletado com sucesso') {
+              this._toastrService.success(
+                'Item deletado com sucesso',
+                'Item deletado'
+              );
               return;
             } else {
               this._toastrService.warning(
                 'Revise o pedido',
                 'Item não deletado'
-                );
+              );
               return;
-          }
-        },
-        error: () => {
-          this._toastrService.error(
-            'Não foi possível deletar o Item',
-            'Erro ao deletar'
-          );
-        },
+            }
+          },
+          error: () => {
+            this._toastrService.error(
+              'Não foi possível deletar o Item',
+              'Erro ao deletar'
+            );
+          },
         })
         .add(() => {
           this._spinner.isLoading = false;
           this.cleanOrder();
           this.loadOrder();
-      });
+        });
     }
 
     this.itemOrders.removeAt(id);
@@ -380,6 +380,35 @@ export class OrderComponent implements OnInit {
       },
       error: () => this._toastrService.error('Erro ao deletar o pedido'),
     });
+  }
+
+  saveItemOrder() {
+    if (!this.itemOrder.valid) {
+      this._toastrService.warning(
+        'Verifique os campos obrigatórios',
+        'Campos inválidos'
+      );
+      return;
+    }
+
+    const itemOrder = this.itemOrder.getRawValue();
+
+    this._spinner.isLoading = true;
+    this._itemOrderService
+      .update(itemOrder.id, itemOrder)
+      .subscribe({
+        next: () => {
+          this._toastrService.success('Pedido alterado com sucesso');
+        },
+        error: (error: HttpErrorResponse) =>
+          this._toastrService.error(error.error, 'Erro ao atualizar item'),
+      })
+      .add(() => {
+        this._spinner.isLoading = false;
+        this.updateItemOrder = false;
+        this.cleanOrder();
+        this.loadOrder();
+      });
   }
 
   validate(): boolean {
