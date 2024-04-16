@@ -159,24 +159,25 @@ export class OrderComponent implements OnInit {
     const itemOrder = this.itemOrder.getRawValue();
     itemOrder.orderId = this.order?.id ?? 0;
 
-    this.form
-      .get('total')
-      ?.setValue(parseFloat((total + itemOrder.price).toFixed(2)));
     this.addData(itemOrder);
     this.itemOrders.push(this.createItemOrder(itemOrder as any));
-
-    this.newItemOrder.reset();
-    this.disableAttributes();
+    this.cleanItemOrder();
   }
 
-  createItemOrder(itemOrder: ItemOrder): FormGroup {
+  createItemOrder(itemOrder: any): FormGroup {
     return this._formBuilder.group({
       id: [itemOrder.id ?? 0],
       orderId: [itemOrder.orderId ?? 0],
       itemId: [itemOrder.itemId],
-      colorId: [itemOrder.color.id, [Validators.required]],
-      fabricId: [itemOrder.fabric.id, [Validators.required]],
-      sizeId: [itemOrder.size.id, [Validators.required]],
+      colorId: [
+        itemOrder.color?.id ?? itemOrder.colorId,
+        [Validators.required],
+      ],
+      fabricId: [
+        itemOrder.fabric?.id ?? itemOrder.fabricId,
+        [Validators.required],
+      ],
+      sizeId: [itemOrder.size?.id ?? itemOrder.sizeId, [Validators.required]],
       amount: [itemOrder.amount, [Validators.required]],
       description: [itemOrder.description],
     });
@@ -186,14 +187,22 @@ export class OrderComponent implements OnInit {
     const dataToAdd = {
       id: itemOrder.id ?? 0,
       item: itemOrder.item,
-      color: itemOrder.color.name,
-      fabric: itemOrder.fabric.name,
-      size: itemOrder.size.name,
+      color:
+        itemOrder.color?.name ??
+        this.itemColors.find((color) => color.id == itemOrder.colorId).name,
+      fabric:
+        itemOrder.fabric?.name ??
+        this.itemFabrics.find((fabric) => fabric.id == itemOrder.fabricId).name,
+      size:
+        itemOrder.size?.name ??
+        this.itemSizes.find((size) => size.id == itemOrder.sizeId).name,
       amount: itemOrder.amount,
       price: itemOrder.price,
     };
+
     this.dataSource.push(dataToAdd);
     this.table?.renderRows();
+    this.setOrderTotal();
   }
 
   removeData(id: number, item: any) {
