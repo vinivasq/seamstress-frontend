@@ -165,6 +165,16 @@
                 <button
                   *ngIf="column == 'price'"
                   class="button"
+                  color="accent"
+                  mat-icon-button
+                  aria-label="Icon Button to edit an item"
+                  (click)="loadItemOrder(i)"
+                >
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button
+                  *ngIf="column == 'price'"
+                  class="button"
                   color="warn"
                   mat-icon-button
                   aria-label="Icon Button to remove an item"
@@ -182,10 +192,12 @@
     </mat-card-content>
   </mat-card>
 
-  <mat-card [formGroup]="newItemOrder">
+  <mat-card [formGroup]="itemOrder">
     <mat-card-header class="order__header">
-      <h1>Selecione um Modelo</h1>
-      <!-- <p>Form value: {{ newItemOrder.value | json }}</p> -->
+      <h1>
+        {{ this.updateItemOrder ? "Alterando modelo" : "Selecione um modelo" }}
+      </h1>
+      <!-- <p>Form value: {{ itemOrder.value | json }}</p> -->
       <!-- <p>Form valid: {{ form.status | json }}</p> -->
       <mat-divider></mat-divider>
     </mat-card-header>
@@ -206,24 +218,24 @@
               <mat-option
                 *ngFor="let item of filteredItems | async"
                 [value]="item.name"
-                (onSelectionChange)="getItemAttributes($event, item.id)"
+                (onSelectionChange)="getItemAttributes(item.id, $event)"
               >
                 {{ item.name }}
               </mat-option>
             </mat-autocomplete>
-            <mat-error *ngIf="newItemOrder.get('item')?.hasError('required')">
+            <mat-error *ngIf="itemOrder.get('item')?.hasError('required')">
               O campo "Nome do modelo" não pode ficar vazio
             </mat-error>
           </mat-form-field>
           <div class="model__subgroup">
             <mat-form-field class="group__field">
               <mat-label>Tamanho</mat-label>
-              <mat-select formControlName="size">
-                <mat-option *ngFor="let size of itemSizes" [value]="size">
+              <mat-select formControlName="sizeId">
+                <mat-option *ngFor="let size of itemSizes" [value]="size.id">
                   {{ size.name }}
                 </mat-option>
               </mat-select>
-              <mat-error *ngIf="newItemOrder.get('size')?.hasError('required')">
+              <mat-error *ngIf="itemOrder.get('sizeId')?.hasError('required')">
                 "Tamanho" deve ser informado
               </mat-error>
             </mat-form-field>
@@ -240,12 +252,10 @@
                 #spinner
                 matSuffix
               ></ngx-mat-number-spinner>
-              <mat-error
-                *ngIf="newItemOrder.get('amount')?.hasError('required')"
-              >
+              <mat-error *ngIf="itemOrder.get('amount')?.hasError('required')">
                 Campo Obrigatório
               </mat-error>
-              <mat-error *ngIf="newItemOrder.get('amount')?.hasError('min')">
+              <mat-error *ngIf="itemOrder.get('amount')?.hasError('min')">
                 Quantidade inválida
               </mat-error>
             </mat-form-field>
@@ -255,14 +265,14 @@
           <div class="model__container">
             <mat-form-field class="model__field">
               <mat-label>Cor</mat-label>
-              <mat-select formControlName="color">
-                <mat-option *ngFor="let color of itemColors" [value]="color">{{
-                  color.name
-                }}</mat-option>
+              <mat-select formControlName="colorId">
+                <mat-option
+                  *ngFor="let color of itemColors"
+                  [value]="color.id"
+                  >{{ color.name }}</mat-option
+                >
               </mat-select>
-              <mat-error
-                *ngIf="newItemOrder.get('color')?.hasError('required')"
-              >
+              <mat-error *ngIf="itemOrder.get('colorId')?.hasError('required')">
                 O campo "Cor" não pode ficar vazio
               </mat-error>
             </mat-form-field>
@@ -270,15 +280,15 @@
           <div class="model__container">
             <mat-form-field class="model__field">
               <mat-label>Tecido</mat-label>
-              <mat-select formControlName="fabric">
+              <mat-select formControlName="fabricId">
                 <mat-option
                   *ngFor="let fabric of itemFabrics"
-                  [value]="fabric"
+                  [value]="fabric.id"
                   >{{ fabric.name }}</mat-option
                 >
               </mat-select>
               <mat-error
-                *ngIf="newItemOrder.get('fabric')?.hasError('required')"
+                *ngIf="itemOrder.get('fabricId')?.hasError('required')"
               >
                 O campo "Tecido" não pode ficar vazio
               </mat-error>
@@ -296,8 +306,35 @@
             ></textarea>
           </mat-form-field>
         </div>
-        <div class="model__buttons">
-          <button mat-stroked-button (click)="addItemOrder()" color="accent">
+        <div>
+          <div class="model__buttons" *ngIf="this.updateItemOrder">
+            <button
+              mat-stroked-button
+              (click)="
+                this.requestMethod === 'put' ? cleanItemOrder() : addItemOrder()
+              "
+              color="warn"
+            >
+              <mat-icon>block</mat-icon>
+              Cancelar
+            </button>
+            <button
+              mat-raised-button
+              (click)="
+                this.requestMethod === 'put' ? saveItemOrder() : addItemOrder()
+              "
+              color="accent"
+            >
+              <mat-icon>check</mat-icon>
+              {{ this.requestMethod === "put" ? "Salvar" : "Alterar" }}
+            </button>
+          </div>
+          <button
+            *ngIf="this.updateItemOrder === false"
+            mat-stroked-button
+            (click)="addItemOrder()"
+            color="accent"
+          >
             <mat-icon>add</mat-icon>
             Adicionar
           </button>

@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import {
   FormArray,
@@ -58,13 +59,23 @@ export class OrderComponent implements OnInit {
     itemOrders: this._formBuilder.array([]),
   });
 
-  newItemOrder = this._formBuilder.group({
-    itemId: [0],
+  itemOrder = this._formBuilder.group({
+    id: [0],
     orderId: [0],
+    itemId: [null, [Validators.required]],
     item: ['', [Validators.required]],
-    color: new FormControl({ value: '', disabled: true }, Validators.required),
-    fabric: new FormControl({ value: '', disabled: true }, Validators.required),
-    size: new FormControl({ value: '', disabled: true }, Validators.required),
+    colorId: new FormControl(
+      { value: null, disabled: true },
+      Validators.required
+    ),
+    fabricId: new FormControl(
+      { value: null, disabled: true },
+      Validators.required
+    ),
+    sizeId: new FormControl(
+      { value: null, disabled: true },
+      Validators.required
+    ),
     amount: new FormControl({ value: 0, disabled: true }, Validators.required),
     description: new FormControl({ value: '', disabled: true }),
     price: [0],
@@ -80,6 +91,7 @@ export class OrderComponent implements OnInit {
   ];
 
   requestMethod: string = 'post';
+  updateItemOrder: boolean = false;
   order: Order;
   dataSource: any[] = [];
   customers: Observable<Customer[]>;
@@ -139,36 +151,35 @@ export class OrderComponent implements OnInit {
   }
 
   addItemOrder() {
-    if (!this.newItemOrder.valid) {
+    if (!this.itemOrder.valid) {
       this._toastrService.warning(
         'Verifique os campos obrigatórios',
         'Campos inválidos'
       );
       return;
     }
-    const itemOrder = this.newItemOrder.getRawValue();
-    const total = this.form.get('total').value;
-    itemOrder.price = itemOrder.price * itemOrder.amount;
+    const itemOrder = this.itemOrder.getRawValue();
     itemOrder.orderId = this.order?.id ?? 0;
 
-    this.form
-      .get('total')
-      ?.setValue(parseFloat((total + itemOrder.price).toFixed(2)));
     this.addData(itemOrder);
     this.itemOrders.push(this.createItemOrder(itemOrder as any));
-
-    this.newItemOrder.reset();
-    this.disableAttributes();
+    this.cleanItemOrder();
   }
 
-  createItemOrder(itemOrder: ItemOrder): FormGroup {
+  createItemOrder(itemOrder: any): FormGroup {
     return this._formBuilder.group({
       id: [itemOrder.id ?? 0],
       orderId: [itemOrder.orderId ?? 0],
       itemId: [itemOrder.itemId],
-      colorId: [itemOrder.color.id, [Validators.required]],
-      fabricId: [itemOrder.fabric.id, [Validators.required]],
-      sizeId: [itemOrder.size.id, [Validators.required]],
+      colorId: [
+        itemOrder.color?.id ?? itemOrder.colorId,
+        [Validators.required],
+      ],
+      fabricId: [
+        itemOrder.fabric?.id ?? itemOrder.fabricId,
+        [Validators.required],
+      ],
+      sizeId: [itemOrder.size?.id ?? itemOrder.sizeId, [Validators.required]],
       amount: [itemOrder.amount, [Validators.required]],
       description: [itemOrder.description],
     });
@@ -178,24 +189,26 @@ export class OrderComponent implements OnInit {
     const dataToAdd = {
       id: itemOrder.id ?? 0,
       item: itemOrder.item,
-      color: itemOrder.color.name,
-      fabric: itemOrder.fabric.name,
-      size: itemOrder.size.name,
+      color:
+        itemOrder.color?.name ??
+        this.itemColors.find((color) => color.id == itemOrder.colorId).name,
+      fabric:
+        itemOrder.fabric?.name ??
+        this.itemFabrics.find((fabric) => fabric.id == itemOrder.fabricId).name,
+      size:
+        itemOrder.size?.name ??
+        this.itemSizes.find((size) => size.id == itemOrder.sizeId).name,
       amount: itemOrder.amount,
       price: itemOrder.price,
     };
+
     this.dataSource.push(dataToAdd);
     this.table?.renderRows();
+    this.setOrderTotal();
   }
 
-  removeData(id: number, item: any) {
-    console.log(item);
-    const total = this.form.get('total').value;
-    this.form
-      .get('total')
-      ?.setValue(parseFloat((total - item.price).toFixed(2)));
-
-    if (item.id !== 0) {
+  removeData(id: number, itemOrder: any) {
+    if (itemOrder.id !== 0 && this.requestMethod === 'put') {
       if (this.itemOrders.length === 1) {
         this._toastrService.warning(
           'Não é possível deletar o unico item do pedido.',
@@ -203,43 +216,45 @@ export class OrderComponent implements OnInit {
         );
         return;
       }
-      this._itemOrderService.delete(item.id).subscribe({
-        next: (result: any) => {
-          if (result.message === 'Deletado com sucesso') {
-            const { customer, ...formValues } = this.form.getRawValue() as any;
-            this.order = {
-              id: this.order?.id ?? 0,
-              ...formValues,
-            };
 
-            this._orderService.put(this.order).subscribe({
-              next: () => {
-                this._toastrService.success(
-                  'Item deletado com sucesso',
-                  'Item deletado'
-                );
-              },
-              error: () => {
-                this._toastrService.error(
-                  'Não foi possível salvar o pedido',
-                  'Erro ao salvar o pedido'
-                );
-              },
-            });
-          }
-        },
-        error: () => {
-          this._toastrService.error(
-            'Não foi possível deletar o Item',
-            'Erro ao deletar'
-          );
-        },
-      });
+      this._spinner.isLoading = true;
+
+      this._itemOrderService
+        .delete(itemOrder.id)
+        .subscribe({
+          next: (result: any) => {
+            if (result.message === 'Deletado com sucesso') {
+              this._toastrService.success(
+                'Item deletado com sucesso',
+                'Item deletado'
+              );
+              return;
+            } else {
+              this._toastrService.warning(
+                'Revise o pedido',
+                'Item não deletado'
+              );
+              return;
+            }
+          },
+          error: () => {
+            this._toastrService.error(
+              'Não foi possível deletar o Item',
+              'Erro ao deletar'
+            );
+          },
+        })
+        .add(() => {
+          this._spinner.isLoading = false;
+          this.cleanOrder();
+          this.loadOrder();
+        });
     }
 
     this.itemOrders.removeAt(id);
     this.dataSource.splice(id, 1);
     this.table?.renderRows();
+    this.setOrderTotal();
   }
 
   loadOrder() {
@@ -291,6 +306,31 @@ export class OrderComponent implements OnInit {
       .add(() => (this._spinner.isLoading = false));
   }
 
+  loadItemOrder(index: number) {
+    this.updateItemOrder = true;
+    const itemOrder = this.itemOrders.getRawValue()[index];
+
+    this.itemOrder.get('item').disable();
+    this.getItemAttributes(itemOrder.itemId);
+
+    this.itemOrder.patchValue({
+      id: itemOrder.id,
+      orderId: itemOrder.orderId,
+      item: this.items.find((item) => item.id === itemOrder.itemId).name,
+      colorId: itemOrder.colorId,
+      fabricId: itemOrder.fabricId,
+      sizeId: itemOrder.sizeId,
+      amount: itemOrder.amount,
+      description: itemOrder.description,
+    });
+
+    if (this.requestMethod === 'post') {
+      this.itemOrders.removeAt(index);
+      this.dataSource.splice(index, 1);
+      this.table.renderRows();
+    }
+  }
+
   saveOrder() {
     if (this.validate() == false) return;
 
@@ -315,12 +355,6 @@ export class OrderComponent implements OnInit {
             } com sucesso`,
             'Pedido salvo com sucesso'
           );
-          this.form.reset();
-          this.itemOrders.clear();
-          this.newItemOrder.reset();
-          this.dataSource = [];
-          this.disableAttributes();
-          this._router.navigate(['./order']);
         },
         error: () =>
           this._toastrService.error(
@@ -328,7 +362,11 @@ export class OrderComponent implements OnInit {
             'Erro ao Cadastrar'
           ),
       })
-      .add(() => (this._spinner.isLoading = false));
+      .add(() => {
+        this._spinner.isLoading = false;
+        this.cleanOrder();
+        this._router.navigate(['./order']);
+      });
   }
 
   deleteOrder() {
@@ -344,6 +382,35 @@ export class OrderComponent implements OnInit {
     });
   }
 
+  saveItemOrder() {
+    if (!this.itemOrder.valid) {
+      this._toastrService.warning(
+        'Verifique os campos obrigatórios',
+        'Campos inválidos'
+      );
+      return;
+    }
+
+    const itemOrder = this.itemOrder.getRawValue();
+
+    this._spinner.isLoading = true;
+    this._itemOrderService
+      .update(itemOrder.id, itemOrder)
+      .subscribe({
+        next: () => {
+          this._toastrService.success('Pedido alterado com sucesso');
+        },
+        error: (error: HttpErrorResponse) =>
+          this._toastrService.error(error.error, 'Erro ao atualizar item'),
+      })
+      .add(() => {
+        this._spinner.isLoading = false;
+        this.updateItemOrder = false;
+        this.cleanOrder();
+        this.loadOrder();
+      });
+  }
+
   validate(): boolean {
     if (!this.form.valid) {
       this._toastrService.warning(
@@ -353,7 +420,13 @@ export class OrderComponent implements OnInit {
       return false;
     }
 
-    console.log(this.form.get('customerId'));
+    if (this.form.get('orderedAt').value > this.form.get('deadline').value) {
+      this._toastrService.warning(
+        'A data de pedido não pode ser maior que o prazo de entrega',
+        'Data inválida'
+      );
+      return false;
+    }
 
     if (this.form.get('customerId').value == null) {
       this._toastrService.warning(
@@ -386,7 +459,7 @@ export class OrderComponent implements OnInit {
     this._itemService.getItems().subscribe({
       next: (data: Item[]) => {
         this.items = data;
-        this.filteredItems = this.newItemOrder.get('item').valueChanges.pipe(
+        this.filteredItems = this.itemOrder.get('item').valueChanges.pipe(
           startWith(''),
           map((value) => this._filter(value || '', 'items'))
         );
@@ -439,19 +512,19 @@ export class OrderComponent implements OnInit {
       );
   }
 
-  async getItemAttributes(event, itemId: number) {
-    if (event.isUserInput === false) return;
+  async getItemAttributes(itemId: number, event?) {
+    if (event?.isUserInput === false) return;
     const itemResponse = (await this._itemService.getItemAttributes(
       itemId
     )) as Item;
 
-    const newItemOrder = this.newItemOrder as FormGroup;
+    const itemOrder = this.itemOrder as FormGroup;
     let colors: Color[] = [];
     let fabrics: Fabric[] = [];
     let sizes: Size[] = [];
 
-    newItemOrder.get('itemId')?.setValue(itemId);
-    newItemOrder.get('price')?.setValue(itemResponse.price);
+    itemOrder.get('itemId')?.setValue(itemId);
+    itemOrder.get('price')?.setValue(itemResponse.price);
 
     for (let i = 0; i < itemResponse.itemColors.length; ++i) {
       colors.push(itemResponse.itemColors[i].color);
@@ -496,19 +569,43 @@ export class OrderComponent implements OnInit {
     });
   }
 
+  setOrderTotal() {
+    let total = 0;
+    this.dataSource.forEach((itemOrder) => {
+      const price = itemOrder.amount * itemOrder.price;
+      total += price;
+    });
+    this.form.get('total').setValue(total);
+  }
+
+  cleanItemOrder() {
+    this.itemOrder.reset();
+    this.disableAttributes();
+    this.itemOrder.get('item').enable();
+    this.updateItemOrder = false;
+  }
+
+  cleanOrder() {
+    this.cleanItemOrder();
+    this.form.reset();
+    this.itemOrders.clear();
+    this.dataSource = [];
+    this.table?.renderRows();
+  }
+
   enableAttributes() {
-    this.newItemOrder.get('color').enable();
-    this.newItemOrder.get('fabric').enable();
-    this.newItemOrder.get('size').enable();
-    this.newItemOrder.get('amount').enable();
-    this.newItemOrder.get('description').enable();
+    this.itemOrder.get('colorId').enable();
+    this.itemOrder.get('fabricId').enable();
+    this.itemOrder.get('sizeId').enable();
+    this.itemOrder.get('amount').enable();
+    this.itemOrder.get('description').enable();
   }
 
   disableAttributes() {
-    this.newItemOrder.get('color').disable();
-    this.newItemOrder.get('fabric').disable();
-    this.newItemOrder.get('size').disable();
-    this.newItemOrder.get('amount').disable();
-    this.newItemOrder.get('description').disable();
+    this.itemOrder.get('colorId').disable();
+    this.itemOrder.get('fabricId').disable();
+    this.itemOrder.get('sizeId').disable();
+    this.itemOrder.get('amount').disable();
+    this.itemOrder.get('description').disable();
   }
 }
