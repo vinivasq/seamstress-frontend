@@ -366,7 +366,13 @@ export class OrderComponent implements OnInit {
       return false;
     }
 
-    console.log(this.form.get('customerId'));
+    if (this.form.get('orderedAt').value > this.form.get('deadline').value) {
+      this._toastrService.warning(
+        'A data de pedido não pode ser maior que o prazo de entrega',
+        'Data inválida'
+      );
+      return false;
+    }
 
     if (this.form.get('customerId').value == null) {
       this._toastrService.warning(
