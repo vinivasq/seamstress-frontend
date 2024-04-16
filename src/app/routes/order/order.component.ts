@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import {
   FormArray,
@@ -90,6 +91,7 @@ export class OrderComponent implements OnInit {
   ];
 
   requestMethod: string = 'post';
+  updateItemOrder: boolean = false;
   order: Order;
   dataSource: any[] = [];
   customers: Observable<Customer[]>;
@@ -302,6 +304,31 @@ export class OrderComponent implements OnInit {
           ),
       })
       .add(() => (this._spinner.isLoading = false));
+  }
+
+  loadItemOrder(index: number) {
+    this.updateItemOrder = true;
+    const itemOrder = this.itemOrders.getRawValue()[index];
+
+    this.itemOrder.get('item').disable();
+    this.getItemAttributes(itemOrder.itemId);
+
+    this.itemOrder.patchValue({
+      id: itemOrder.id,
+      orderId: itemOrder.orderId,
+      item: this.items.find((item) => item.id === itemOrder.itemId).name,
+      colorId: itemOrder.colorId,
+      fabricId: itemOrder.fabricId,
+      sizeId: itemOrder.sizeId,
+      amount: itemOrder.amount,
+      description: itemOrder.description,
+    });
+
+    if (this.requestMethod === 'post') {
+      this.itemOrders.removeAt(index);
+      this.dataSource.splice(index, 1);
+      this.table.renderRows();
+    }
   }
 
   saveOrder() {
