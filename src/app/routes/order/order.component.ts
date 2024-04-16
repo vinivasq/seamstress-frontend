@@ -456,8 +456,8 @@ export class OrderComponent implements OnInit {
       );
   }
 
-  async getItemAttributes(event, itemId: number) {
-    if (event.isUserInput === false) return;
+  async getItemAttributes(itemId: number, event?) {
+    if (event?.isUserInput === false) return;
     const itemResponse = (await this._itemService.getItemAttributes(
       itemId
     )) as Item;
