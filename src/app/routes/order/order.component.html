@@ -165,6 +165,16 @@
                 <button
                   *ngIf="column == 'price'"
                   class="button"
+                  color="accent"
+                  mat-icon-button
+                  aria-label="Icon Button to edit an item"
+                  (click)="loadItemOrder(i)"
+                >
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button
+                  *ngIf="column == 'price'"
+                  class="button"
                   color="warn"
                   mat-icon-button
                   aria-label="Icon Button to remove an item"
@@ -184,8 +194,10 @@
 
   <mat-card [formGroup]="itemOrder">
     <mat-card-header class="order__header">
-      <h1>Selecione um Modelo</h1>
-      <!-- <p>Form value: {{ newItemOrder.value | json }}</p> -->
+      <h1>
+        {{ this.updateItemOrder ? "Alterando modelo" : "Selecione um modelo" }}
+      </h1>
+      <!-- <p>Form value: {{ itemOrder.value | json }}</p> -->
       <!-- <p>Form valid: {{ form.status | json }}</p> -->
       <mat-divider></mat-divider>
     </mat-card-header>
@@ -206,7 +218,7 @@
               <mat-option
                 *ngFor="let item of filteredItems | async"
                 [value]="item.name"
-                (onSelectionChange)="getItemAttributes($event, item.id)"
+                (onSelectionChange)="getItemAttributes(item.id, $event)"
               >
                 {{ item.name }}
               </mat-option>
@@ -294,8 +306,35 @@
             ></textarea>
           </mat-form-field>
         </div>
-        <div class="model__buttons">
-          <button mat-stroked-button (click)="addItemOrder()" color="accent">
+        <div>
+          <div class="model__buttons" *ngIf="this.updateItemOrder">
+            <button
+              mat-stroked-button
+              (click)="
+                this.requestMethod === 'put' ? cleanItemOrder() : addItemOrder()
+              "
+              color="warn"
+            >
+              <mat-icon>block</mat-icon>
+              Cancelar
+            </button>
+            <button
+              mat-raised-button
+              (click)="
+                this.requestMethod === 'put' ? saveItemOrder() : addItemOrder()
+              "
+              color="accent"
+            >
+              <mat-icon>check</mat-icon>
+              {{ this.requestMethod === "put" ? "Salvar" : "Alterar" }}
+            </button>
+          </div>
+          <button
+            *ngIf="this.updateItemOrder === false"
+            mat-stroked-button
+            (click)="addItemOrder()"
+            color="accent"
+          >
             <mat-icon>add</mat-icon>
             Adicionar
           </button>
