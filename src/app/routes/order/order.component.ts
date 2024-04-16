@@ -504,6 +504,30 @@ export class OrderComponent implements OnInit {
     });
   }
 
+  setOrderTotal() {
+    let total = 0;
+    this.dataSource.forEach((itemOrder) => {
+      const price = itemOrder.amount * itemOrder.price;
+      total += price;
+    });
+    this.form.get('total').setValue(total);
+  }
+
+  cleanItemOrder() {
+    this.itemOrder.reset();
+    this.disableAttributes();
+    this.itemOrder.get('item').enable();
+    this.updateItemOrder = false;
+  }
+
+  cleanOrder() {
+    this.cleanItemOrder();
+    this.form.reset();
+    this.itemOrders.clear();
+    this.dataSource = [];
+    this.table?.renderRows();
+  }
+
   enableAttributes() {
     this.itemOrder.get('colorId').enable();
     this.itemOrder.get('fabricId').enable();
