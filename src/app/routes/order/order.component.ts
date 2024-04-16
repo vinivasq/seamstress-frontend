@@ -328,12 +328,6 @@ export class OrderComponent implements OnInit {
             } com sucesso`,
             'Pedido salvo com sucesso'
           );
-          this.form.reset();
-          this.itemOrders.clear();
-          this.newItemOrder.reset();
-          this.dataSource = [];
-          this.disableAttributes();
-          this._router.navigate(['./order']);
         },
         error: () =>
           this._toastrService.error(
@@ -341,7 +335,11 @@ export class OrderComponent implements OnInit {
             'Erro ao Cadastrar'
           ),
       })
-      .add(() => (this._spinner.isLoading = false));
+      .add(() => {
+        this._spinner.isLoading = false;
+        this.cleanOrder();
+        this._router.navigate(['./order']);
+      });
   }
 
   deleteOrder() {
