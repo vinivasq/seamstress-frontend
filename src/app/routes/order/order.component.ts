@@ -205,14 +205,8 @@ export class OrderComponent implements OnInit {
     this.setOrderTotal();
   }
 
-  removeData(id: number, item: any) {
-    console.log(item);
-    const total = this.form.get('total').value;
-    this.form
-      .get('total')
-      ?.setValue(parseFloat((total - item.price).toFixed(2)));
-
-    if (item.id !== 0) {
+  removeData(id: number, itemOrder: any) {
+    if (itemOrder.id !== 0 && this.requestMethod === 'put') {
       if (this.itemOrders.length === 1) {
         this._toastrService.warning(
           'Não é possível deletar o unico item do pedido.',
@@ -220,29 +214,25 @@ export class OrderComponent implements OnInit {
         );
         return;
       }
-      this._itemOrderService.delete(item.id).subscribe({
+
+      this._spinner.isLoading = true;
+
+      this._itemOrderService
+        .delete(itemOrder.id)
+        .subscribe({
         next: (result: any) => {
           if (result.message === 'Deletado com sucesso') {
-            const { customer, ...formValues } = this.form.getRawValue() as any;
-            this.order = {
-              id: this.order?.id ?? 0,
-              ...formValues,
-            };
-
-            this._orderService.put(this.order).subscribe({
-              next: () => {
                 this._toastrService.success(
                   'Item deletado com sucesso',
                   'Item deletado'
                 );
-              },
-              error: () => {
-                this._toastrService.error(
-                  'Não foi possível salvar o pedido',
-                  'Erro ao salvar o pedido'
+              return;
+            } else {
+              this._toastrService.warning(
+                'Revise o pedido',
+                'Item não deletado'
                 );
-              },
-            });
+              return;
           }
         },
         error: () => {
@@ -251,12 +241,18 @@ export class OrderComponent implements OnInit {
             'Erro ao deletar'
           );
         },
+        })
+        .add(() => {
+          this._spinner.isLoading = false;
+          this.cleanOrder();
+          this.loadOrder();
       });
     }
 
     this.itemOrders.removeAt(id);
     this.dataSource.splice(id, 1);
     this.table?.renderRows();
+    this.setOrderTotal();
   }
 
   loadOrder() {
