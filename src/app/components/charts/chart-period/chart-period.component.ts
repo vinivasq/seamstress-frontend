@@ -26,17 +26,20 @@ export class ChartPeriodComponent implements OnInit {
     {
       text: 'Esta Semana',
       value: 'weekly',
-      startDate: moment().subtract(moment().day(), 'day'),
+      startDate: moment().startOf('week').toISOString(true),
+      endDate: moment().endOf('week').toISOString(true),
     },
     {
       text: 'Este Mês',
       value: 'monthly',
-      startDate: moment().subtract(moment().date() - 1, 'day'),
+      startDate: moment().startOf('month').toISOString(true),
+      endDate: moment().endOf('month').toISOString(true),
     },
     {
       text: 'Este Ano',
       value: 'yearly',
-      startDate: moment().subtract(moment().dayOfYear() - 1, 'day'),
+      startDate: moment().startOf('year').toISOString(true),
+      endDate: moment().endOf('year').toISOString(true),
     },
   ];
 
@@ -46,15 +49,9 @@ export class ChartPeriodComponent implements OnInit {
   }
 
   setFilterValue(value: string) {
-    const { startDate } = this.filterOptions.find(
+    const { startDate, endDate } = this.filterOptions.find(
       (option) => option.value === value
     );
-
-    const periodBegin = moment(startDate).toISOString(true);
-    const periodEnd = moment().toISOString(true);
-
-    const period = `${periodBegin}&${periodEnd}`;
-
-    this.valueChange.emit(period);
+    this.valueChange.emit(`${startDate}&${endDate}`);
   }
 }
