@@ -1,9 +1,11 @@
 <app-title
-  [title]="'Cadastro de Pedidos'"
+  [title]="
+    requestMethod === 'post' ? 'Cadastro de Pedidos' : 'Edição de Pedido'
+  "
   [listButton]="true"
   [route]="'/dashboard/orders'"
   [descripton]="
-    'Lorem ipsum dolor sit amet consectetur adipisicing elit. Praesentium laudantium atque alias'
+    'Adicione e edite modelos ao pedido, defina uma plataforma de venda, atribua um executor e adicione observações.'
   "
   [btnLabel]="'Pedidos'"
   [icon]="'playlist_add'"

@@ -3,7 +3,7 @@
   [listButton]="true"
   [route]="'/dashboard/orders'"
   [descripton]="
-    'Lorem ipsum dolor sit amet consectetur adipisicing elit. Praesentium laudantium atque alias'
+    'Encontre e visualize pedidos buscando por cliente, data de compra ou status'
   "
   [btnLabel]="'Pendentes'"
   [icon]="'search'"
@@ -80,7 +80,6 @@
       </div>
     </mat-card-content>
     <mat-card-actions [align]="'end'">
-      <!-- <p style="margin: auto !important">Filter: {{ form.value | json }}</p> -->
       <button mat-raised-button color="accent" (click)="searchOrders()">
         <mat-icon>search</mat-icon>
         Buscar

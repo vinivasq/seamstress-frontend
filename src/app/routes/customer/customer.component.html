@@ -1,9 +1,13 @@
 <div class="container">
   <app-title
     [icon]="'person_add'"
-    [title]="'Cadastro de Clientes'"
+    [title]="
+      requestMethod === 'post' ? 'Cadastro de Clientes' : 'Edição de Cliente'
+    "
     [descripton]="
-      'Lorem ipsum dolor sit amet consectetur adipisicing elit. Alias quibusdam accusamus,'
+      requestMethod === 'post'
+        ? 'Cadastre um novo cliente preenchendo suas informações pessoais, endereço e medidas em etapas de formulário progressivas.'
+        : 'Edite um cliente preenchendo suas informações pessoais, endereço e medidas em etapas de formulário progressivas.'
     "
     [listButton]="true"
     [btnLabel]="'Clientes'"

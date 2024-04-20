@@ -4,7 +4,9 @@
     requestMethod === 'post' ? 'Cadastro de Modelos' : 'Edição de Modelos'
   "
   [descripton]="
-    'Lorem ipsum dolor sit amet consectetur adipisicing elit. Alias quibusdam accusamus'
+    requestMethod === 'post'
+      ? 'Registre novos modelos adicionando imagens e vinculando cores, tamanhos e tecidos.'
+      : 'Edite as imagens, cores, tamanhos e tecidos de um modelo. Acesse também a página de medidas do modelo.'
   "
   [listButton]="true"
   [showMenu]="true"
