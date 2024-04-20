@@ -111,6 +111,10 @@ tr.order-detail-row {
   color: #e4e4e4be;
 }
 
+mat-card-actions {
+  padding: 0 1rem 1rem 1rem;
+}
+
 @media screen and (max-width: 768px) {
   .order__header {
     h1 {
