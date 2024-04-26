@@ -32,6 +32,7 @@ import { SalePlatformService } from 'src/app/services/salePlatform.service';
 import { SpinnerService } from 'src/app/services/spinner.service';
 import { UserService } from 'src/app/services/user.service';
 import { formatHeader } from 'src/helpers/ColumnHeaders';
+import moment from 'moment';
 
 @Component({
   selector: 'app-order',
@@ -423,6 +424,34 @@ export class OrderComponent implements OnInit {
     if (this.form.get('orderedAt').value > this.form.get('deadline').value) {
       this._toastrService.warning(
         'A data de pedido não pode ser maior que o prazo de entrega',
+        'Data inválida'
+      );
+      return false;
+    }
+
+    if (
+      moment(this.form.get('orderedAt').value).isAfter(
+        this.form.get('deadline').value
+      )
+    ) {
+      this._toastrService.warning(
+        'A data de pedido não pode ser maior que o prazo de entrega',
+        'Data inválida'
+      );
+      return false;
+    }
+
+    if (moment(this.form.get('orderedAt').value).isAfter(moment())) {
+      this._toastrService.warning(
+        'A data de pedido não pode ser maior atual',
+        'Data inválida'
+      );
+      return false;
+    }
+
+    if (moment(this.form.get('deadline').value).isAfter(moment())) {
+      this._toastrService.warning(
+        'A data de entrega não pode ser maior atual',
         'Data inválida'
       );
       return false;
