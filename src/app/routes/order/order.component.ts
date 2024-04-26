@@ -504,7 +504,7 @@ export class OrderComponent implements OnInit {
 
   filterCustomers(value: string): Observable<Customer[]> {
     return this._customerService
-      .getCustomers(new PageParams(0, 25, value))
+      .getCustomers(new PageParams(0, 25, value.trim()))
       .pipe(
         map((data: PaginatedResult<Customer[]>) => {
           return data.result;

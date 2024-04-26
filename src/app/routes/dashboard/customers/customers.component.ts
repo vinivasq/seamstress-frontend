@@ -109,6 +109,6 @@ export class CustomersComponent implements AfterViewInit {
       });
     }
 
-    this.searchTerm.next(value);
+    this.searchTerm.next(value.trim());
   }
 }
