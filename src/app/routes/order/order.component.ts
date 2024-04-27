@@ -421,6 +421,16 @@ export class OrderComponent implements OnInit {
       return false;
     }
 
+    if (this.requestMethod === 'post') {
+      if (moment(this.form.get('deadline').value).isBefore(moment(), 'day')) {
+        this._toastrService.warning(
+          'A data de entrega não pode ser menor que a atual',
+          'Data inválida'
+        );
+        return false;
+      }
+    }
+
     if (this.form.get('orderedAt').value > this.form.get('deadline').value) {
       this._toastrService.warning(
         'A data de pedido não pode ser maior que o prazo de entrega',
@@ -449,14 +459,6 @@ export class OrderComponent implements OnInit {
       return false;
     }
 
-    if (moment(this.form.get('deadline').value).isAfter(moment())) {
-      this._toastrService.warning(
-        'A data de entrega não pode ser maior atual',
-        'Data inválida'
-      );
-      return false;
-    }
-
     if (this.form.get('customerId').value == null) {
       this._toastrService.warning(
         'Selecione um cliente da lista disponível',
@@ -480,7 +482,6 @@ export class OrderComponent implements OnInit {
       );
       return false;
     }
-
     return true;
   }
 
