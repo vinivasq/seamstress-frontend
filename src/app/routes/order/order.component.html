@@ -81,54 +81,56 @@
       </div>
 
       <div class="info__container">
-        <mat-form-field class="info__field">
-          <mat-label>Produção</mat-label>
-          <input
-            matInput
-            formControlName="executor"
-            type="text"
-            placeholder="Selecione um produtor"
-            aria-label="Produção"
-            [matAutocomplete]="executor"
-          />
-          <mat-autocomplete #executor="matAutocomplete">
-            <mat-option
-              *ngFor="let executor of filteredExecutors | async"
-              [value]="executor.name"
-              (onSelectionChange)="getExecutorId($event, executor.id)"
-            >
-              {{ executor.name }}
-            </mat-option>
-          </mat-autocomplete>
-          <mat-error *ngIf="form.get('executor')?.hasError('required')">
-            O campo "Produção" não pode ficar vazio
-          </mat-error>
-        </mat-form-field>
-
-        <mat-form-field class="info__field">
-          <mat-label>Plataforma de venda</mat-label>
-          <input
-            matInput
-            formControlName="salePlatform"
-            type="text"
-            placeholder="Selecione uma plataforma"
-            aria-label="Plataforma de venda"
-            [matAutocomplete]="salePlatform"
-          />
-          <mat-autocomplete #salePlatform="matAutocomplete">
-            <mat-option
-              *ngFor="let salePlatform of salePlatforms"
-              [value]="salePlatform.name"
-              (onSelectionChange)="getSalePlatformId($event, salePlatform.id)"
-            >
-              {{ salePlatform.name }}
-            </mat-option>
-          </mat-autocomplete>
-          <mat-error *ngIf="form.get('salePlatform')?.hasError('required')">
-            O campo "Plataforma de venda" não pode ficar vazio
-          </mat-error>
-        </mat-form-field>
-
+        <div class="input__container">
+          <mat-form-field class="info__field">
+            <mat-label>Produção</mat-label>
+            <input
+              matInput
+              formControlName="executor"
+              type="text"
+              placeholder="Selecione um produtor"
+              aria-label="Produção"
+              [matAutocomplete]="executor"
+            />
+            <mat-autocomplete #executor="matAutocomplete">
+              <mat-option
+                *ngFor="let executor of filteredExecutors | async"
+                [value]="executor.name"
+                (onSelectionChange)="getExecutorId($event, executor.id)"
+              >
+                {{ executor.name }}
+              </mat-option>
+            </mat-autocomplete>
+            <mat-error *ngIf="form.get('executor')?.hasError('required')">
+              O campo "Produção" não pode ficar vazio
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="input__container">
+          <mat-form-field class="info__field">
+            <mat-label>Plataforma de venda</mat-label>
+            <input
+              matInput
+              formControlName="salePlatform"
+              type="text"
+              placeholder="Selecione uma plataforma"
+              aria-label="Plataforma de venda"
+              [matAutocomplete]="salePlatform"
+            />
+            <mat-autocomplete #salePlatform="matAutocomplete">
+              <mat-option
+                *ngFor="let salePlatform of salePlatforms"
+                [value]="salePlatform.name"
+                (onSelectionChange)="getSalePlatformId($event, salePlatform.id)"
+              >
+                {{ salePlatform.name }}
+              </mat-option>
+            </mat-autocomplete>
+            <mat-error *ngIf="form.get('salePlatform')?.hasError('required')">
+              O campo "Plataforma de venda" não pode ficar vazio
+            </mat-error>
+          </mat-form-field>
+        </div>
         <mat-form-field class="info__field">
           <mat-label>Observações do pedido</mat-label>
           <textarea
@@ -361,11 +363,11 @@
           (click)="openModalOrder()"
         >
           <mat-icon>delete</mat-icon>
-          Excluir Pedido
+          Excluir
         </button>
         <button mat-raised-button color="accent" (click)="saveOrder()">
           <mat-icon>check</mat-icon
-          >{{ requestMethod === "post" ? "Finalizar" : "Salvar" }} Pedido
+          >{{ requestMethod === "post" ? "Finalizar" : "Salvar" }}
         </button>
       </div>
     </mat-card-content>
