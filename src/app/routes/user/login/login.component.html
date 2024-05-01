@@ -20,18 +20,20 @@
         <mat-label>Usuário</mat-label>
         <input
           matInput
-          [(ngModel)]="model.username"
           name="username"
           type="text"
+          [(ngModel)]="model.username"
+          (keydown.enter)="login()"
         />
       </mat-form-field>
       <mat-form-field class="form__field">
         <mat-label>Senha</mat-label>
         <input
           matInput
-          [(ngModel)]="model.password"
           name="password"
           type="password"
+          [(ngModel)]="model.password"
+          (keydown.enter)="login()"
         />
       </mat-form-field>
     </form>
