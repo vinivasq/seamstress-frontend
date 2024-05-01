@@ -88,6 +88,7 @@ tr.order-row:not(.order-expanded-row):active {
   .field__label {
     margin: 0;
     white-space: nowrap;
+    align-self: flex-start;
     font-weight: 500;
   }
 }
