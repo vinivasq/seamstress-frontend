@@ -95,15 +95,7 @@ const routes: Routes = [
   {
     path: 'user',
     component: UserComponent,
-    children: [
-      { path: 'login', component: LoginComponent },
-      { path: 'register', component: RegisterComponent },
-      {
-        path: 'profile',
-        component: ProfileComponent,
-        canActivate: [authGuard],
-      },
-    ],
+    children: [{ path: 'login', component: LoginComponent }],
   },
 
   {

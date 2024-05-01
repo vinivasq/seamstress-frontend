@@ -68,8 +68,8 @@
   </li>
 </ul>
 <mat-menu #menu="matMenu">
-  <button mat-menu-item (click)="drawer.close()" routerLink="/user/profile">
-    Meu Perfil
+  <button mat-menu-item (click)="logout()">
+    <mat-icon color="warn">power_settings_new</mat-icon>
+    Sair
   </button>
-  <button mat-menu-item (click)="logout()">Sair</button>
 </mat-menu>
