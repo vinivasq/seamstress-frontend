@@ -9,8 +9,6 @@ import { OrdersComponent } from './routes/dashboard/orders/orders.component';
 import { OrderComponent } from './routes/order/order.component';
 import { UserComponent } from './routes/user/user.component';
 import { LoginComponent } from './routes/user/login/login.component';
-import { RegisterComponent } from './routes/user/register/register.component';
-import { ProfileComponent } from './routes/user/profile/profile.component';
 import { ItemComponent } from './routes/item/item.component';
 import { ItemsComponent } from './routes/dashboard/items/items.component';
 import { CustomersComponent } from './routes/dashboard/customers/customers.component';
@@ -26,8 +24,8 @@ import { OrdersReportComponent } from './routes/report/ordersReport/ordersReport
 import { AdminComponent } from './routes/dashboard/admin/admin.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: 'dashboard/admin', pathMatch: 'full' },
-  { path: 'dashboard', redirectTo: 'dashboard/admin', pathMatch: 'full' },
+  { path: '', redirectTo: 'dashboard/orders', pathMatch: 'full' },
+  { path: 'dashboard', redirectTo: 'dashboard/orders', pathMatch: 'full' },
   { path: 'orders', redirectTo: 'dashboard/orders', pathMatch: 'full' },
   { path: 'items', redirectTo: 'dashboard/items', pathMatch: 'full' },
   { path: 'attributes', redirectTo: 'attributes/color', pathMatch: 'full' },
