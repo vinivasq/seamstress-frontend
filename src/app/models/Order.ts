@@ -1,3 +1,4 @@
+import { Step } from '../Enums/Step.enum';
 import { Customer } from './Customer';
 import { ItemOrder } from './ItemOrder';
 import { SalePlatform } from './SalePlatform';
@@ -9,7 +10,6 @@ export interface Order {
   createdAt: Date;
   orderedAt: Date;
   deadline: Date;
-  total: number;
   customerId: number;
   customer?: Customer;
   executorId: number;
@@ -17,5 +17,6 @@ export interface Order {
   salePlatformId?: number;
   salePlatform?: SalePlatform;
   itemOrders: ItemOrder[];
-  orderUser?: User[];
+  step: Step;
+  total: number;
 }

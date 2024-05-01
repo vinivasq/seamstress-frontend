@@ -342,6 +342,7 @@ export class OrderComponent implements OnInit {
 
     this.order = {
       id: this.order?.id ?? 0,
+      step: this.order?.step ?? 0,
       createdAt:
         this.requestMethod === 'post' ? new Date() : this.order.createdAt,
       ...formValues,
