@@ -528,7 +528,7 @@ export class OrderComponent implements OnInit {
       startWith(''),
       debounceTime(1000),
       switchMap((value) => {
-        return this.filterCustomers(value);
+        return this.filterCustomers(value || '');
       })
     );
   }
