@@ -12,6 +12,7 @@ import { UserService } from 'src/app/services/user.service';
 })
 export class LinksComponent implements OnInit {
   public drawer!: DrawerService;
+  isMobile: boolean;
   user: User;
 
   constructor(
@@ -26,6 +27,10 @@ export class LinksComponent implements OnInit {
     this._userService.currentUser$.subscribe(
       (data: User) => (this.user = data)
     );
+
+    window.screen.width < 992
+      ? (this.isMobile = true)
+      : (this.isMobile = false);
   }
 
   logout() {

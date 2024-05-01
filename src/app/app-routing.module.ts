@@ -48,15 +48,19 @@ const routes: Routes = [
     component: DashboardComponent,
     canActivate: [authGuard],
     children: [
+      ...(window.screen.width > 992
+        ? [
+            {
+              path: 'admin',
+              component: AdminComponent,
+              canActivate: [roleGuard],
+              data: {
+                role: ['admin'],
+              },
+            },
+          ]
+        : []),
       { path: 'orders', component: OrdersComponent },
-      {
-        path: 'admin',
-        component: AdminComponent,
-        canActivate: [roleGuard],
-        data: {
-          role: ['admin'],
-        },
-      },
       {
         path: 'customers',
         component: CustomersComponent,
