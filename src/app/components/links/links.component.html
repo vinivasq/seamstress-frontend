@@ -20,7 +20,7 @@
       (click)="drawer.close()"
       routerLink="/dashboard/admin"
       routerLinkActive="link-active"
-      *ngIf="user.role.toLowerCase() === 'admin' && this.isMobile === false"
+      *ngIf="user.role.toLowerCase() !== 'executor' && this.isMobile === false"
     >
       <p>Métricas</p>
     </li>
