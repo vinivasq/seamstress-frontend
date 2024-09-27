@@ -37,20 +37,14 @@ import { MatBadgeModule } from '@angular/material/badge';
 
 import { MAT_DATE_LOCALE, MatNativeDateModule } from '@angular/material/core';
 
-import { AppComponent } from './app.component';
 import { DashboardComponent } from './routes/dashboard/dashboard.component';
 import { ReportComponent } from './routes/report/report.component';
 import { OrdersReportComponent } from './routes/report/ordersReport/ordersReport.component';
-import { DialogComponent } from './components/dialog/dialog.component';
-import { DialogCarouselComponent } from './components/dialogCarousel/dialogCarousel.component';
 import { ItemComponent } from './routes/item/item.component';
 import { MeasurementsComponent } from './routes/measurements/measurements.component';
 import { OrderComponent } from './routes/order/order.component';
 import { OrdersComponent } from './routes/dashboard/orders/orders.component';
 import { ProfileComponent } from './routes/user/profile/profile.component';
-import { TitleComponent } from './components/title/title.component';
-import { ToolbarComponent } from './components/toolbar/toolbar.component';
-import { LinksComponent } from './components/links/links.component';
 import { ItemsComponent } from './routes/dashboard/items/items.component';
 import { ColorComponent } from './routes/attributes/color/color.component';
 import { FabricComponent } from './routes/attributes/fabric/fabric.component';
@@ -59,12 +53,20 @@ import { SetComponent } from './routes/attributes/set/set.component';
 import { AttributesComponent } from './routes/attributes/attributes.component';
 import { CustomersComponent } from './routes/dashboard/customers/customers.component';
 import { CustomerComponent } from './routes/customer/customer.component';
-import { ButtonAddComponent } from './components/buttonAdd/buttonAdd.component';
-import { TableHeaderComponent } from './components/tableHeader/tableHeader.component';
-import { SpinnerComponent } from './components/spinner/spinner.component';
 import { UserComponent } from './routes/user/user.component';
 import { LoginComponent } from './routes/user/login/login.component';
 import { RegisterComponent } from './routes/user/register/register.component';
+
+import { AppComponent } from './app.component';
+import { DialogComponent } from './components/dialog/dialog.component';
+import { DialogCarouselComponent } from './components/dialogCarousel/dialogCarousel.component';
+import { TitleComponent } from './components/title/title.component';
+import { ToolbarComponent } from './components/toolbar/toolbar.component';
+import { LinksComponent } from './components/links/links.component';
+import { ButtonAddComponent } from './components/buttonAdd/buttonAdd.component';
+import { TableHeaderComponent } from './components/tableHeader/tableHeader.component';
+import { SpinnerComponent } from './components/spinner/spinner.component';
+import { ItemFormComponent } from './components/itemForm/itemForm.component';
 
 import { DateFormatPipe } from 'src/helpers/DateFormat.pipe';
 
@@ -143,6 +145,7 @@ import { JwtInterceptor } from './interceptors/jwt.interceptor';
     NgxDropzoneModule,
     NgxMatNumberInputSpinnerModule,
     NgChartsModule,
+    ItemFormComponent,
     ToastrModule.forRoot({
       timeOut: 4000,
       positionClass: 'toast-bottom-right',
