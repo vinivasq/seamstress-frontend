@@ -8,12 +8,10 @@ import { environment } from 'src/environments/environment';
 })
 export class AttributeService {
   _baseURL = '';
-  _atribute = '';
 
   constructor(private client: HttpClient) {}
 
   setAttribute(attribute: string) {
-    this._atribute = attribute;
     this._baseURL = `${environment.apiURL}/${attribute}`;
   }
 
