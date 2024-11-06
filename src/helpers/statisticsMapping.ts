@@ -1,10 +1,10 @@
 export class StatisticsMapping {
   static mapping = {
-    'Faturamento do mês atual': {
-      icon: 'bar_chart',
-      color: '#69F0AE',
-      backGroundColor: '#69F0AE42',
-    },
+    // 'Faturamento do mês atual': { Eliza pediu para remover visto que não refletia o faturamento real do atelie, já que muitas peças eram vendidas com valores diferentes do cadastrados no sistema
+    //   icon: 'bar_chart',
+    //   color: '#69F0AE',
+    //   backGroundColor: '#69F0AE42',
+    // },
     'Melhor plataforma de venda': {
       icon: 'bar_chart',
       color: '#69F0AE',
