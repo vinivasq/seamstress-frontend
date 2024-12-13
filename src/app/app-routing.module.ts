@@ -22,6 +22,7 @@ import { MeasurementsComponent } from './routes/measurements/measurements.compon
 import { ReportComponent } from './routes/report/report.component';
 import { OrdersReportComponent } from './routes/report/ordersReport/ordersReport.component';
 import { AdminComponent } from './routes/dashboard/admin/admin.component';
+import { RegisterComponent } from './routes/user/register/register.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'dashboard/orders', pathMatch: 'full' },
@@ -97,7 +98,16 @@ const routes: Routes = [
   {
     path: 'user',
     component: UserComponent,
-    children: [{ path: 'login', component: LoginComponent }],
+    children: [
+      {
+        path: 'login',
+        component: LoginComponent,
+      },
+      {
+        path: 'register',
+        component: RegisterComponent,
+      },
+    ],
   },
 
   {
