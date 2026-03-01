@@ -1,3 +1,42 @@
-<p>
-  profile works!
-</p>
+<app-title
+  [title]="'Meu Perfil'"
+  [icon]="'manage_accounts'"
+  [descripton]="'Altere sua senha de acesso à plataforma.'"
+></app-title>
+
+<mat-card class="profile__card">
+  <mat-card-title>Alterar Senha</mat-card-title>
+
+  <form [formGroup]="formGroup" class="profile__form">
+    <mat-form-field>
+      <mat-label>Senha atual</mat-label>
+      <input matInput type="password" formControlName="currentPassword" />
+      <mat-error *ngIf="form.currentPassword?.hasError('required')">Senha atual é obrigatória</mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Nova senha</mat-label>
+      <input matInput type="password" formControlName="newPassword" />
+      <mat-error *ngIf="form.newPassword?.hasError('required')">Nova senha é obrigatória</mat-error>
+      <mat-error *ngIf="form.newPassword?.hasError('minlength')">Tam. mínimo 6 caracteres</mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Confirmar nova senha</mat-label>
+      <input matInput type="password" formControlName="confirmPassword" />
+      <mat-error *ngIf="form.confirmPassword?.hasError('required')">Confirmação é obrigatória</mat-error>
+      <mat-error *ngIf="form.confirmPassword?.hasError('mustMatch')">As senhas não combinam</mat-error>
+    </mat-form-field>
+  </form>
+
+  <mat-card-actions>
+    <button
+      mat-raised-button
+      color="accent"
+      (click)="changePassword()"
+      [disabled]="formGroup.invalid"
+    >
+      Salvar
+    </button>
+  </mat-card-actions>
+</mat-card>
