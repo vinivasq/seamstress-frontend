@@ -261,6 +261,16 @@
             </button>
 
             <button
+              mat-icon-button
+              aria-label="Abrir cockpit do pedido"
+              *ngIf="user.role.toLocaleLowerCase() === 'executor'"
+              [routerLink]="['/order-cockpit', order.id]"
+              (click)="$event.stopPropagation()"
+            >
+              <mat-icon>open_in_new</mat-icon>
+            </button>
+
+            <button
               *ngIf="user.role.toLocaleLowerCase() === 'executor'"
               [matMenuTriggerFor]="menu"
               mat-icon-button
