@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { ToastrService } from 'ngx-toastr';
 import { Subject, debounceTime } from 'rxjs';
+import { DialogMetaExportComponent } from 'src/app/components/dialogMetaExport/dialogMetaExport.component';
 import { TableHeaderComponent } from 'src/app/components/tableHeader/tableHeader.component';
 import { Customer } from 'src/app/models/Customer';
 import { PageParams } from 'src/app/models/PageParams';
@@ -29,7 +30,8 @@ export class CustomersComponent implements AfterViewInit {
   constructor(
     private _customerService: CustomerService,
     private _toastrService: ToastrService,
-    private _spinnerService: SpinnerService
+    private _spinnerService: SpinnerService,
+    private _dialog: MatDialog
   ) {}
 
   ngAfterViewInit() {
@@ -68,6 +70,10 @@ export class CustomersComponent implements AfterViewInit {
     this.pagination.pageSize = event.pageSize;
 
     this.getCustomers();
+  }
+
+  openExportDialog(): void {
+    this._dialog.open(DialogMetaExportComponent, { width: '420px' });
   }
 
   filterCustomers(value: string) {

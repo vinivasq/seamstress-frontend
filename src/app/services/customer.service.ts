@@ -1,6 +1,7 @@
 import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Customer } from '../models/Customer';
+import { CustomerExportRow } from '../models/CustomerExportRow';
 import { Observable, map, take } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { PaginatedResult } from '../models/Pagination';
@@ -85,6 +86,28 @@ export class CustomerService {
   public getAddress(cep: string) {
     return this.client
       .get(`https://viacep.com.br/ws/${cep}/json/`)
+      .pipe(take(1));
+  }
+
+  exportCustomers(params: {
+    fromCreatedAt?: Date;
+    toCreatedAt?: Date;
+    fromOrderDate?: Date;
+    toOrderDate?: Date;
+  }): Observable<CustomerExportRow[]> {
+    let httpParams = new HttpParams();
+
+    if (params.fromCreatedAt)
+      httpParams = httpParams.append('fromCreatedAt', params.fromCreatedAt.toISOString());
+    if (params.toCreatedAt)
+      httpParams = httpParams.append('toCreatedAt', params.toCreatedAt.toISOString());
+    if (params.fromOrderDate)
+      httpParams = httpParams.append('fromOrderDate', params.fromOrderDate.toISOString());
+    if (params.toOrderDate)
+      httpParams = httpParams.append('toOrderDate', params.toOrderDate.toISOString());
+
+    return this.client
+      .get<CustomerExportRow[]>(`${this.baseURL}/export`, { params: httpParams })
       .pipe(take(1));
   }
 }
