@@ -58,6 +58,10 @@ export class UserService {
     return this._client.put<UserOutput>(`${this.baseURL}/${id}`, data).pipe(take(1));
   }
 
+  public deleteUser(id: number): Observable<any> {
+    return this._client.delete(`${this.baseURL}/${id}`).pipe(take(1));
+  }
+
   public changePassword(dto: { currentPassword: string; newPassword: string }): Observable<any> {
     return this._client.post(`${this.baseURL}/change-password`, dto).pipe(take(1));
   }
