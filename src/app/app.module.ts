@@ -34,6 +34,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatBadgeModule } from '@angular/material/badge';
+import { MatChipsModule } from '@angular/material/chips';
 
 import { MAT_DATE_LOCALE, MatNativeDateModule } from '@angular/material/core';
 
@@ -65,6 +66,7 @@ import { SpinnerComponent } from './components/spinner/spinner.component';
 import { UserComponent } from './routes/user/user.component';
 import { LoginComponent } from './routes/user/login/login.component';
 import { RegisterComponent } from './routes/user/register/register.component';
+import { OrderCockpitComponent } from './routes/order-cockpit/order-cockpit.component';
 
 import { DateFormatPipe } from 'src/helpers/DateFormat.pipe';
 
@@ -93,6 +95,7 @@ import { JwtInterceptor } from './interceptors/jwt.interceptor';
     MeasurementsComponent,
     OrderComponent,
     OrdersComponent,
+    OrderCockpitComponent,
     UserComponent,
     LoginComponent,
     RegisterComponent,
@@ -140,6 +143,7 @@ import { JwtInterceptor } from './interceptors/jwt.interceptor';
     MatNativeDateModule,
     MatRadioModule,
     MatBadgeModule,
+    MatChipsModule,
     NgxDropzoneModule,
     NgxMatNumberInputSpinnerModule,
     NgChartsModule,

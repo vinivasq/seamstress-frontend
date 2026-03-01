@@ -23,6 +23,7 @@ import { ReportComponent } from './routes/report/report.component';
 import { OrdersReportComponent } from './routes/report/ordersReport/ordersReport.component';
 import { AdminComponent } from './routes/dashboard/admin/admin.component';
 import { RegisterComponent } from './routes/user/register/register.component';
+import { OrderCockpitComponent } from './routes/order-cockpit/order-cockpit.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'dashboard/orders', pathMatch: 'full' },
@@ -108,6 +109,12 @@ const routes: Routes = [
         component: RegisterComponent,
       },
     ],
+  },
+
+  {
+    path: 'order-cockpit/:id',
+    component: OrderCockpitComponent,
+    canActivate: [authGuard],
   },
 
   {

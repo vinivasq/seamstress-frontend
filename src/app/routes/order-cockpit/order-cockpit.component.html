@@ -1,0 +1,304 @@
+<div class="cockpit-container" *ngIf="currentOrder">
+  <!-- Search Bar -->
+  <div class="search-bar">
+    <div class="search-icon-wrapper">
+      <mat-icon>search</mat-icon>
+    </div>
+    <input
+      type="text"
+      class="search-input"
+      [(ngModel)]="filterValue"
+      (keyup)="filterOrders(filterValue)"
+      (focus)="showNextOrders = true"
+      placeholder="Buscar pedido..."
+    />
+    <button class="next-orders-button" (click)="toggleNextOrders()">
+      <mat-icon>filter_list</mat-icon>
+      <span>Lista</span>
+    </button>
+  </div>
+
+  <!-- Next Orders Dropdown -->
+  <mat-card class="next-orders-panel" *ngIf="showNextOrders">
+    <mat-card-content>
+      <div class="next-orders-list">
+        <div
+          *ngFor="let order of filteredNextOrders"
+          class="next-order-item"
+          (click)="selectOrder(order.id)"
+        >
+          <div class="order-info">
+            <span class="order-id">#{{ order.id }}</span>
+            <span class="customer-name">{{ order.customer.name }}</span>
+            <span class="step-badge">{{ order.step }}</span>
+          </div>
+          <div class="order-meta">
+            <span class="deadline">{{ order.deadline | DateFormat }}</span>
+            <span *ngIf="isUrgent(order.deadline)" class="urgent-badge-small">
+              <mat-icon>priority_high</mat-icon>
+              Urgente
+            </span>
+          </div>
+        </div>
+        <div *ngIf="filteredNextOrders.length === 0" class="no-results">
+          Nenhum pedido encontrado
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Order Card -->
+  <mat-card class="order-card mat-elevation-z8">
+    <!-- Order Header -->
+    <mat-card-header class="order-header">
+      <div class="header-content">
+        <div class="order-title-section">
+          <span class="order-number">PEDIDO #{{ currentOrder.id }}</span>
+          <h2 class="customer-name">{{ currentOrder.customer.name }}</h2>
+          <div class="order-info-row">
+            <span class="info-item">
+              <mat-icon>calendar_today</mat-icon>
+              {{ currentOrder.deadline | DateFormat }}
+            </span>
+          </div>
+          <p class="order-description" *ngIf="currentOrder.description">
+            {{ currentOrder.description }}
+          </p>
+        </div>
+        <div *ngIf="isUrgent(currentOrder.deadline)" class="urgent-badge">
+          <mat-icon>priority_high</mat-icon>
+          Urgente
+        </div>
+      </div>
+    </mat-card-header>
+
+    <!-- Progress Stepper -->
+    <div class="progress-section">
+      <div class="stepper-container">
+        <div class="stepper-track">
+          <div
+            class="stepper-progress"
+            [style.width.%]="getProgressPercentage()"
+          ></div>
+        </div>
+        <div class="stepper-steps">
+          <div
+            *ngFor="let step of steps; let i = index"
+            class="step-item"
+            [class.completed]="this.currentStep > step.value || this.currentStep === steps.length - 1"
+            [class.current]="this.currentStep === step.value && this.currentStep !== steps.length - 1"
+          >
+            <div class="step-circle">
+              <mat-icon *ngIf="this.currentStep > step.value">check</mat-icon>
+              <span *ngIf="this.currentStep <= step.value">{{ i + 1 }}</span>
+            </div>
+            <span class="step-label">{{ step.label }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Button Below Stepper -->
+    <div class="action-button-wrapper">
+      <button
+        mat-raised-button
+        color="accent"
+        class="advance-step-button"
+        (click)="updateStep()"
+        [disabled]="this.currentStep >= steps.length - 1"
+      >
+        <ng-container *ngIf="this.currentStep < steps.length - 1">
+          Avançar <mat-icon>arrow_forward</mat-icon> {{ getNextStepLabel() }}
+        </ng-container>
+        <ng-container *ngIf="this.currentStep === steps.length - 1">
+          Pedido concluído
+        </ng-container>
+      </button>
+    </div>
+
+    <!-- Items List -->
+    <mat-card-content class="items-section">
+      <div *ngFor="let itemOrder of currentOrder.itemOrders" class="item-card">
+        <div class="item-header">
+          <img
+            *ngIf="itemOrder.item.imageURL"
+            [src]="imageAPI + '/' + itemOrder.item.imageURL?.split(';')[0]"
+            (click)="openCarousel(itemOrder.item.imageURL)"
+            class="item-image"
+            alt="{{ itemOrder.item.name }}"
+          />
+
+          <div class="item-details">
+            <h3 class="item-name">{{ itemOrder.item.name }}</h3>
+            <p class="item-attribute">
+              {{ itemOrder.size.name }} • {{ itemOrder.color.name }}
+            </p>
+            <p class="item-attribute">Tecido: {{ itemOrder.fabric.name }}</p>
+            <p class="item-attribute">Quantidade: {{ itemOrder.amount }}</p>
+          </div>
+        </div>
+
+        <!-- Measurements Expansion Panel -->
+        <mat-expansion-panel class="measurements-panel">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <mat-icon>straighten</mat-icon>
+              Medidas
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <div class="measurements-grid">
+            <!-- Custom Size Measurements -->
+            <ng-container
+              *ngIf="
+                itemOrder.size.id === 1 && currentOrder.customer.sizings;
+                else standardMeasurements
+              "
+            >
+              <div
+                *ngIf="currentOrder.customer.sizings.bust"
+                class="measurement-item"
+              >
+                <span class="measurement-label">Busto:</span>
+                <span class="measurement-value"
+                  >{{ currentOrder.customer.sizings.bust }} cm</span
+                >
+              </div>
+              <div
+                *ngIf="currentOrder.customer.sizings.waist"
+                class="measurement-item"
+              >
+                <span class="measurement-label">Cintura:</span>
+                <span class="measurement-value"
+                  >{{ currentOrder.customer.sizings.waist }} cm</span
+                >
+              </div>
+              <div
+                *ngIf="currentOrder.customer.sizings.hip"
+                class="measurement-item"
+              >
+                <span class="measurement-label">Quadril:</span>
+                <span class="measurement-value"
+                  >{{ currentOrder.customer.sizings.hip }} cm</span
+                >
+              </div>
+              <div
+                *ngIf="currentOrder.customer.sizings.arm"
+                class="measurement-item"
+              >
+                <span class="measurement-label">Braço:</span>
+                <span class="measurement-value"
+                  >{{ currentOrder.customer.sizings.arm }} cm</span
+                >
+              </div>
+              <div
+                *ngIf="currentOrder.customer.sizings.thigh"
+                class="measurement-item"
+              >
+                <span class="measurement-label">Coxa:</span>
+                <span class="measurement-value"
+                  >{{ currentOrder.customer.sizings.thigh }} cm</span
+                >
+              </div>
+              <div
+                *ngIf="currentOrder.customer.sizings.calf"
+                class="measurement-item"
+              >
+                <span class="measurement-label">Panturrilha:</span>
+                <span class="measurement-value"
+                  >{{ currentOrder.customer.sizings.calf }} cm</span
+                >
+              </div>
+              <div
+                *ngIf="currentOrder.customer.sizings.shoulderToShoulder"
+                class="measurement-item"
+              >
+                <span class="measurement-label">Ombro a Ombro:</span>
+                <span class="measurement-value"
+                  >{{ currentOrder.customer.sizings.shoulderToShoulder }}
+                  cm</span
+                >
+              </div>
+              <div
+                *ngIf="currentOrder.customer.sizings.lengthLegging"
+                class="measurement-item"
+              >
+                <span class="measurement-label">Comp. Legging:</span>
+                <span class="measurement-value"
+                  >{{ currentOrder.customer.sizings.lengthLegging }} cm</span
+                >
+              </div>
+              <div
+                *ngIf="currentOrder.customer.sizings.lengthPants"
+                class="measurement-item"
+              >
+                <span class="measurement-label">Comp. Calça:</span>
+                <span class="measurement-value"
+                  >{{ currentOrder.customer.sizings.lengthPants }} cm</span
+                >
+              </div>
+              <div
+                *ngIf="currentOrder.customer.sizings.lengthDress"
+                class="measurement-item"
+              >
+                <span class="measurement-label">Comp. Vestido:</span>
+                <span class="measurement-value"
+                  >{{ currentOrder.customer.sizings.lengthDress }} cm</span
+                >
+              </div>
+              <div
+                *ngIf="currentOrder.customer.sizings.lengthShirt"
+                class="measurement-item"
+              >
+                <span class="measurement-label">Comp. Blusa:</span>
+                <span class="measurement-value"
+                  >{{ currentOrder.customer.sizings.lengthShirt }} cm</span
+                >
+              </div>
+              <div
+                *ngIf="currentOrder.customer.sizings.lengthTunica"
+                class="measurement-item"
+              >
+                <span class="measurement-label">Comp. Túnica:</span>
+                <span class="measurement-value"
+                  >{{ currentOrder.customer.sizings.lengthTunica }} cm</span
+                >
+              </div>
+            </ng-container>
+
+            <!-- Standard Size Measurements -->
+            <ng-template #standardMeasurements>
+              <div
+                *ngFor="let measure of getMeasurementsForItemOrder(itemOrder)"
+                class="measurement-item"
+              >
+                <span class="measurement-label">{{ measure.measure }}:</span>
+                <span class="measurement-value">{{ measure.value }} cm</span>
+              </div>
+            </ng-template>
+          </div>
+        </mat-expansion-panel>
+
+        <!-- Observations Expansion Panel -->
+        <mat-expansion-panel
+          class="observations-panel"
+          *ngIf="itemOrder.description"
+        >
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <mat-icon>description</mat-icon>
+              Observações
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <p class="observation-text">{{ itemOrder.description }}</p>
+        </mat-expansion-panel>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<!-- Loading State -->
+<div *ngIf="!currentOrder" class="loading-state">
+  <mat-spinner></mat-spinner>
+</div>
