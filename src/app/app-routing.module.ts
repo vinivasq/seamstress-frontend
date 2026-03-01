@@ -24,6 +24,8 @@ import { OrdersReportComponent } from './routes/report/ordersReport/ordersReport
 import { AdminComponent } from './routes/dashboard/admin/admin.component';
 import { RegisterComponent } from './routes/user/register/register.component';
 import { OrderCockpitComponent } from './routes/order-cockpit/order-cockpit.component';
+import { UsersComponent } from './routes/dashboard/users/users.component';
+import { ProfileComponent } from './routes/user/profile/profile.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'dashboard/orders', pathMatch: 'full' },
@@ -77,6 +79,14 @@ const routes: Routes = [
           role: ['admin', 'requester'],
         },
       },
+      {
+        path: 'users',
+        component: UsersComponent,
+        canActivate: [roleGuard],
+        data: {
+          role: ['admin'],
+        },
+      },
     ],
   },
 
@@ -107,6 +117,11 @@ const routes: Routes = [
       {
         path: 'register',
         component: RegisterComponent,
+      },
+      {
+        path: 'profile',
+        component: ProfileComponent,
+        canActivate: [authGuard],
       },
     ],
   },

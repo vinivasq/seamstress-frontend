@@ -1,0 +1,15 @@
+.profile__card {
+  max-width: 480px;
+  padding: 1rem;
+}
+
+.profile__form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-top: 1rem;
+
+  mat-form-field {
+    width: 100%;
+  }
+}

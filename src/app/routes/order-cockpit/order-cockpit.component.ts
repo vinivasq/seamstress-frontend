@@ -176,11 +176,4 @@ export class OrderCockpitComponent implements OnInit {
     return (this.currentOrder.step / (this.steps.length - 1)) * 100;
   }
 
-  getMeasurementsForItemOrder(itemOrder: any): any[] {
-    // Find the ItemSize that matches the current size
-    const itemSize = itemOrder.item.itemSizes?.find(
-      (is: any) => is.sizeId === itemOrder.size.id
-    );
-    return itemSize?.measurements || [];
-  }
 }

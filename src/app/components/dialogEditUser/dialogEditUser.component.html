@@ -1,0 +1,77 @@
+<h2 mat-dialog-title>Editar Usuário — {{ data.name }}</h2>
+
+<div mat-dialog-content class="edit-content">
+  <section class="edit-section">
+    <h3 class="edit-section__title">Nome de usuário</h3>
+    <form [formGroup]="usernameForm" class="edit-form">
+      <mat-form-field>
+        <mat-label>Nome de usuário</mat-label>
+        <input matInput formControlName="userName" />
+        <mat-error *ngIf="usernameControls.userName?.hasError('required')">Campo obrigatório</mat-error>
+      </mat-form-field>
+    </form>
+    <div class="edit-section__actions">
+      <button
+        mat-raised-button
+        color="accent"
+        (click)="saveUsername()"
+        [disabled]="usernameForm.invalid"
+      >
+        Salvar nome
+      </button>
+    </div>
+  </section>
+
+  <mat-divider></mat-divider>
+
+  <section class="edit-section">
+    <h3 class="edit-section__title">Função</h3>
+    <form [formGroup]="roleForm" class="edit-form">
+      <mat-form-field>
+        <mat-label>Função</mat-label>
+        <mat-select formControlName="role">
+          <mat-option *ngFor="let r of roles" [value]="r">{{ r }}</mat-option>
+        </mat-select>
+        <mat-error *ngIf="roleControls.role?.hasError('required')">Campo obrigatório</mat-error>
+      </mat-form-field>
+    </form>
+    <div class="edit-section__actions">
+      <button
+        mat-raised-button
+        color="accent"
+        (click)="saveRole()"
+        [disabled]="roleForm.invalid || roleForm.getRawValue().role === data.role"
+      >
+        Salvar função
+      </button>
+    </div>
+  </section>
+
+  <mat-divider></mat-divider>
+
+  <section class="edit-section">
+    <h3 class="edit-section__title">Redefinir senha</h3>
+    <form [formGroup]="passwordForm" class="edit-form">
+      <mat-form-field>
+        <mat-label>Nova senha temporária</mat-label>
+        <input matInput type="password" formControlName="password" />
+        <mat-error *ngIf="passwordControls.password?.hasError('required')">Campo obrigatório</mat-error>
+        <mat-error *ngIf="passwordControls.password?.hasError('minlength')">Tam. mínimo 6 caracteres</mat-error>
+      </mat-form-field>
+    </form>
+    <div class="edit-section__actions">
+      <button
+        mat-raised-button
+        color="warn"
+        (click)="savePassword()"
+        [disabled]="passwordForm.invalid"
+      >
+        Redefinir senha
+      </button>
+    </div>
+  </section>
+</div>
+
+<div mat-dialog-actions class="dialog__buttons">
+  <button mat-stroked-button mat-dialog-close>Fechar</button>
+</div>

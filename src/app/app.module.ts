@@ -45,6 +45,8 @@ import { OrdersReportComponent } from './routes/report/ordersReport/ordersReport
 import { DialogComponent } from './components/dialog/dialog.component';
 import { DialogCarouselComponent } from './components/dialogCarousel/dialogCarousel.component';
 import { DialogMetaExportComponent } from './components/dialogMetaExport/dialogMetaExport.component';
+import { DialogEditUserComponent } from './components/dialogEditUser/dialogEditUser.component';
+import { UsersComponent } from './routes/dashboard/users/users.component';
 import { ItemComponent } from './routes/item/item.component';
 import { MeasurementsComponent } from './routes/measurements/measurements.component';
 import { OrderComponent } from './routes/order/order.component';
@@ -87,6 +89,8 @@ import { JwtInterceptor } from './interceptors/jwt.interceptor';
     DialogComponent,
     DialogCarouselComponent,
     DialogMetaExportComponent,
+    DialogEditUserComponent,
+    UsersComponent,
     AttributesComponent,
     ColorComponent,
     FabricComponent,

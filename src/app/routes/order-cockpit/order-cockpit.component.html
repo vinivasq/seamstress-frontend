@@ -269,7 +269,7 @@
             <!-- Standard Size Measurements -->
             <ng-template #standardMeasurements>
               <div
-                *ngFor="let measure of getMeasurementsForItemOrder(itemOrder)"
+                *ngFor="let measure of itemOrder.itemSize.measurements"
                 class="measurement-item"
               >
                 <span class="measurement-label">{{ measure.measure }}:</span>

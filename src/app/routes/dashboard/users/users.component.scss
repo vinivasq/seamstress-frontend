@@ -1,0 +1,47 @@
+.users {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.user {
+  display: flex;
+  flex-direction: column;
+  width: calc(25.1% - 0.5rem);
+  min-width: 16rem;
+}
+
+.user__content {
+  padding: 0.5rem 1rem !important;
+}
+
+.user__field {
+  font-size: 0.875rem;
+  display: flex;
+  gap: 0.175rem;
+}
+
+.user__label {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.card__buttons {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+@media screen and (max-width: 1100px) {
+  .user {
+    width: calc(50.35% - 0.5rem);
+  }
+}
+
+@media screen and (max-width: 720px) {
+  .user {
+    width: 100%;
+  }
+}

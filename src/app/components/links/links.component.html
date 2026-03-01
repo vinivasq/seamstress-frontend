@@ -50,6 +50,15 @@
     >
       <p>Modelos</p>
     </li>
+    <li
+      class="link"
+      (click)="drawer.close()"
+      routerLink="/dashboard/users"
+      routerLinkActive="link-active"
+      *ngIf="user.role.toLowerCase() === 'admin'"
+    >
+      <p>Usuários</p>
+    </li>
   </div>
 
   <div class="links__footer">
@@ -68,6 +77,10 @@
   </li>
 </ul>
 <mat-menu #menu="matMenu">
+  <button mat-menu-item routerLink="/user/profile">
+    <mat-icon>manage_accounts</mat-icon>
+    Meu Perfil
+  </button>
   <button mat-menu-item (click)="logout()">
     <mat-icon color="warn">power_settings_new</mat-icon>
     Sair

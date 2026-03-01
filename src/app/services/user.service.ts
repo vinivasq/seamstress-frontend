@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, ReplaySubject, firstValueFrom, map, take } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { User } from '../models/identity/User';
+import { UserOutput } from '../models/identity/UserOutput';
 
 @Injectable({
   providedIn: 'root',
@@ -47,6 +48,18 @@ export class UserService {
 
   public getExecutors() {
     return this._client.get(`${this.baseURL}/executors`).pipe(take(1));
+  }
+
+  public getUsers(): Observable<UserOutput[]> {
+    return this._client.get<UserOutput[]>(`${this.baseURL}/users`).pipe(take(1));
+  }
+
+  public adminUpdateUser(id: number, data: { userName: string; password?: string; role?: string }): Observable<UserOutput> {
+    return this._client.put<UserOutput>(`${this.baseURL}/${id}`, data).pipe(take(1));
+  }
+
+  public changePassword(dto: { currentPassword: string; newPassword: string }): Observable<any> {
+    return this._client.post(`${this.baseURL}/change-password`, dto).pipe(take(1));
   }
 
   public setCurrentUser(user: User): void {
