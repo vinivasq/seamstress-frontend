@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
+import { DialogComponent } from 'src/app/components/dialog/dialog.component';
 import { DialogEditUserComponent } from 'src/app/components/dialogEditUser/dialogEditUser.component';
 import { UserOutput } from 'src/app/models/identity/UserOutput';
 import { SpinnerService } from 'src/app/services/spinner.service';
@@ -37,6 +38,34 @@ export class UsersComponent implements OnInit {
         error: (error) => {
           console.log(error);
           this._toastr.error('Não foi possível listar os usuários', 'Erro de conexão');
+        },
+      })
+      .add(() => (this._spinner.isLoading = false));
+  }
+
+  openDeleteDialog(user: UserOutput): void {
+    this._dialog.open(DialogComponent, {
+      data: {
+        title: `Deseja excluir o usuário ${user.name}?`,
+        content: 'Esta ação irá desativar o usuário. Tem certeza?',
+        action: () => this.deleteUser(user.id),
+      },
+    });
+  }
+
+  deleteUser(id: number): void {
+    this._spinner.isLoading = true;
+
+    this._userService
+      .deleteUser(id)
+      .subscribe({
+        next: () => {
+          this._toastr.success('Usuário excluído com sucesso', 'Sucesso');
+          this.users = this.users.filter((u) => u.id !== id);
+        },
+        error: (error) => {
+          console.log(error);
+          this._toastr.error('Não foi possível excluir o usuário', 'Erro');
         },
       })
       .add(() => (this._spinner.isLoading = false));
