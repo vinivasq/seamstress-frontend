@@ -15,4 +15,5 @@ export interface Customer {
   email: string;
   sizings?: Sizings;
   isActive?: boolean;
+  createdAt?: string;
 }

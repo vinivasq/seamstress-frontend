@@ -13,6 +13,10 @@
   (keyPressed)="filterCustomers($event)"
 >
 </app-tableHeader>
+<button mat-stroked-button color="accent" (click)="openExportDialog()" style="margin-bottom: 0.5rem">
+  <mat-icon>file_download</mat-icon>
+  Exportar para Meta Ads
+</button>
 <app-buttonAdd [route]="'/customer'"> </app-buttonAdd>
 
 <div class="customers">

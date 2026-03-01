@@ -1,0 +1,32 @@
+<h2 mat-dialog-title>Exportar para Meta Ads</h2>
+
+<div mat-dialog-content class="export-content">
+  <mat-radio-group [(ngModel)]="filterType" class="filter-type">
+    <mat-radio-button value="createdAt">Por período de cadastro</mat-radio-button>
+    <mat-radio-button value="orderDate">Por período de pedidos</mat-radio-button>
+  </mat-radio-group>
+
+  <div class="date-range">
+    <mat-form-field>
+      <mat-label>De</mat-label>
+      <input matInput [matDatepicker]="pickerFrom" [(ngModel)]="fromDate" />
+      <mat-datepicker-toggle matIconSuffix [for]="pickerFrom"></mat-datepicker-toggle>
+      <mat-datepicker #pickerFrom></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Até</mat-label>
+      <input matInput [matDatepicker]="pickerTo" [(ngModel)]="toDate" />
+      <mat-datepicker-toggle matIconSuffix [for]="pickerTo"></mat-datepicker-toggle>
+      <mat-datepicker #pickerTo></mat-datepicker>
+    </mat-form-field>
+  </div>
+</div>
+
+<div mat-dialog-actions class="dialog__buttons">
+  <button mat-raised-button color="accent" (click)="export()">
+    <mat-icon>file_download</mat-icon>
+    Exportar CSV
+  </button>
+  <button mat-stroked-button mat-dialog-close>Cancelar</button>
+</div>
