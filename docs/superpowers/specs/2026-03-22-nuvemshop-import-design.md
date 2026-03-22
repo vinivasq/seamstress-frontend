@@ -194,7 +194,7 @@ All under `src/app/routes/import/`:
 - Allows admin to upload a sample CSV, set the mapping, and save it for reuse
 
 #### Navigation
-- Add "Import" link to sidebar (`links.component.html`) visible for Admin and Requester roles
+- No new sidebar link. Import is accessed via an "Importar" button on the Items list page (`ItemsComponent`), next to the existing "Novo Modelo" button. Visible for Admin and Requester roles.
 
 #### Module Registration
 - Register `ImportComponent` and `MappingConfigComponent` in `app.module.ts` declarations (NgModule pattern)
