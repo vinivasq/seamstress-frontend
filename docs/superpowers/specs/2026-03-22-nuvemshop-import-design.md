@@ -11,7 +11,7 @@ Add an integration module to Seamstress that allows admin users to import produc
 3. **Repeatable sync** — On each import, items are matched by `ExternalId` + `SalePlatformId`. New items are created, existing items are updated, items no longer in the CSV are inactivated
 4. **Preview before execution** — After mapping, a preview shows what will be created, updated, and inactivated. Import only executes on user confirmation
 5. **Image download** — Product images are downloaded from NuvemShop CDN and re-uploaded to Azure Blob Storage at import time, decoupling Seamstress from NuvemShop's CDN
-6. **Entity resolution** — Colors, Fabrics, and Sizes referenced in the CSV are matched by name against existing DB records. Unmatched values are created automatically
+6. **Entity resolution** — Colors, Fabrics, and Sizes referenced in the CSV are matched by name (case-insensitive) against existing DB records, including inactive ones. Inactive matches are reactivated. Unmatched values are created automatically (with `IsActive = true`)
 7. **Admin-only access** — All import functionality is restricted to users with the Admin role
 8. **Future extensibility** — The architecture supports adding NuvemShop API as an alternative data source with minimal changes (swap CSV parser for API client; pipeline from entity resolution onward is shared)
 
@@ -40,6 +40,12 @@ NuvemShop products map to Seamstress Items as follows:
 | Veludos | Veludo |
 | Malha Tricot | Malha tricô |
 | Algodão | Malha de algodão |
+
+> **Note:** This table is provided as reference for the specific NuvemShop store. The actual mapping is handled by the generic entity resolution logic (match by name, create if unmatched).
+
+### Multiple images
+
+NuvemShop products can have multiple images. All product images listed in the CSV are downloaded and stored. `Item.ImageURL` uses the existing semicolon-delimited format (e.g., `uuid1.jpg;uuid2.jpg`). On update, existing blob names are compared against new image URLs to avoid re-downloading unchanged images. Orphaned blobs (images no longer in the CSV) are deleted.
 
 ## Domain Changes
 
@@ -77,7 +83,7 @@ Source (CSV / API)
   ↓
 ② Column Mapping → apply user-defined mapping → normalized product rows
   ↓
-③ Resolve Entities → find or create Colors, Fabrics, Sizes by name
+③ Resolve Entities → find or create Colors, Fabrics, Sizes by name (case-insensitive, including inactive records — reactivate if found inactive)
   ↓
 ④ Diff Against DB → query existing Items by ExternalId + SalePlatformId
    → classify each row as: Create | Update | Inactivate
@@ -86,11 +92,11 @@ Source (CSV / API)
   ↓
 ⑥ [User confirms]
   ↓
-⑦ Execute Import → create/update/inactivate items in DB
+⑦ Execute Import → create/update/inactivate items in DB (wrapped in a single DB transaction)
   ↓
-⑧ Download Images → fetch from CDN URLs
+⑧ Download Images → fetch from CDN URLs (after transaction commits; failures logged, not rolled back)
   ↓
-⑨ Upload to Azure Blob → store images, update ImageURL field
+⑨ Upload to Azure Blob → store images, update ImageURL field (uses new Stream-based overload)
   ↓
 Return ImportResultDto (counts + any errors)
 ```
@@ -101,7 +107,9 @@ When adding API integration later, only step ① changes — a `NuvemShopApiClie
 
 **Seamstress.Application:**
 - `Contracts/IImportService.cs` — interface for the import pipeline
-- `ImportService.cs` — implementation
+- `ImportService.cs` — implementation (works directly with `Item` domain entities and `IGeneralPersistence` for bulk operations, bypassing `ItemService`/`ItemInputDto` which are designed for single-item CRUD)
+- `Contracts/IAzureBlobService.cs` — add new overload: `Task<string> UploadModelImageAsync(Stream imageStream, string imageName)` (existing method accepts `IFormFile`; CDN downloads produce `Stream`)
+- `AzureBlobService.cs` — implement the new overload
 - `Dtos/ImportColumnMappingDto.cs` — column-to-field mapping pairs
 - `Dtos/ImportPreviewDto.cs` — preview summary (toCreate, toUpdate, toInactivate lists)
 - `Dtos/ImportPreviewItemDto.cs` — individual item in preview (name, price, colors, fabric, sizes, action)
@@ -110,7 +118,7 @@ When adding API integration later, only step ① changes — a `NuvemShopApiClie
 
 **Seamstress.Persistence:**
 - `IItemPersistence.cs` — add `GetItemsByExternalSourceAsync(int salePlatformId)` method
-- `ItemPersistence.cs` — implement the new query
+- `ItemPersistence.cs` — implement the new query (includes `ItemColors.Color`, `ItemFabrics.Fabric`, `ItemSizes.Size` for diff comparison; excludes `ItemSizes.Measurements` to avoid cascade issues)
 
 **Seamstress.API:**
 - `Controllers/ImportController.cs` — 3 endpoints (upload, preview, execute)
@@ -148,7 +156,7 @@ The import is a multi-step process (upload → map → preview → execute). Ser
 
 ### New Components
 
-All under `src/app/routes/import/` (or `src/app/components/import/`):
+All under `src/app/routes/import/`:
 
 #### ImportComponent (main page)
 - Admin-only route at `/dashboard/import`
@@ -160,6 +168,10 @@ All under `src/app/routes/import/` (or `src/app/components/import/`):
 
 #### Navigation
 - Add "Import" link to sidebar (`links.component.html`) visible only for admin role
+
+#### Module Registration
+- Register `ImportComponent` in `app.module.ts` declarations (NgModule pattern)
+- Add route in `app-routing.module.ts` with admin role guard
 
 ### New Service
 
@@ -193,6 +205,26 @@ All under `src/app/routes/import/` (or `src/app/components/import/`):
    - Items to **inactivate** (in Seamstress but not in CSV)
 4. **Confirm**: User clicks "Execute Import" → calls `/api/import/execute` → shows spinner during image downloads
 5. **Results**: Shows counts (X created, Y updated, Z inactivated) and any errors
+
+## Import Behavior Details
+
+### ImportService vs ItemService
+
+`ImportService` operates directly on `Item` domain entities via `IGeneralPersistence`, bypassing `ItemService` and its DTOs. This is intentional:
+- Bulk import has different concerns than single-item CRUD (no individual image upload, no DTO validation)
+- `ItemInputDto` and `ItemOutputDto` remain unchanged — they serve the manual item creation/editing flow
+- The new `ExternalId` and `SalePlatformId` fields are added to the `Item` domain entity only. They appear in `ItemOutputDto` for display purposes but are not part of `ItemInputDto` (they are set exclusively by the import process)
+
+### ItemSize and Measurements handling
+
+Imported items are created with `ItemSize` records but **no `ItemSizeMeasurement` data** (NuvemShop does not provide body measurements). When updating an existing item's sizes during re-import:
+- Only **add** new `ItemSize` records for sizes not already present
+- Only **remove** `ItemSize` records for sizes no longer in the CSV
+- **Never recreate** existing `ItemSize` records that match by `SizeId` — this preserves any manually-entered `ItemSizeMeasurement` data (which cascade-deletes when `ItemSize` is removed)
+
+### Transaction scope
+
+The execute step (step ⑦) wraps all create/update/inactivate operations in a single database transaction. Image downloads (steps ⑧–⑨) happen **after** the transaction commits, so a failed image download does not roll back the item changes. Failed image downloads are logged and reported in `ImportResultDto.Errors`.
 
 ## Error Handling
 
