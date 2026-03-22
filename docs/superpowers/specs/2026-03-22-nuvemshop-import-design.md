@@ -2,17 +2,17 @@
 
 ## Overview
 
-Add an integration module to Seamstress that allows admin users to import products from NuvemShop via CSV upload. The module is designed for future expansion to support direct NuvemShop API integration. NuvemShop is the source of truth for what's currently producible — the import is a repeatable sync that keeps Seamstress items in 1:1 parity with the NuvemShop store.
+Add an integration module to Seamstress that allows admin and requester users to import products from NuvemShop via CSV upload. The module is designed for future expansion to support direct NuvemShop API integration. NuvemShop is the source of truth for what's currently producible — the import is a repeatable sync that keeps Seamstress items in 1:1 parity with the NuvemShop store.
 
 ## Requirements
 
-1. **CSV upload** — Admin uploads a NuvemShop product export CSV file
-2. **Configurable column mapping** — UI lets the admin map CSV columns to Seamstress fields (Name, Price, ExternalId, Category/Fabric, Variants/Colors, Size, Image URL)
+1. **CSV upload** — User uploads a NuvemShop product export CSV file
+2. **Configurable column mapping** — UI lets the **admin** configure which CSV columns map to Seamstress fields (Name, Price, ExternalId, Category/Fabric, Variants/Colors, Size, Image URL). This mapping is saved and reused by requesters on subsequent imports.
 3. **Repeatable sync** — On each import, items are matched by `ExternalId` + `SalePlatformId`. New items are created, existing items are updated, items no longer in the CSV are inactivated
 4. **Preview before execution** — After mapping, a preview shows what will be created, updated, and inactivated. Import only executes on user confirmation
 5. **Image download** — Product images are downloaded from NuvemShop CDN and re-uploaded to Azure Blob Storage at import time, decoupling Seamstress from NuvemShop's CDN
 6. **Entity resolution** — Colors, Fabrics, and Sizes referenced in the CSV are matched by name (case-insensitive) against existing DB records, including inactive ones. Inactive matches are reactivated. Unmatched values are created automatically (with `IsActive = true`)
-7. **Admin-only access** — All import functionality is restricted to users with the Admin role
+7. **Role-based access** — The import flow (upload, preview, execute) is accessible to **Admin and Requester** roles. Column mapping configuration is restricted to **Admin only**.
 8. **Future extensibility** — The architecture supports adding NuvemShop API as an alternative data source with minimal changes (swap CSV parser for API client; pipeline from entity resolution onward is shared)
 
 ## Data Mapping
@@ -66,9 +66,23 @@ public SalePlatform? SalePlatform { get; set; }
 
 Add a "Nuvem Shop" entry to the existing `SalePlatforms` table (or use existing "Ecommerce" entry — TBD during implementation).
 
+### ImportMapping entity (new)
+
+```csharp
+// Seamstress.Domain/ImportMapping.cs
+public int Id { get; set; }
+public int SalePlatformId { get; set; }           // FK → SalePlatforms
+public SalePlatform SalePlatform { get; set; }
+public string MappingsJson { get; set; }           // Serialized [{ csvColumn, seamstressField }]
+```
+
+Stores the saved column mapping configuration per platform. `MappingsJson` is a JSON string — avoids a separate join table for a simple key-value list. One mapping per `SalePlatformId` (unique constraint).
+
 ### Database migration
 
-An EF Core migration adds the two new columns to `Items` and the unique index on `(ExternalId, SalePlatformId)`.
+An EF Core migration adds:
+- Two new columns to `Items` (`ExternalId`, `SalePlatformId`) and the unique index on `(ExternalId, SalePlatformId)`
+- New `ImportMappings` table
 
 ## Backend Architecture
 
@@ -125,23 +139,31 @@ When adding API integration later, only step ① changes — a `NuvemShopApiClie
 
 ### API Endpoints
 
-All endpoints require `[Authorize]` and Admin role check.
+All endpoints require `[Authorize]`. Role requirements vary per endpoint.
 
-#### `POST /api/import/upload`
+#### `POST /api/import/upload` — Admin, Requester
 - **Input**: Multipart form with CSV file
 - **Process**: Parse CSV headers and first N sample rows
-- **Output**: `ImportUploadResultDto` — list of column names, sample data rows, a server-generated `sessionId` to track this import session
+- **Output**: `ImportUploadResultDto` — list of column names, sample data rows, a server-generated `sessionId` to track this import session, and the current saved column mapping (if one exists)
 - **State**: Parsed CSV data cached server-side (in-memory or temp file) keyed by `sessionId`
 
-#### `POST /api/import/preview`
+#### `POST /api/import/preview` — Admin, Requester
 - **Input**: `{ sessionId, mappings: [{ csvColumn, seamstressField }], salePlatformId }`
 - **Process**: Apply column mapping → resolve entities → diff against DB → generate preview
 - **Output**: `ImportPreviewDto` — lists of items to create, update, inactivate with details
 
-#### `POST /api/import/execute`
+#### `POST /api/import/execute` — Admin, Requester
 - **Input**: `{ sessionId }`
 - **Process**: Execute the previewed import → download images → upload to Azure Blob
 - **Output**: `ImportResultDto` — counts of created, updated, inactivated items + any errors
+
+#### `PUT /api/import/mapping` — Admin only
+- **Input**: `{ salePlatformId, mappings: [{ csvColumn, seamstressField }] }`
+- **Process**: Save/update the column mapping configuration for a given platform
+- **Output**: Saved mapping
+
+#### `GET /api/import/mapping/{salePlatformId}` — Admin, Requester
+- **Output**: The saved column mapping for the given platform (if exists)
 
 ### Import Session Management
 
@@ -159,19 +181,24 @@ The import is a multi-step process (upload → map → preview → execute). Ser
 All under `src/app/routes/import/`:
 
 #### ImportComponent (main page)
-- Admin-only route at `/dashboard/import`
+- Route at `/dashboard/import`, accessible to Admin and Requester roles
 - Multi-step wizard flow:
   1. **Upload step** — drag-and-drop CSV upload (reuse ngx-dropzone pattern)
-  2. **Mapping step** — for each Seamstress field, a dropdown to select which CSV column maps to it
+  2. **Mapping step** — if a saved mapping exists, auto-apply it and skip to preview. If no saved mapping exists and user is a Requester, show a message that an admin needs to configure the mapping first. If user is Admin, show the mapping dropdowns.
   3. **Preview step** — table showing items to be created/updated/inactivated with details
   4. **Result step** — summary of what was imported
 
+#### MappingConfigComponent (admin-only)
+- Route at `/dashboard/import/mapping`, accessible to Admin only
+- Standalone page (or section within ImportComponent) to configure and save column mappings per platform
+- Allows admin to upload a sample CSV, set the mapping, and save it for reuse
+
 #### Navigation
-- Add "Import" link to sidebar (`links.component.html`) visible only for admin role
+- Add "Import" link to sidebar (`links.component.html`) visible for Admin and Requester roles
 
 #### Module Registration
-- Register `ImportComponent` in `app.module.ts` declarations (NgModule pattern)
-- Add route in `app-routing.module.ts` with admin role guard
+- Register `ImportComponent` and `MappingConfigComponent` in `app.module.ts` declarations (NgModule pattern)
+- Add routes in `app-routing.module.ts`: `/dashboard/import` with admin+requester guard, `/dashboard/import/mapping` with admin-only guard
 
 ### New Service
 
@@ -248,7 +275,8 @@ The execute step (step ⑦) wraps all create/update/inactivate operations in a s
 
 ## Security
 
-- All endpoints check Admin role before processing
+- Import flow endpoints (upload, preview, execute, get mapping) check Admin or Requester role
+- Mapping configuration endpoint (PUT mapping) checks Admin role only
 - File upload size limit (configurable, default 10MB)
 - CSV parsing with row limit to prevent memory exhaustion
 - Session cleanup on expiration
