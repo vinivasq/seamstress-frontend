@@ -24,4 +24,10 @@ export class ImportService {
       .post<ImportResult>(`${this.baseURL}/execute`, { sessionId })
       .pipe(take(1));
   }
+
+  public fetchNuvemShopPreview(): Observable<ImportPreview> {
+    return this._client
+      .get<ImportPreview>(`${environment.apiURL}/nuvemshop/import-preview`)
+      .pipe(take(1));
+  }
 }
