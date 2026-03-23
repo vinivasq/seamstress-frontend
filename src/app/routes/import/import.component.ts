@@ -23,6 +23,24 @@ export class ImportComponent {
     private _router: Router
   ) {}
 
+  fetchPreview(): void {
+    this._spinner.isLoading = true;
+    this._importService.fetchNuvemShopPreview().subscribe({
+      next: (preview: ImportPreview) => {
+        if (!preview.sessionId) {
+          this._toastr.warning('Nenhum produto publicado encontrado na NuvemShop.', 'Aviso');
+        } else {
+          this.setPreview(preview);
+        }
+        this._spinner.isLoading = false;
+      },
+      error: (error: any) => {
+        this._toastr.error('Erro ao buscar produtos da NuvemShop. Tente novamente.', 'Erro');
+        this._spinner.isLoading = false;
+      }
+    });
+  }
+
   // Called by future API integration to set preview data
   setPreview(preview: ImportPreview): void {
     this.preview = preview;

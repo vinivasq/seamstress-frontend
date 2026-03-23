@@ -123,12 +123,17 @@
   </mat-card>
 
   <!-- No preview yet -->
-  <mat-card *ngIf="currentStep === 1 && !preview">
-    <mat-card-content>
-      <div class="alert-box">
-        <p>Nenhum preview disponível. A integração com a API NuvemShop será adicionada em breve.</p>
-        <button mat-raised-button (click)="goToItems()">Voltar</button>
-      </div>
+  <mat-card class="fetch-card" *ngIf="!preview">
+    <mat-card-content class="fetch-content">
+      <h2>Importar Produtos</h2>
+      <p>Busque os produtos publicados na NuvemShop para gerar um preview da importação.</p>
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="fetchPreview()"
+      >
+        <i class="fa fa-cloud-download me-1"></i> Buscar produtos da NuvemShop
+      </button>
     </mat-card-content>
   </mat-card>
 

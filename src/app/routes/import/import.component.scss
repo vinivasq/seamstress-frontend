@@ -67,6 +67,25 @@
   }
 }
 
+.fetch-card {
+  max-width: 500px;
+  margin: 2rem auto;
+  text-align: center;
+}
+
+.fetch-content {
+  padding: 2rem;
+
+  h2 {
+    margin-bottom: 1rem;
+  }
+
+  p {
+    margin-bottom: 1.5rem;
+    color: rgba(0, 0, 0, 0.6);
+  }
+}
+
 .errors-section {
   .error-item {
     color: #c62828;
