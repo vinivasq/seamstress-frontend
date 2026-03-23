@@ -38,6 +38,9 @@
         <div class="cell">
           <div class="cell__content">
             {{ column == "set" ? item[column]?.name : item[column] }}
+            <small *ngIf="column === 'name' && item.measurementsDescription" class="d-block text-muted mt-1" style="white-space: pre-line; font-size: 0.75rem;">
+              {{ item.measurementsDescription }}
+            </small>
           </div>
           <button
             *ngIf="column == 'price'"
