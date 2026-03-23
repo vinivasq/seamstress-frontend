@@ -15,6 +15,16 @@
   route="/item"
 ></app-tableHeader>
 
+<div class="d-flex justify-content-end mb-2" *ngIf="user && user.role.toLowerCase() !== 'executor'">
+  <button
+    mat-raised-button
+    color="accent"
+    routerLink="/dashboard/import"
+  >
+    <i class="fa fa-upload me-1"></i> Importar
+  </button>
+</div>
+
 <div class="responsive-table">
   <table class="mat-elevation-z8" mat-table matSort [dataSource]="dataSource">
     <ng-container

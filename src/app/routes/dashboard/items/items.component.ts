@@ -15,6 +15,7 @@ import { SpinnerService } from 'src/app/services/spinner.service';
 export class ItemsComponent implements OnInit {
   public dataSource: any;
   displayedColumns: string[] = ['name', 'set', 'price'];
+  user: any;
 
   @ViewChild(MatPaginator) paginator?: MatPaginator;
   @ViewChild(MatSort) sort?: MatSort;
@@ -26,6 +27,7 @@ export class ItemsComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.user = JSON.parse(localStorage.getItem('user')!);
     this.getItems();
   }
 

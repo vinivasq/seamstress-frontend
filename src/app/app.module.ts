@@ -70,6 +70,7 @@ import { UserComponent } from './routes/user/user.component';
 import { LoginComponent } from './routes/user/login/login.component';
 import { RegisterComponent } from './routes/user/register/register.component';
 import { OrderCockpitComponent } from './routes/order-cockpit/order-cockpit.component';
+import { ImportComponent } from './routes/import/import.component';
 
 import { DateFormatPipe } from 'src/helpers/DateFormat.pipe';
 
@@ -114,6 +115,7 @@ import { JwtInterceptor } from './interceptors/jwt.interceptor';
     ButtonAddComponent,
     TableHeaderComponent,
     SpinnerComponent,
+    ImportComponent,
     DateFormatPipe,
   ],
   imports: [
