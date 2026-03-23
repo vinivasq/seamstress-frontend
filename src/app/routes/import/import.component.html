@@ -1,137 +1,17 @@
 <app-title
   [icon]="'fa fa-upload'"
   [title]="'Importar Produtos'"
-  [descripton]="'Importar produtos do NuvemShop via CSV'"
+  [descripton]="'Importar produtos do NuvemShop'"
 ></app-title>
 
 <div class="container mt-3">
-  <!-- STEP INDICATOR -->
-  <div class="step-indicator mb-4">
-    <div class="step" [class.active]="currentStep >= 1" [class.completed]="currentStep > 1">
-      <span class="step-number">1</span>
-      <span class="step-label">Upload</span>
-    </div>
-    <div class="step-line" [class.active]="currentStep > 1"></div>
-    <div class="step" [class.active]="currentStep >= 2" [class.completed]="currentStep > 2">
-      <span class="step-number">2</span>
-      <span class="step-label">Mapeamento</span>
-    </div>
-    <div class="step-line" [class.active]="currentStep > 2"></div>
-    <div class="step" [class.active]="currentStep >= 3" [class.completed]="currentStep > 3">
-      <span class="step-number">3</span>
-      <span class="step-label">Preview</span>
-    </div>
-    <div class="step-line" [class.active]="currentStep > 3"></div>
-    <div class="step" [class.active]="currentStep >= 4">
-      <span class="step-number">4</span>
-      <span class="step-label">Resultado</span>
-    </div>
-  </div>
-
-  <!-- STEP 1: UPLOAD -->
-  <mat-card *ngIf="currentStep === 1">
-    <mat-card-header>
-      <mat-card-title>Upload do CSV</mat-card-title>
-      <mat-card-subtitle>Arraste ou selecione o arquivo CSV exportado do NuvemShop</mat-card-subtitle>
-    </mat-card-header>
-    <mat-card-content>
-      <ngx-dropzone (change)="onFileSelected($event)" [multiple]="false" accept=".csv">
-        <ngx-dropzone-label>
-          <div *ngIf="!file">Arraste o arquivo CSV aqui ou clique para selecionar</div>
-          <div *ngIf="file">{{ file.name }} ({{ (file.size / 1024).toFixed(1) }} KB)</div>
-        </ngx-dropzone-label>
-      </ngx-dropzone>
-    </mat-card-content>
-    <mat-card-actions align="end">
-      <button mat-raised-button color="primary" [disabled]="!file" (click)="uploadFile()">
-        Processar CSV
-      </button>
-    </mat-card-actions>
-  </mat-card>
-
-  <!-- STEP 2: MAPPING -->
-  <mat-card *ngIf="currentStep === 2">
-    <mat-card-header>
-      <mat-card-title>Mapeamento de Colunas</mat-card-title>
-      <mat-card-subtitle>
-        Selecione qual coluna do CSV corresponde a cada campo
-      </mat-card-subtitle>
-    </mat-card-header>
-    <mat-card-content>
-      <!-- No saved mapping and not admin -->
-      <div *ngIf="!isAdmin && !uploadResult?.savedMapping" class="alert-box">
-        <p>Nenhum mapeamento configurado. Solicite a um administrador para configurar o mapeamento de colunas.</p>
-        <button mat-raised-button (click)="goToItems()">Voltar</button>
-      </div>
-
-      <!-- Mapping form -->
-      <div *ngIf="isAdmin || uploadResult?.savedMapping" class="mapping-grid">
-        <div *ngFor="let field of seamstressFields" class="mapping-row">
-          <label>
-            {{ field.label }}
-            <span *ngIf="field.required" class="required">*</span>
-          </label>
-          <mat-form-field appearance="outline">
-            <mat-select [(value)]="mappings[field.key]" [disabled]="!isAdmin && !!uploadResult?.savedMapping">
-              <mat-option value="">-- Não mapear --</mat-option>
-              <mat-option *ngFor="let col of uploadResult?.columns" [value]="col">
-                {{ col }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
-      </div>
-
-      <!-- Sample data -->
-      <div *ngIf="uploadResult?.sampleRows?.length" class="sample-data mt-3">
-        <h4>Amostra dos dados (primeiras 5 linhas):</h4>
-        <div class="table-responsive">
-          <table class="mat-table">
-            <thead>
-              <tr>
-                <th *ngFor="let col of uploadResult!.columns">{{ col }}</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let row of uploadResult!.sampleRows">
-                <td *ngFor="let col of uploadResult!.columns">{{ row[col] }}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </mat-card-content>
-    <mat-card-actions align="end">
-      <button mat-button (click)="goBack()">Voltar</button>
-      <button
-        *ngIf="isAdmin"
-        mat-raised-button
-        color="accent"
-        (click)="saveMapping()"
-      >
-        Salvar Mapeamento
-      </button>
-      <button
-        mat-raised-button
-        color="primary"
-        [disabled]="!requiredMappingsFilled"
-        (click)="generatePreview()"
-      >
-        Gerar Preview
-      </button>
-    </mat-card-actions>
-  </mat-card>
-
-  <!-- STEP 3: PREVIEW -->
-  <mat-card *ngIf="currentStep === 3">
+  <!-- STEP 1: PREVIEW -->
+  <mat-card *ngIf="currentStep === 1 && preview">
     <mat-card-header>
       <mat-card-title>Preview da Importação</mat-card-title>
-      <mat-card-subtitle>
-        Revise as alterações antes de confirmar
-      </mat-card-subtitle>
+      <mat-card-subtitle>Revise as alterações antes de confirmar</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
-      <!-- Summary -->
       <div class="preview-summary">
         <div class="summary-item create">
           <span class="count">{{ preview?.toCreate?.length || 0 }}</span>
@@ -236,15 +116,24 @@
       </div>
     </mat-card-content>
     <mat-card-actions align="end">
-      <button mat-button (click)="goBack()">Voltar</button>
       <button mat-raised-button color="warn" (click)="executeImport()">
         Executar Importação
       </button>
     </mat-card-actions>
   </mat-card>
 
-  <!-- STEP 4: RESULT -->
-  <mat-card *ngIf="currentStep === 4">
+  <!-- No preview yet -->
+  <mat-card *ngIf="currentStep === 1 && !preview">
+    <mat-card-content>
+      <div class="alert-box">
+        <p>Nenhum preview disponível. A integração com a API NuvemShop será adicionada em breve.</p>
+        <button mat-raised-button (click)="goToItems()">Voltar</button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- STEP 2: RESULT -->
+  <mat-card *ngIf="currentStep === 2">
     <mat-card-header>
       <mat-card-title>Importação Concluída</mat-card-title>
     </mat-card-header>
