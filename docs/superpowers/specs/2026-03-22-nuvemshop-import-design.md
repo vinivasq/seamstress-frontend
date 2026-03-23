@@ -11,9 +11,39 @@ Add an integration module to Seamstress that allows admin and requester users to
 3. **Repeatable sync** — On each import, items are matched by `ExternalId` + `SalePlatformId`. New items are created, existing items are updated, items no longer in the CSV are inactivated
 4. **Preview before execution** — After mapping, a preview shows what will be created, updated, and inactivated. Import only executes on user confirmation
 5. **Image download** — Product images are downloaded from NuvemShop CDN and re-uploaded to Azure Blob Storage at import time, decoupling Seamstress from NuvemShop's CDN
-6. **Entity resolution** — Colors, Fabrics, and Sizes referenced in the CSV are matched by name (case-insensitive) against existing DB records, including inactive ones. Inactive matches are reactivated. Unmatched values are created automatically (with `IsActive = true`)
+6. **Entity resolution** — Colors and Sizes are matched by name (case-insensitive) against existing DB records, including inactive ones. Inactive matches are reactivated. Unmatched colors/sizes are created automatically. **Fabrics must already exist** in the DB — products with unmatched fabrics are skipped and reported as failed imports.
 7. **Role-based access** — The import flow (upload, preview, execute) is accessible to **Admin and Requester** roles. Column mapping configuration is restricted to **Admin only**.
 8. **Future extensibility** — The architecture supports adding NuvemShop API as an alternative data source with minimal changes (swap CSV parser for API client; pipeline from entity resolution onward is shared)
+
+## CSV Format (NuvemShop Export)
+
+The actual NuvemShop CSV export has been analyzed. Key format details:
+
+- **Delimiter**: `;` (semicolon, not comma)
+- **Encoding**: `latin-1` (ISO-8859-1, not UTF-8)
+- **Structure**: One row per **variant** (color/size combination), not one row per product. Rows must be grouped by `Identificador URL` to reconstruct a single product.
+- **~148 unique products, ~2600 rows** in the full export
+- **Columns**: `Identificador URL`, `Nome`, `Categorias`, `Nome da variação 1`, `Valor da variação 1`, `Nome da variação 2`, `Valor da variação 2`, `Preço`, `Estoque`, `SKU`, `Exibir na loja`, `Descrição`, and others.
+
+### Row filtering
+
+Before import, rows are filtered:
+- **`Exibir na loja` = `NÃO`** → skip entirely (product not visible on store)
+- **`Categorias` contains `E-book`** → skip entirely (not a garment)
+- Only products with `Exibir na loja` = `SIM` are imported (~46 products after filtering)
+
+### Variant structure
+
+Variation columns are **not positional** — "Nome da variação 1" can be either `Cor`/`Cores` (color) or `Tamanho` (size). The import must check the variation name to determine which field it represents:
+- If `Nome da variação N` is `Cor` or `Cores` → `Valor da variação N` is a color
+- If `Nome da variação N` is `Tamanho` → `Valor da variação N` is a size
+- Variation 3 is unused in this store
+
+### Row grouping
+
+All rows sharing the same `Identificador URL` belong to one product. When grouped:
+- `Nome`, `Preço`, `Categorias`, `Descrição`, `Exibir na loja` come from the first row
+- Colors and sizes are collected from all rows (deduplicated)
 
 ## Data Mapping
 
@@ -21,27 +51,34 @@ NuvemShop products map to Seamstress Items as follows:
 
 | NuvemShop Field | Seamstress Field | Notes |
 |-----------------|------------------|-------|
-| Product Name | `Item.Name` | Direct mapping |
-| Price | `Item.Price` | Direct mapping |
-| Product ID | `Item.ExternalId` | **New field** — used for sync matching |
-| Category (Linho, Crepe, etc.) | `Item.ItemFabrics` → `Fabric` | NuvemShop uses fabric as primary category |
-| Variant names (Pink, Marrom, etc.) | `Item.ItemColors` → `Color` | Extracted from variant data |
-| Size (Único, P, M, G, etc.) | `Item.ItemSizes` → `Size` | Extracted from variant data |
-| Image URLs | `Item.ImageURL` | Downloaded from CDN → uploaded to Azure Blob |
-| — | `Item.SalePlatformId` | **New field** — FK to SalePlatforms, set to NuvemShop platform ID |
-| Garment-type categories | (ignored) | Vestidos, Conjuntos, etc. are not tracked in Seamstress |
+| Nome | `Item.Name` | Direct mapping |
+| Preço | `Item.Price` | Direct mapping |
+| Identificador URL | `Item.ExternalId` | **New field** — URL slug as unique key |
+| Categorias (first item) | `Item.ItemFabrics` → `Fabric` | First category is always the fabric |
+| Variação Cor/Cores values | `Item.ItemColors` → `Color` | Collected from all variant rows |
+| Variação Tamanho values | `Item.ItemSizes` → `Size` | Collected from all variant rows |
+| Descrição (MEDIDAS section) | `Item.MeasurementsDescription` | **New field** — HTML stripped, stored as text |
+| — | `Item.SalePlatformId` | **New field** — FK to SalePlatforms |
+| Garment-type categories | (ignored) | Vestidos, Conjuntos, etc. (2nd+ categories) |
 
-### NuvemShop store category → Fabric mapping (elizandrade.com)
+### Fabric resolution
 
-| NuvemShop Category | Seamstress Fabric |
-|--------------------|-------------------|
-| Linho | Linho |
-| Crepe | Crepe (user may need to disambiguate from subtypes) |
-| Veludos | Veludo |
-| Malha Tricot | Malha tricô |
-| Algodão | Malha de algodão |
+The **first item** in the comma-separated `Categorias` field is the fabric (e.g., `"Linho, Vestidos"` → fabric is `Linho`). The fabric must **already exist** in the Fabrics table (case-insensitive match). If no match is found, the product is **not imported** and is added to the **failed imports list** in the result. Fabrics are never auto-created.
 
-> **Note:** This table is provided as reference for the specific NuvemShop store. The actual mapping is handled by the generic entity resolution logic (match by name, create if unmatched).
+Known fabric categories from the store: Linho, Crepe, Veludos, Algodão, Malha Tricot.
+
+### Color and size resolution
+
+Colors and sizes **are** auto-created if not found in the DB (case-insensitive match, inactive matches are reactivated). The CSV has ~100 unique color names with inconsistent casing (e.g., `"Pink"`, `"pink"`, `"PINK"`) — case-insensitive matching is essential.
+
+### Measurements
+
+NuvemShop product descriptions contain free-text measurement sections (e.g., `"MEDIDAS P - Busto 122cm / Largura da manga 38cm..."`). These are **not** parsed into the existing `ItemSizeMeasurement` table because:
+- Measurement types vary wildly per product (Busto, Cintura, Quadril, Gancho, Comp. Frente, Comp. Costas, Largura da manga, etc.)
+- Formatting is inconsistent (mixed delimiters, HTML entities, typos)
+- The existing `ItemSizeMeasurement` table has a fixed set of columns that don't cover all measurement types
+
+Instead, a new `MeasurementsDescription` nullable string field on `Item` stores the cleaned text from the description's measurements section. The existing `ItemSizeMeasurement` table remains for manually-created items.
 
 ### Multiple images
 
@@ -53,9 +90,10 @@ NuvemShop products can have multiple images. All product images listed in the CS
 
 ```csharp
 // Seamstress.Domain/Item.cs
-public string? ExternalId { get; set; }    // NuvemShop Product ID
-public int? SalePlatformId { get; set; }   // FK → SalePlatforms
+public string? ExternalId { get; set; }           // NuvemShop Identificador URL
+public int? SalePlatformId { get; set; }          // FK → SalePlatforms
 public SalePlatform? SalePlatform { get; set; }
+public string? MeasurementsDescription { get; set; }  // Free-text measurements from NuvemShop description
 ```
 
 - `ExternalId` is nullable (existing manually-created items won't have one)
@@ -81,7 +119,7 @@ Stores the saved column mapping configuration per platform. `MappingsJson` is a 
 ### Database migration
 
 An EF Core migration adds:
-- Two new columns to `Items` (`ExternalId`, `SalePlatformId`) and the unique index on `(ExternalId, SalePlatformId)`
+- Three new columns to `Items` (`ExternalId`, `SalePlatformId`, `MeasurementsDescription`) and the unique index on `(ExternalId, SalePlatformId)`
 - New `ImportMappings` table
 
 ## Backend Architecture
@@ -97,7 +135,7 @@ Source (CSV / API)
   ↓
 ② Column Mapping → apply user-defined mapping → normalized product rows
   ↓
-③ Resolve Entities → find or create Colors, Fabrics, Sizes by name (case-insensitive, including inactive records — reactivate if found inactive)
+③ Resolve Entities → find or create Colors/Sizes by name; validate Fabric exists (skip product if not found)
   ↓
 ④ Diff Against DB → query existing Items by ExternalId + SalePlatformId
    → classify each row as: Create | Update | Inactivate
@@ -125,9 +163,9 @@ When adding API integration later, only step ① changes — a `NuvemShopApiClie
 - `Contracts/IAzureBlobService.cs` — add new overload: `Task<string> UploadModelImageAsync(Stream imageStream, string imageName)` (existing method accepts `IFormFile`; CDN downloads produce `Stream`)
 - `AzureBlobService.cs` — implement the new overload
 - `Dtos/ImportColumnMappingDto.cs` — column-to-field mapping pairs
-- `Dtos/ImportPreviewDto.cs` — preview summary (toCreate, toUpdate, toInactivate lists)
-- `Dtos/ImportPreviewItemDto.cs` — individual item in preview (name, price, colors, fabric, sizes, action)
-- `Dtos/ImportResultDto.cs` — execution result (created, updated, inactivated counts, errors)
+- `Dtos/ImportPreviewDto.cs` — preview summary (toCreate, toUpdate, toInactivate, failed lists)
+- `Dtos/ImportPreviewItemDto.cs` — individual item in preview (name, price, colors, fabric, sizes, action, failReason)
+- `Dtos/ImportResultDto.cs` — execution result (created, updated, inactivated counts, failed list, errors)
 - `Dtos/ImportUploadResultDto.cs` — parsed CSV info (detected columns, sample rows)
 
 **Seamstress.Persistence:**
@@ -226,10 +264,11 @@ All under `src/app/routes/import/`:
 
 1. **Upload**: User drags CSV file → calls `/api/import/upload` → receives column list
 2. **Map**: Dropdowns for each Seamstress field (Name, Price, ExternalId, Category/Fabric, Colors, Sizes, Image URL) → user selects corresponding CSV column for each
-3. **Preview**: Calls `/api/import/preview` → shows 3-section table:
+3. **Preview**: Calls `/api/import/preview` → shows 4-section table:
    - Items to **create** (new in NuvemShop, not in Seamstress)
    - Items to **update** (exist in both, data changed)
    - Items to **inactivate** (in Seamstress but not in CSV)
+   - **Failed imports** (products skipped due to missing fabric, with reason)
 4. **Confirm**: User clicks "Execute Import" → calls `/api/import/execute` → shows spinner during image downloads
 5. **Results**: Shows counts (X created, Y updated, Z inactivated) and any errors
 
@@ -244,7 +283,7 @@ All under `src/app/routes/import/`:
 
 ### ItemSize and Measurements handling
 
-Imported items are created with `ItemSize` records but **no `ItemSizeMeasurement` data** (NuvemShop does not provide body measurements). When updating an existing item's sizes during re-import:
+Imported items are created with `ItemSize` records but **no `ItemSizeMeasurement` data**. Instead, the free-text measurements from NuvemShop's description field are stored in `Item.MeasurementsDescription`. When updating an existing item's sizes during re-import:
 - Only **add** new `ItemSize` records for sizes not already present
 - Only **remove** `ItemSize` records for sizes no longer in the CSV
 - **Never recreate** existing `ItemSize` records that match by `SizeId` — this preserves any manually-entered `ItemSizeMeasurement` data (which cascade-deletes when `ItemSize` is removed)
@@ -259,7 +298,8 @@ The execute step (step ⑦) wraps all create/update/inactivate operations in a s
 - **Missing required mappings**: Frontend validates that Name, Price, ExternalId are mapped before allowing preview
 - **Image download failure**: Log the error, create the item without image, include in result errors list. Do not fail the entire import for one bad image.
 - **Duplicate ExternalId in CSV**: Warn in preview, use last occurrence
-- **Entity resolution ambiguity**: When a fabric name partially matches multiple DB records (e.g., "Crepe" matches "Crepe acetinado", "Crepe dune"), create a new Fabric with the exact CSV value. The user can merge/clean up later.
+- **Unmatched fabric**: Product is skipped and added to the failed imports list with the reason "Tecido não encontrado: {fabricName}". User decides how to handle these after import (e.g., add the fabric to the DB and re-import).
+- **No fabric category**: If the first category in `Categorias` is a garment type (Vestidos, Blusas, etc.) and no fabric category is found, the product is added to failed imports.
 
 ## Testing Strategy
 
