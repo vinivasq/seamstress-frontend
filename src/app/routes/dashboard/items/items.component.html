@@ -15,6 +15,16 @@
   route="/item"
 ></app-tableHeader>
 
+<div class="d-flex justify-content-end mt-2">
+  <mat-checkbox
+    [checked]="showInactive"
+    (change)="toggleShowInactive()"
+    color="primary"
+  >
+    Mostrar inativos
+  </mat-checkbox>
+</div>
+
 <div class="d-flex justify-content-end mb-2" *ngIf="user && user.role.toLowerCase() !== 'executor'">
   <button
     mat-raised-button
@@ -38,9 +48,6 @@
         <div class="cell">
           <div class="cell__content">
             {{ column == "set" ? item[column]?.name : item[column] }}
-            <small *ngIf="column === 'name' && item.measurementsDescription" class="d-block text-muted mt-1" style="white-space: pre-line; font-size: 0.75rem;">
-              {{ item.measurementsDescription }}
-            </small>
           </div>
           <button
             *ngIf="column == 'price'"

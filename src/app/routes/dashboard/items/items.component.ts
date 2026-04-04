@@ -16,6 +16,7 @@ export class ItemsComponent implements OnInit {
   public dataSource: any;
   displayedColumns: string[] = ['name', 'set', 'price'];
   user: any;
+  showInactive = false;
 
   @ViewChild(MatPaginator) paginator?: MatPaginator;
   @ViewChild(MatSort) sort?: MatSort;
@@ -39,7 +40,7 @@ export class ItemsComponent implements OnInit {
     this._spinner.isLoading = true;
 
     this._itemService
-      .getItems()
+      .getItems(!this.showInactive)
       .subscribe({
         next: (data: any) => {
           this.dataSource = new MatTableDataSource(data);
@@ -57,5 +58,10 @@ export class ItemsComponent implements OnInit {
 
   filterItems(value: string) {
     this.dataSource.filter = value.trim().toLowerCase();
+  }
+
+  toggleShowInactive() {
+    this.showInactive = !this.showInactive;
+    this.getItems();
   }
 }
