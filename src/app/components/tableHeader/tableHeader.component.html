@@ -13,8 +13,9 @@
     mat-raised-button
     color="accent"
     class="button"
-    routerLink="/{{ route }}"
     *ngIf="user.role.toLowerCase() !== 'executor'"
+    [routerLink]="buttonClick.observed ? null : '/' + route"
+    (click)="buttonClick.observed ? buttonClick.emit() : null"
   >
     <mat-icon>playlist_add</mat-icon>
     {{ label }}

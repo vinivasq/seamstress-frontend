@@ -2,10 +2,13 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { formatHeader } from 'src/helpers/ColumnHeaders';
 import { ItemService } from 'src/app/services/item.service';
 import { ToastrService } from 'ngx-toastr';
 import { SpinnerService } from 'src/app/services/spinner.service';
+import { DialogRegisterItemComponent } from 'src/app/components/dialogRegisterItem/dialogRegisterItem.component';
 
 @Component({
   selector: 'app-items',
@@ -24,7 +27,9 @@ export class ItemsComponent implements OnInit {
   constructor(
     private _itemService: ItemService,
     private _toastrService: ToastrService,
-    private _spinner: SpinnerService
+    private _spinner: SpinnerService,
+    private _dialog: MatDialog,
+    private _router: Router
   ) {}
 
   ngOnInit() {
@@ -63,5 +68,16 @@ export class ItemsComponent implements OnInit {
   toggleShowInactive() {
     this.showInactive = !this.showInactive;
     this.getItems();
+  }
+
+  openRegisterDialog() {
+    const dialogRef = this._dialog.open(DialogRegisterItemComponent);
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result === 'individual') {
+        this._router.navigate(['/item']);
+      } else if (result === 'import') {
+        this._router.navigate(['/import']);
+      }
+    });
   }
 }

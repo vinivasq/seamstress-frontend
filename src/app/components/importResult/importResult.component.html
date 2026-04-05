@@ -1,0 +1,53 @@
+<mat-card class="result-card">
+  <mat-card-header>
+    <mat-card-title>
+      <mat-icon class="header-icon">check_circle</mat-icon>
+      Importação Concluída
+    </mat-card-title>
+  </mat-card-header>
+
+  <mat-card-content>
+    <div class="result-summary">
+      <div class="result-item created">
+        <span class="count">{{ result?.created || 0 }}</span>
+        <span class="label">Criados</span>
+      </div>
+      <div class="result-item updated">
+        <span class="count">{{ result?.updated || 0 }}</span>
+        <span class="label">Atualizados</span>
+      </div>
+      <div class="result-item inactivated">
+        <span class="count">{{ result?.inactivated || 0 }}</span>
+        <span class="label">Inativados</span>
+      </div>
+    </div>
+
+    <div class="info-banner">
+      <mat-icon>schedule</mat-icon>
+      <span>As imagens dos produtos estão sendo processadas em segundo plano e podem levar alguns minutos para aparecer.</span>
+    </div>
+
+    <div *ngIf="result?.failed?.length" class="failed-section">
+      <h4>Produtos não importados ({{ result!.failed.length }}):</h4>
+      <ul>
+        <li *ngFor="let item of result!.failed">
+          <strong>{{ item.name }}</strong> — {{ item.failReason }}
+        </li>
+      </ul>
+    </div>
+
+    <div *ngIf="result?.errors?.length" class="errors-section">
+      <h4>Erros durante importação:</h4>
+      <ul>
+        <li *ngFor="let error of result!.errors" class="error-item">{{ error }}</li>
+      </ul>
+    </div>
+  </mat-card-content>
+
+  <mat-card-actions>
+    <button mat-raised-button color="accent" (click)="goToItems.emit()">
+      <mat-icon>visibility</mat-icon>
+      Ver Modelos
+    </button>
+  </mat-card-actions>
+</mat-card>

@@ -11,28 +11,18 @@
 <app-tableHeader
   (keyPressed)="filterItems($event)"
   placeholder="Vestido Longo"
-  label="Novo Modelo"
-  route="/item"
+  label="Cadastrar"
+  (buttonClick)="openRegisterDialog()"
 ></app-tableHeader>
 
-<div class="d-flex justify-content-end mt-2">
+<div class="table-toolbar">
   <mat-checkbox
     [checked]="showInactive"
     (change)="toggleShowInactive()"
-    color="primary"
+    color="accent"
   >
     Mostrar inativos
   </mat-checkbox>
-</div>
-
-<div class="d-flex justify-content-end mb-2" *ngIf="user && user.role.toLowerCase() !== 'executor'">
-  <button
-    mat-raised-button
-    color="accent"
-    routerLink="/dashboard/import"
-  >
-    <i class="fa fa-upload me-1"></i> Importar
-  </button>
 </div>
 
 <div class="responsive-table">
@@ -74,4 +64,4 @@
 >
 </mat-paginator>
 
-<app-buttonAdd [route]="'/item'"></app-buttonAdd>
+<app-buttonAdd (buttonClick)="openRegisterDialog()"></app-buttonAdd>

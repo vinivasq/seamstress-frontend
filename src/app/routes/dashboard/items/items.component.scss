@@ -1,3 +1,11 @@
+.table-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.25rem;
+}
+
 .cell {
   display: flex;
   align-items: center;

@@ -1,0 +1,14 @@
+<h1 mat-dialog-title>Cadastrar Modelo</h1>
+<div mat-dialog-content>
+  <p>Como deseja cadastrar o modelo?</p>
+</div>
+<div mat-dialog-actions>
+  <button mat-stroked-button (click)="select('individual')">
+    <mat-icon>edit</mat-icon>
+    Cadastro Individual
+  </button>
+  <button mat-stroked-button color="accent" (click)="select('import')">
+    <mat-icon>cloud_download</mat-icon>
+    Importar da NuvemShop
+  </button>
+</div>

@@ -1,5 +1,5 @@
 <app-title
-  [icon]="'fa fa-upload'"
+  [icon]="'cloud_download'"
   [title]="'Importar Produtos'"
   [descripton]="'Importar produtos do NuvemShop'"
 ></app-title>
@@ -34,7 +34,7 @@
       <!-- Create table -->
       <div *ngIf="preview?.toCreate?.length" class="preview-section">
         <h4>Novos Itens</h4>
-        <table mat-table [dataSource]="preview!.toCreate" class="full-width">
+        <div class="table-scroll"><table mat-table [dataSource]="preview!.toCreate" class="full-width">
           <ng-container matColumnDef="name">
             <th mat-header-cell *matHeaderCellDef>Nome</th>
             <td mat-cell *matCellDef="let item">{{ item.name }}</td>
@@ -57,13 +57,13 @@
           </ng-container>
           <tr mat-header-row *matHeaderRowDef="['name','price','fabric','colors','sizes']"></tr>
           <tr mat-row *matRowDef="let row; columns: ['name','price','fabric','colors','sizes']"></tr>
-        </table>
+        </table></div>
       </div>
 
       <!-- Update table -->
       <div *ngIf="preview?.toUpdate?.length" class="preview-section">
         <h4>Itens a Atualizar</h4>
-        <table mat-table [dataSource]="preview!.toUpdate" class="full-width">
+        <div class="table-scroll"><table mat-table [dataSource]="preview!.toUpdate" class="full-width">
           <ng-container matColumnDef="name">
             <th mat-header-cell *matHeaderCellDef>Nome</th>
             <td mat-cell *matCellDef="let item">{{ item.name }}</td>
@@ -74,13 +74,13 @@
           </ng-container>
           <tr mat-header-row *matHeaderRowDef="['name','changes']"></tr>
           <tr mat-row *matRowDef="let row; columns: ['name','changes']"></tr>
-        </table>
+        </table></div>
       </div>
 
       <!-- Inactivate table -->
       <div *ngIf="preview?.toInactivate?.length" class="preview-section">
         <h4>Itens a Inativar</h4>
-        <table mat-table [dataSource]="preview!.toInactivate" class="full-width">
+        <div class="table-scroll"><table mat-table [dataSource]="preview!.toInactivate" class="full-width">
           <ng-container matColumnDef="name">
             <th mat-header-cell *matHeaderCellDef>Nome</th>
             <td mat-cell *matCellDef="let item">{{ item.name }}</td>
@@ -91,13 +91,13 @@
           </ng-container>
           <tr mat-header-row *matHeaderRowDef="['name','price']"></tr>
           <tr mat-row *matRowDef="let row; columns: ['name','price']"></tr>
-        </table>
+        </table></div>
       </div>
 
       <!-- Failed imports table -->
       <div *ngIf="preview?.failed?.length" class="preview-section">
         <h4>Falhas na Importação</h4>
-        <table mat-table [dataSource]="preview!.failed" class="full-width">
+        <div class="table-scroll"><table mat-table [dataSource]="preview!.failed" class="full-width">
           <ng-container matColumnDef="name">
             <th mat-header-cell *matHeaderCellDef>Nome</th>
             <td mat-cell *matCellDef="let item">{{ item.name }}</td>
@@ -112,71 +112,22 @@
           </ng-container>
           <tr mat-header-row *matHeaderRowDef="['name','fabric','reason']"></tr>
           <tr mat-row *matRowDef="let row; columns: ['name','fabric','reason']"></tr>
-        </table>
+        </table></div>
       </div>
     </mat-card-content>
     <mat-card-actions align="end">
-      <button mat-raised-button color="warn" (click)="executeImport()">
+      <button mat-raised-button color="accent" (click)="executeImport()">
         Executar Importação
       </button>
     </mat-card-actions>
   </mat-card>
 
-  <!-- No preview yet -->
-  <mat-card class="fetch-card" *ngIf="!preview">
-    <mat-card-content class="fetch-content">
-      <h2>Importar Produtos</h2>
-      <p>Busque os produtos publicados na NuvemShop para gerar um preview da importação.</p>
-      <button
-        mat-raised-button
-        color="primary"
-        (click)="fetchPreview()"
-      >
-        <i class="fa fa-cloud-download me-1"></i> Buscar produtos da NuvemShop
-      </button>
-    </mat-card-content>
-  </mat-card>
 
   <!-- STEP 2: RESULT -->
-  <mat-card *ngIf="currentStep === 2">
-    <mat-card-header>
-      <mat-card-title>Importação Concluída</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <div class="result-summary">
-        <div class="result-item">
-          <span class="count">{{ importResult?.created || 0 }}</span>
-          <span class="label">Criados</span>
-        </div>
-        <div class="result-item">
-          <span class="count">{{ importResult?.updated || 0 }}</span>
-          <span class="label">Atualizados</span>
-        </div>
-        <div class="result-item">
-          <span class="count">{{ importResult?.inactivated || 0 }}</span>
-          <span class="label">Inativados</span>
-        </div>
-      </div>
-
-      <div *ngIf="importResult?.failed?.length" class="preview-section mt-3">
-        <h4>Produtos não importados ({{ importResult!.failed.length }}):</h4>
-        <ul>
-          <li *ngFor="let item of importResult!.failed">
-            <strong>{{ item.name }}</strong> — {{ item.failReason }}
-          </li>
-        </ul>
-      </div>
-
-      <div *ngIf="importResult?.errors?.length" class="errors-section mt-3">
-        <h4>Erros durante importação:</h4>
-        <ul>
-          <li *ngFor="let error of importResult!.errors" class="error-item">{{ error }}</li>
-        </ul>
-      </div>
-    </mat-card-content>
-    <mat-card-actions align="end">
-      <button mat-raised-button (click)="restart()">Nova Importação</button>
-      <button mat-raised-button color="primary" (click)="goToItems()">Ver Modelos</button>
-    </mat-card-actions>
-  </mat-card>
+  <app-import-result
+    *ngIf="currentStep === 2"
+    [result]="importResult"
+    (restart)="restart()"
+    (goToItems)="goToItems()"
+  ></app-import-result>
 </div>

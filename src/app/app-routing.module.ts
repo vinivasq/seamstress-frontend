@@ -88,12 +88,6 @@ const routes: Routes = [
           role: ['admin'],
         },
       },
-      {
-        path: 'import',
-        component: ImportComponent,
-        canActivate: [roleGuard],
-        data: { role: ['admin', 'requester'] },
-      },
     ],
   },
 
@@ -177,6 +171,11 @@ const routes: Routes = [
       {
         path: 'measurements/:id',
         component: MeasurementsComponent,
+      },
+
+      {
+        path: 'import',
+        component: ImportComponent,
       },
 
       {

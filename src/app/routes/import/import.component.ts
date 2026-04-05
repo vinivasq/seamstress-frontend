@@ -23,28 +23,28 @@ export class ImportComponent {
     private _router: Router
   ) {}
 
+  ngOnInit(): void {
+    this.fetchPreview();
+  }
+
   fetchPreview(): void {
     this._spinner.isLoading = true;
     this._importService.fetchNuvemShopPreview().subscribe({
       next: (preview: ImportPreview) => {
         if (!preview.sessionId) {
           this._toastr.warning('Nenhum produto publicado encontrado na NuvemShop.', 'Aviso');
+          this._router.navigate(['/dashboard/items']);
         } else {
-          this.setPreview(preview);
+          this.preview = preview;
         }
         this._spinner.isLoading = false;
       },
-      error: (error: any) => {
+      error: () => {
         this._toastr.error('Erro ao buscar produtos da NuvemShop. Tente novamente.', 'Erro');
         this._spinner.isLoading = false;
+        this._router.navigate(['/dashboard/items']);
       }
     });
-  }
-
-  // Called by future API integration to set preview data
-  setPreview(preview: ImportPreview): void {
-    this.preview = preview;
-    this.currentStep = 1;
   }
 
   executeImport(): void {
