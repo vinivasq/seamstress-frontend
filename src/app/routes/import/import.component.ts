@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { ImportPreview } from 'src/app/models/import/ImportPreview';
@@ -11,7 +11,7 @@ import { SpinnerService } from 'src/app/services/spinner.service';
   templateUrl: './import.component.html',
   styleUrls: ['./import.component.scss'],
 })
-export class ImportComponent {
+export class ImportComponent implements OnInit {
   currentStep = 1; // 1=preview, 2=result
   preview: ImportPreview | null = null;
   importResult: ImportResult | null = null;

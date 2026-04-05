@@ -38,6 +38,7 @@ export class ItemComponent implements OnInit {
     itemSizes: ['', Validators.required],
     imageURL: ['', Validators.required],
     price: ['', Validators.required],
+    measurementsDescription: [''],
   });
 
   item: Item;
@@ -119,6 +120,9 @@ export class ItemComponent implements OnInit {
         const price = this.form.get('price') as FormControl;
         price.patchValue(this.item.price);
 
+        const measurementsDescription = this.form.get('measurementsDescription') as FormControl;
+        measurementsDescription.patchValue(this.item.measurementsDescription);
+
         const itemColors = this.form.get('itemColors') as FormControl;
         itemColors.patchValue(
           this.item.itemColors.map((color: ItemColors) => color.colorId)
@@ -166,7 +170,7 @@ export class ItemComponent implements OnInit {
     this._spinner.isLoading = true;
 
     let setId: number;
-    const { name, price } = this.form.getRawValue();
+    const { name, price, measurementsDescription } = this.form.getRawValue();
     const itemAttributes = {
       set: this.form.getRawValue().set as unknown as string,
       itemColors: this.form.getRawValue().itemColors as unknown as number[],
@@ -191,6 +195,7 @@ export class ItemComponent implements OnInit {
       imageURL: null,
       price: price as unknown as number,
       isActive: this.item?.isActive,
+      measurementsDescription: measurementsDescription,
     };
 
     if (this.images?.length > 0) {
