@@ -152,6 +152,12 @@
             </mat-error>
           </mat-form-field>
         </div>
+        <div class="fields__groups" style="flex-basis: 100%;">
+          <mat-form-field class="field" appearance="outline" style="width: 100%;">
+            <mat-label>Descrição / Medidas</mat-label>
+            <textarea matInput formControlName="measurementsDescription" rows="4" placeholder="Ex: P - Cintura 86cm / Busto 84cm..."></textarea>
+          </mat-form-field>
+        </div>
         <div class="buttons">
           <div *ngIf="requestMethod == 'put'">
             <button

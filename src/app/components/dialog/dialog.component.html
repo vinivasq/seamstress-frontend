@@ -3,7 +3,7 @@
 <div mat-dialog-actions class="dialog__buttons">
   <button
     mat-stroked-button
-    color="warn"
+    [color]="data.actionColor || 'warn'"
     mat-dialog-close
     (click)="data.action()"
   >

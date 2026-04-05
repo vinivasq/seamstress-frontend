@@ -1,0 +1,110 @@
+.preview-summary, .result-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  margin: 24px 0;
+
+  .summary-item, .result-item {
+    text-align: center;
+    padding: 12px 24px;
+    border-radius: 8px;
+    min-width: 80px;
+    flex: 1 1 0;
+
+    .count {
+      display: block;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .label {
+      font-size: 13px;
+      opacity: 0.7;
+    }
+  }
+
+  .create {
+    background: rgba(76, 175, 80, 0.12);
+    .count { color: #66bb6a; }
+  }
+
+  .update {
+    background: rgba(255, 152, 0, 0.12);
+    .count { color: #ffa726; }
+  }
+
+  .inactivate {
+    background: rgba(244, 67, 54, 0.12);
+    .count { color: #ef5350; }
+  }
+
+  .failed {
+    background: rgba(156, 39, 176, 0.12);
+    .count { color: #ba68c8; }
+  }
+}
+
+.preview-section {
+  margin-top: 24px;
+
+  h4 {
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+}
+
+.table-scroll {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.full-width {
+  width: 100%;
+}
+
+@media screen and (max-width: 600px) {
+  .container {
+    padding: 0 8px;
+  }
+
+  .preview-summary, .result-summary {
+    gap: 8px;
+    margin: 16px 0;
+
+    .summary-item, .result-item {
+      padding: 8px 12px;
+
+      .count {
+        font-size: 22px;
+      }
+
+      .label {
+        font-size: 11px;
+      }
+    }
+  }
+}
+
+.alert-box {
+  padding: 24px;
+  background: #fff3e0;
+  border-radius: 8px;
+  text-align: center;
+
+  p {
+    margin-bottom: 16px;
+    color: #ef6c00;
+  }
+}
+
+::ng-deep .mat-mdc-card-actions {
+  padding: 16px !important;
+}
+
+.errors-section {
+  .error-item {
+    color: #c62828;
+    margin-bottom: 4px;
+  }
+}

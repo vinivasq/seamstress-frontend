@@ -14,4 +14,5 @@ export interface Item {
   imageURL: string;
   price: number;
   isActive?: boolean;
+  measurementsDescription?: string;
 }

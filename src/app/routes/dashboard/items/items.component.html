@@ -11,9 +11,19 @@
 <app-tableHeader
   (keyPressed)="filterItems($event)"
   placeholder="Vestido Longo"
-  label="Novo Modelo"
-  route="/item"
+  label="Cadastrar"
+  (buttonClick)="openRegisterDialog()"
 ></app-tableHeader>
+
+<div class="table-toolbar">
+  <mat-checkbox
+    [checked]="showInactive"
+    (change)="toggleShowInactive()"
+    color="accent"
+  >
+    Mostrar inativos
+  </mat-checkbox>
+</div>
 
 <div class="responsive-table">
   <table class="mat-elevation-z8" mat-table matSort [dataSource]="dataSource">
@@ -54,4 +64,4 @@
 >
 </mat-paginator>
 
-<app-buttonAdd [route]="'/item'"></app-buttonAdd>
+<app-buttonAdd (buttonClick)="openRegisterDialog()"></app-buttonAdd>

@@ -487,7 +487,7 @@ export class OrderComponent implements OnInit {
   }
 
   getItems() {
-    this._itemService.getItems().subscribe({
+    this._itemService.getItems(true).subscribe({
       next: (data: Item[]) => {
         this.items = data;
         this.filteredItems = this.itemOrder.get('item').valueChanges.pipe(

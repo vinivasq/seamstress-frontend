@@ -3,7 +3,8 @@
   color="accent"
   class="button__add"
   aria-label="Botão para adicionar novo"
-  routerLink="{{ route }}"
+  [routerLink]="buttonClick.observed ? null : route"
+  (click)="buttonClick.observed ? buttonClick.emit() : null"
 >
   <mat-icon>add</mat-icon>
 </button>

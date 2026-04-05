@@ -268,13 +268,18 @@
 
             <!-- Standard Size Measurements -->
             <ng-template #standardMeasurements>
-              <div
-                *ngFor="let measure of itemOrder.itemSize.measurements"
-                class="measurement-item"
-              >
-                <span class="measurement-label">{{ measure.measure }}:</span>
-                <span class="measurement-value">{{ measure.value }} cm</span>
-              </div>
+              <ng-container *ngIf="itemOrder.item.measurementsDescription; else structuredMeasurements">
+                <pre class="description-text" style="white-space: pre-line; margin: 0; font-family: inherit;">{{ itemOrder.item.measurementsDescription }}</pre>
+              </ng-container>
+              <ng-template #structuredMeasurements>
+                <div
+                  *ngFor="let measure of itemOrder.itemSize.measurements"
+                  class="measurement-item"
+                >
+                  <span class="measurement-label">{{ measure.measure }}:</span>
+                  <span class="measurement-value">{{ measure.value }} cm</span>
+                </div>
+              </ng-template>
             </ng-template>
           </div>
         </mat-expansion-panel>

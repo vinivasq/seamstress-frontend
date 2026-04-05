@@ -26,6 +26,7 @@ import { RegisterComponent } from './routes/user/register/register.component';
 import { OrderCockpitComponent } from './routes/order-cockpit/order-cockpit.component';
 import { UsersComponent } from './routes/dashboard/users/users.component';
 import { ProfileComponent } from './routes/user/profile/profile.component';
+import { ImportComponent } from './routes/import/import.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'dashboard/orders', pathMatch: 'full' },
@@ -170,6 +171,11 @@ const routes: Routes = [
       {
         path: 'measurements/:id',
         component: MeasurementsComponent,
+      },
+
+      {
+        path: 'import',
+        component: ImportComponent,
       },
 
       {

@@ -9,6 +9,7 @@ import { UserService } from 'src/app/services/user.service';
 })
 export class TableHeaderComponent implements OnInit {
   @Output() keyPressed = new EventEmitter<string>();
+  @Output() buttonClick = new EventEmitter<void>();
   @Input() placeholder = '';
   @Input() route = '';
   @Input() label = '';

@@ -46,6 +46,7 @@ import { DialogComponent } from './components/dialog/dialog.component';
 import { DialogCarouselComponent } from './components/dialogCarousel/dialogCarousel.component';
 import { DialogMetaExportComponent } from './components/dialogMetaExport/dialogMetaExport.component';
 import { DialogEditUserComponent } from './components/dialogEditUser/dialogEditUser.component';
+import { DialogRegisterItemComponent } from './components/dialogRegisterItem/dialogRegisterItem.component';
 import { UsersComponent } from './routes/dashboard/users/users.component';
 import { ItemComponent } from './routes/item/item.component';
 import { MeasurementsComponent } from './routes/measurements/measurements.component';
@@ -70,6 +71,8 @@ import { UserComponent } from './routes/user/user.component';
 import { LoginComponent } from './routes/user/login/login.component';
 import { RegisterComponent } from './routes/user/register/register.component';
 import { OrderCockpitComponent } from './routes/order-cockpit/order-cockpit.component';
+import { ImportComponent } from './routes/import/import.component';
+import { ImportResultComponent } from './components/importResult/importResult.component';
 
 import { DateFormatPipe } from 'src/helpers/DateFormat.pipe';
 
@@ -90,6 +93,7 @@ import { JwtInterceptor } from './interceptors/jwt.interceptor';
     DialogCarouselComponent,
     DialogMetaExportComponent,
     DialogEditUserComponent,
+    DialogRegisterItemComponent,
     UsersComponent,
     AttributesComponent,
     ColorComponent,
@@ -114,6 +118,8 @@ import { JwtInterceptor } from './interceptors/jwt.interceptor';
     ButtonAddComponent,
     TableHeaderComponent,
     SpinnerComponent,
+    ImportComponent,
+    ImportResultComponent,
     DateFormatPipe,
   ],
   imports: [

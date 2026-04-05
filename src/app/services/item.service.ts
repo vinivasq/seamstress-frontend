@@ -12,8 +12,11 @@ export class ItemService {
 
   constructor(private client: HttpClient) {}
 
-  getItems() {
-    return this.client.get(this.baseURL).pipe(take(1));
+  getItems(activeOnly: boolean = true) {
+    let params = new HttpParams();
+    params = params.append('activeOnly', activeOnly);
+
+    return this.client.get(this.baseURL, { params }).pipe(take(1));
   }
 
   getItemById(id: number) {
