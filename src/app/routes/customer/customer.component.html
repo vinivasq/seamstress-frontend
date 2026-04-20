@@ -183,12 +183,15 @@
               <mat-label>N° Residência</mat-label>
               <input
                 matInput
-                placeholder="00000"
-                mask="09999"
+                placeholder="123A"
+                maxlength="10"
                 formControlName="number"
               />
               <mat-error *ngIf="secondGroup.get('number')?.hasError('required')"
                 >Campo obrigatório</mat-error
+              >
+              <mat-error *ngIf="secondGroup.get('number')?.hasError('pattern')"
+                >Use até 10 caracteres: letras, números, espaço, '-' ou '/'</mat-error
               >
             </mat-form-field>
           </div>

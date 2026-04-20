@@ -51,7 +51,7 @@ export class CustomerComponent implements OnInit {
       address: ['', [Validators.required]],
       city: ['', [Validators.required]],
       neighborhood: ['', [Validators.required]],
-      number: [null, [Validators.required]],
+      number: ['', [Validators.required, Validators.pattern(/^[A-Za-z0-9/\- ]{1,10}$/)]],
       complement: [''],
     }),
     thirdFormGroup: this._formBuilder.group({
