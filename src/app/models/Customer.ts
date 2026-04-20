@@ -7,7 +7,7 @@ export interface Customer {
   city: string;
   uf: string;
   neighborhood: string;
-  number: number;
+  number: string;
   complement?: string;
   cep: number;
   cpF_CNPJ: number;
