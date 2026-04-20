@@ -51,7 +51,6 @@ export class OrdersComponent implements OnInit {
     'customer',
     'orderedAt',
     'deadline',
-    'total',
     'step',
   ];
   displayedColumnsWithExpand = [...this.displayedColumns, 'expand'];
